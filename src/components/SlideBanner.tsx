@@ -1,22 +1,16 @@
 // import Swiper core and required modules
-import {
-  Navigation,
-  Pagination,
-  Scrollbar,
-  A11y,
-  Autoplay,
-} from 'swiper/modules';
+import { Navigation, Pagination, A11y, Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
+import 'styles/slideBanner.css';
 
-export default function SlideContainer() {
+export default function SlideBanner() {
   return (
-    <div className="w-full h-screen">
+    <div className="slideBanner w-full h-screen">
       <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+        modules={[Navigation, Pagination, A11y, Autoplay]}
         spaceBetween={50}
         slidesPerView={1}
         navigation
@@ -25,7 +19,7 @@ export default function SlideContainer() {
         }}
         loop={true}
         autoplay={{ delay: 4000 }}
-        className="w-full h-[90%]"
+        className="h-[85%]"
       >
         <SwiperSlide>
           <img

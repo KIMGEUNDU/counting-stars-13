@@ -10,3 +10,12 @@ interface ProductItem {
   title: string;
   price: string;
 }
+
+interface ReviewItem {
+  link: string;
+  productSrc: string;
+  productName: string;
+  content: string;
+  score: number;
+  nickName: string;
+}
