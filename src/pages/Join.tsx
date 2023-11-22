@@ -1,3 +1,4 @@
+import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 
 export default function Join() {
@@ -6,7 +7,7 @@ export default function Join() {
       <main className="w-full">
         <PageMainTitle title="회원 가입" />
         <section className="w-4/5 mx-auto">
-          <table className="border-t border-gray-300">
+          <table className="w-full border-t border-gray-300">
             <tbody>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-100 w-40 p-3">
@@ -149,7 +150,7 @@ export default function Join() {
                     className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
                     readOnly
                   >
-                    제1조
+                    {terms.term}
                   </textarea>
                   <div className="flex flex-row">
                     <p className="mr-2">이용 약관에 동의하십니까?</p>
@@ -172,7 +173,7 @@ export default function Join() {
                     className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
                     readOnly
                   >
-                    제1조
+                    {terms.privacy}
                   </textarea>
                   <div className="flex flex-row">
                     <p className="mr-2">
@@ -197,7 +198,7 @@ export default function Join() {
                     className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
                     readOnly
                   >
-                    제1조
+                    {terms.shopInfo}
                   </textarea>
                   <div className="flex flex-row">
                     <p className="mr-2">SMS 수신을 동의하십니까?</p>
