@@ -1,0 +1,22 @@
+.reviewSlide .swiper-button-prev {
+  background-image: url('/reviewSwiperArrow.png');
+  background-size: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.reviewSlide .swiper-button-prev::after {
+  display: none;
+}
+
+.reviewSlide .swiper-button-next {
+  background-image: url('/reviewSwiperArrow.png');
+  background-size: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(-180deg);
+}
+
+.reviewSlide .swiper-button-next::after {
+  display: none;
+}

@@ -11,34 +11,3 @@
     @apply bg-gray-100 px-6 py-1 rounded-xl active:bg-zinc-900 active:text-white;
   }
 }
-
-.swiper .swiper-pagination-bullet {
-  background-color: #eaaa95;
-  width: 20px;
-  margin: 0 10px;
-}
-
-.swiper-button-prev {
-  padding-right: 80px;
-  background-image: url('../assets/swiperArrow.png');
-  background-size: 60px;
-  background-repeat: no-repeat;
-  background-position: center;
-  transform: rotate(-180deg);
-}
-
-.swiper-button-prev::after {
-  display: none;
-}
-
-.swiper-button-next {
-  padding-right: 80px;
-  background-image: url('../assets/swiperArrow.png');
-  background-size: 60px;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.swiper-button-next::after {
-  display: none;
-}

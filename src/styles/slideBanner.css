@@ -1,0 +1,30 @@
+.slideBanner .swiper .swiper-pagination-bullet {
+  background-color: #eaaa95;
+  width: 20px;
+  margin: 0 10px;
+}
+
+.slideBanner .swiper-button-prev {
+  padding-right: 80px;
+  background-image: url('/swiperArrow.png');
+  background-size: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(-180deg);
+}
+
+.slideBanner .swiper-button-prev::after {
+  display: none;
+}
+
+.slideBanner .swiper-button-next {
+  padding-right: 80px;
+  background-image: url('/swiperArrow.png');
+  background-size: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.slideBanner .swiper-button-next::after {
+  display: none;
+}
