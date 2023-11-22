@@ -1,13 +1,14 @@
+import MainTitle from './MainTitle';
 import ProductItem from './ProductItem';
 
-function ProductContainer({ title }: ContainerTitle) {
+function ProductContainer() {
   return (
     <div className="w-[1200px] m-auto text-center">
-      <h1 className="font-bold text-2xl">{title}</h1>
+      <MainTitle title="ALL ARRIVAL" />
       <div className="flex gap-1">
-        <ul className="flex gap-2 flex-wrap justify-center">
+        <ul className="flex gap-5 flex-wrap justify-center">
           {Array(28)
-            .fill()
+            .fill('')
             .map((_, i) => (
               <li key={i}>
                 <ProductItem
