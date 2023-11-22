@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
-    <>
-      <header className="w-full border-b-2 flex justify-center">
+    <header className="relative z-10">
+      <div className="w-full border-b-2 flex justify-center fixed h-[96px] bg-white">
         <div className=" w-4/5 ">
           <h1 className="sr-only">별해달</h1>
           <nav className="flex gap-9 justify-between">
@@ -19,10 +19,10 @@ export default function Header() {
               </li>
             </ul>
             <Link to="/" aria-label="홈페이지로 가기" className="mx-12">
-              <img src="./../../public/logoChar.png" width="90px" />
+              <img src="/logoChar.png" width="90px" />
             </Link>
             {/* <button aria-label="홈페이지로 가기" ></button> */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 relative">
               <ul className="flex w-4/10 text-xs items-center gap-5">
                 <li className="min-w-[32px]">
                   <Link to="/login">로그인</Link>
@@ -41,12 +41,29 @@ export default function Header() {
                 </li>
               </ul>
               <button aria-label="검색 버튼">
-                <img src="./../../public/headerSearch.png" width="20px" />
+                <img src="/headerSearch.png" width="20px" />
               </button>
+              <form className="flex justify-around  w-[70%] h-[40%] absolute bottom-[-1px]  right-0 border-starPink border-[1px] rounded-xl z-30">
+                <input
+                  type="search"
+                  placeholder="검색"
+                  className="w-[70%] mx-2 "
+                />
+                <button
+                  aria-label="검색 버튼"
+                  className="text-end mt-1 w-[15%]"
+                >
+                  <img
+                    src="/headerSearch.png"
+                    width="75%"
+                    className="w-[50%]"
+                  />
+                </button>
+              </form>
             </div>
           </nav>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
