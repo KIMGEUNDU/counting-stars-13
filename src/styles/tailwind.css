@@ -10,4 +10,8 @@
   .filterButton {
     @apply bg-gray-100 px-6 py-1 rounded-xl active:bg-zinc-900 active:text-white;
   }
+
+  .center {
+    @apply w-[80%] m-auto;
+  }
 }
