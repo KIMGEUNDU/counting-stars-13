@@ -1,13 +1,18 @@
 import BestItem from '@/components/BestItem';
 import ProductContainer from '@/components/ProductContainer';
-import SlideContainer from '@/components/SlideContainer';
+import ReviewSlide from '@/components/ReviewSlide';
+import SlideBanner from '@/components/SlideBanner';
 
 export default function Home() {
   return (
     <>
-      <SlideContainer />
-      <BestItem title="New Item" />
-      <ProductContainer title="ALL ARRIVAL" />
+      <SlideBanner />
+      <BestItem />
+      <ProductContainer />
+      <p className="text-starPink text-8xl font-bold text-center py-28">
+        We Make Pets Fun!
+      </p>
+      <ReviewSlide />
     </>
   );
 }
