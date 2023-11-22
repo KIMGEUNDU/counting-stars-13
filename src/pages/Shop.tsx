@@ -5,8 +5,8 @@ import ProductItem from '@/components/ProductItem';
 export default function Shop() {
   return (
     <>
-      <PageMap route="Shop" />
-      <PageMainTitle title="SHOP" />
+      <PageMap route="Shop" category="디저트/케이크" />
+      <PageMainTitle title="디저트/케이크" />
       <div className="center pb-10">
         <p className="py-4 text-gray-600">
           Total <span className="text-lg">68</span> item
@@ -34,7 +34,7 @@ export default function Shop() {
             .map((_, i) => (
               <li key={i}>
                 <ProductItem
-                  link="#"
+                  link="/detail"
                   src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
                   title="멍돈까스"
                   price="8,000"
