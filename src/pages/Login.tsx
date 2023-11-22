@@ -4,9 +4,9 @@ import PageMainTitle from 'components/PageMainTitle';
 export default function Login() {
   return (
     <>
-      <main>
+      <main className="min-h-[60vh]">
         <PageMainTitle title="로그인" />
-        <section className="w-4/5 mx-auto border border-gray-300">
+        <section className="w-4/5 min-h-[60vh] mx-auto border border-gray-300 flex flex-col justify-center">
           <article>
             <h2 className="text-center font-bold text-xl mt-8 mb-4">
               회원 로그인
@@ -40,10 +40,10 @@ export default function Login() {
           <hr className="my-5 mx-auto w-1/2" />
           <article>
             <ul className="flex justify-center mb-10 text-sm">
-              <Link to="/">
+              <Link to="/findid">
                 <li className="border-r border-gray-200 px-2">아이디 찾기</li>
               </Link>
-              <Link to="/">
+              <Link to="/findpw">
                 <li className="border-r border-gray-200 px-2">비밀번호 찾기</li>
               </Link>
               <Link to="/join">
