@@ -1,10 +1,12 @@
+import banner from '/eventBanner.png';
+import { Link } from 'react-router-dom';
+import MainTitle from './MainTitle';
 import ProductItem from './ProductItem';
-import banner from '../assets/eventBanner.png';
 
-function BestItem({ title }: ContainerTitle) {
+function BestItem() {
   return (
-    <div className="w-[900px] m-auto text-center pb-20">
-      <h1 className="font-bold text-2xl">{title}</h1>
+    <div className="w-[950px] m-auto text-center pb-20">
+      <MainTitle title="BEST ITEM" />
       <div className="flex gap-3 justify-center py-7">
         <button type="button" className="filterButton">
           # 특별한날
@@ -20,41 +22,23 @@ function BestItem({ title }: ContainerTitle) {
         </button>
       </div>
       <div className="flex gap-1">
-        <ul className="flex gap-2 flex-wrap">
-          <li>
-            <ProductItem
-              link="#"
-              src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
-              title="멍돈까스"
-              price="8,000"
-            />
-          </li>
-          <li>
-            <ProductItem
-              link="#"
-              src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
-              title="멍돈까스"
-              price="8,000"
-            />
-          </li>
-          <li>
-            <ProductItem
-              link="#"
-              src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
-              title="멍돈까스"
-              price="8,000"
-            />
-          </li>
-          <li>
-            <ProductItem
-              link="#"
-              src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
-              title="멍돈까스"
-              price="8,000"
-            />
-          </li>
+        <ul className="flex gap-5 flex-wrap">
+          {Array(4)
+            .fill('')
+            .map((_, i) => (
+              <li key={i}>
+                <ProductItem
+                  link="#"
+                  src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
+                  title="멍돈까스"
+                  price="8,000"
+                />
+              </li>
+            ))}
         </ul>
-        <img src={banner} alt="이벤트배너" className="w-[300px]" />
+        <Link to="/join" className="w-[600px]">
+          <img src={banner} alt="이벤트배너" className="w-full" />
+        </Link>
       </div>
     </div>
   );
