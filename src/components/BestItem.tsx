@@ -8,7 +8,7 @@ function BestItem() {
     <div className="w-[950px] m-auto text-center pb-20">
       <MainTitle title="BEST ITEM" />
       <div className="flex gap-3 justify-center py-7">
-        <button type="button" className="filterButton">
+        <button type="button" className="filterButton bg-zinc-900 text-white">
           # 특별한날
         </button>
         <button type="button" className="filterButton">
