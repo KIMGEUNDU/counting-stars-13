@@ -10,7 +10,9 @@ const Brand = lazy(() => import('pages/Brand'));
 const Shop = lazy(() => import('pages/Shop'));
 const Community = lazy(() => import('pages/Community'));
 const Qna = lazy(() => import('pages/Qna'));
+const WriteQna = lazy(() => import('./pages/WriteQna'));
 const Review = lazy(() => import('pages/Review'));
+const WriteReview = lazy(() => import('./pages/WriteReview'));
 const EditMember = lazy(() => import('pages/EditMember'));
 const Detail = lazy(() => import('pages/Detail'));
 const Join = lazy(() => import('pages/Join'));
@@ -30,7 +32,9 @@ const router = createHashRouter(
       <Route path="detail" element={<Detail />} />
       <Route path="community" element={<Community />} />
       <Route path="qna" element={<Qna />} />
+      <Route path="write-qna" element={<WriteQna />} />
       <Route path="review" element={<Review />} />
+      <Route path="write-review" element={<WriteReview />} />
 
       <Route path="join" element={<Join />} />
       <Route path="edit" element={<EditMember />} />

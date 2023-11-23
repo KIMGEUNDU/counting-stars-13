@@ -123,7 +123,10 @@ export default function EditMember() {
               </tr>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputPhone">휴대전화</label>
+                  <label htmlFor="inputPhone0" className="sr-only">
+                    휴대전화
+                  </label>
+                  <label htmlFor="inputPhone1">휴대전화</label>
                   <label htmlFor="inputPhone2" className="sr-only">
                     휴대전화
                   </label>
@@ -132,7 +135,7 @@ export default function EditMember() {
                   </span>
                 </td>
                 <td className="p-3">
-                  <select name="" id="">
+                  <select name="phoneNumber" id="inputPhone0">
                     <option value="011">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -144,7 +147,7 @@ export default function EditMember() {
                   <input
                     type="text"
                     className="border border-gray-300 rounded w-16"
-                    id="inputPhone"
+                    id="inputPhone1"
                   />
                   -
                   <input
