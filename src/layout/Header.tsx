@@ -9,17 +9,47 @@ export default function Header() {
           <nav className="flex gap-9 justify-between">
             <ul className="w-4/10 flex items-center gap-14 font-bold">
               <li className="px-2 py-5">
-                <Link to="/brand">BRAND</Link>
+                <Link to="/brand">Brand</Link>
               </li>
-              <li className="px-2 py-5">
-                <Link to="/shop">SHOP</Link>
+              <li className="group/item  px-2 py-5 relative">
+                <Link to="/shop">Shop</Link>
+                <div className="group/edit group-hover/item:visible  invisible  absolute bg-white rounded-md py-1 border w-36 text-center text-sm font-medium left-[-40px] mt-2">
+                  <Link to="" className="block py-1">
+                    디저트/케이크
+                  </Link>
+                  <Link to="" className="block py-1">
+                    자연식/특식
+                  </Link>
+                  <Link to="" className="block py-1">
+                    육포/우유껌
+                  </Link>
+                  <Link to="" className="block py-1">
+                    천연껌/뼈간식
+                  </Link>
+                  <Link to="" className="block py-1">
+                    파티용품/굿즈
+                  </Link>
+                </div>
               </li>
-              <li className="px-2 py-5">
-                <Link to="/community">COMMUNITY</Link>
+
+              <li className="group/item  px-2 py-5 relative">
+                <Link to="/community ">Community</Link>
+
+                <div className=" group/edit group-hover/item:visible  invisible  absolute bg-white rounded-md py-1 border w-32 text-center text-sm font-medium  left-[-13px] mt-2">
+                  <Link to="/community" className="block py-1">
+                    Notice
+                  </Link>
+                  <Link to="/qna" className="block py-1">
+                    Q&A
+                  </Link>
+                  <Link to="/review" className="block py-1">
+                    Review
+                  </Link>
+                </div>
               </li>
             </ul>
             <Link to="/" aria-label="홈페이지로 가기" className="mx-12">
-              <img src="/logoChar.png" width="90px" />
+              <img src="/logoChar.png" className="min-w-[90px] w-[90px]" />
             </Link>
             {/* <button aria-label="홈페이지로 가기" ></button> */}
             <div className="flex gap-4 relative">
@@ -41,7 +71,10 @@ export default function Header() {
                 </li>
               </ul>
               <button aria-label="검색 버튼">
-                <img src="/headerSearch.png" width="20px" />
+                <img
+                  src="/headerSearch.png"
+                  className="min-w-[20px] w-[20px]"
+                />
               </button>
               <form className="flex justify-around  w-[70%] h-[40%] absolute bottom-[-1px]  right-0 border-starPink border-[1px] rounded-xl z-30">
                 <input
