@@ -1,12 +1,12 @@
 import banner from '/eventBanner.png';
 import { Link } from 'react-router-dom';
-import MainTitle from './MainTitle';
-import ProductItem from './ProductItem';
+import MainTitle from '../MainTitle';
+import ProductItem from '../Shop/ProductItem';
 
 function BestItem() {
   return (
     <div className="w-[950px] m-auto text-center pb-20">
-      <MainTitle title="BEST ITEM" />
+      <MainTitle title="Best Item" />
       <div className="flex gap-3 justify-center py-7">
         <button type="button" className="filterButton bg-zinc-900 text-white">
           # 특별한날

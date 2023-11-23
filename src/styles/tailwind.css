@@ -20,7 +20,19 @@
   }
 
   .detailButton {
-    @apply px-7 py-3 border-[1px] border-gray-300;
+    @apply w-40 py-3 border-[1px] border-gray-300 font-semibold;
+  }
+
+  .informationList {
+    @apply border-[1px] border-gray-300 border-b-starBlack w-1/5 text-center py-4 text-gray-500;
+  }
+
+  .informationListSelect {
+    @apply border-[1px] border-starBlack border-b-0 w-1/5 text-center py-5 font-bold;
+  }
+
+  .detailProductListButton {
+    @apply w-36 py-1 border-[1px] border-gray-300;
   }
 }
 

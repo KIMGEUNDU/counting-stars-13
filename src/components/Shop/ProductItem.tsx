@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import ProductOption from './ProductOption';
+import ProductOption from '../Detail/ProductOption';
 
 function ProductItem({ link, src, title, price }: ProductItem) {
   return (

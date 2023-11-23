@@ -1,10 +1,10 @@
 // import Swiper core and required modules
-import '../styles/reviewSlide.css';
+import '../../styles/reviewSlide.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { A11y, Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import MainTitle from './MainTitle';
+import MainTitle from '../MainTitle';
 import ReviewItem from './ReviewItem';
 
 export default function ReviewSlide() {

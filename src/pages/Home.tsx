@@ -1,8 +1,8 @@
-import BestItem from '@/components/BestItem';
-import ProductContainer from '@/components/ProductContainer';
-import ReviewSlide from '@/components/ReviewSlide';
-import SlideBanner from '@/components/SlideBanner';
-import Slogan from '@/components/Slogan';
+import BestItem from '@/components/Home/BestItem';
+import ProductContainer from '@/components/Shop/ProductContainer';
+import ReviewSlide from '@/components/Home/ReviewSlide';
+import SlideBanner from '@/components/Home/SlideBanner';
+import Slogan from '@/components/Brand/Slogan';
 
 export default function Home() {
   return (

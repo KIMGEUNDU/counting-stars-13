@@ -1,10 +1,10 @@
-import MainTitle from './MainTitle';
+import MainTitle from '../MainTitle';
 import ProductItem from './ProductItem';
 
 function ProductContainer() {
   return (
     <div className="w-[1200px] m-auto text-center">
-      <MainTitle title="ALL ARRIVAL" />
+      <MainTitle title="All Arrival" />
       <div className="flex gap-1">
         <ul className="flex gap-5 flex-wrap justify-center">
           {Array(28)

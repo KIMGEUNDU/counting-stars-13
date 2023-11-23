@@ -1,6 +1,7 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-import ProductItem from '@/components/ProductItem';
+import PaginationNumber from '@/components/PaginationNumber';
+import ProductItem from '@/components/Shop/ProductItem';
 
 export default function Shop() {
   return (
@@ -42,31 +43,7 @@ export default function Shop() {
               </li>
             ))}
         </ul>
-        <div className="flex gap-3 justify-center items-center py-4">
-          <button type="button">
-            <img className="rotate-180" src="/pagination2.png" alt="처음으로" />
-          </button>
-          <button type="button">
-            <img className="rotate-180" src="/pagination1.png" alt="이전으로" />
-          </button>
-          {Array(5)
-            .fill('')
-            .map((_, i) => (
-              <span
-                className={`hover:bg-starPink hover:text-white px-2 rounded-sm ${
-                  i === 0 ? 'bg-starPink text-white' : ''
-                }`}
-              >
-                {i + 1}
-              </span>
-            ))}
-          <button type="button">
-            <img src="/pagination1.png" alt="다음으로" />
-          </button>
-          <button type="button">
-            <img src="/pagination2.png" alt="마지막으로" />
-          </button>
-        </div>
+        <PaginationNumber length={5} />
       </div>
     </>
   );

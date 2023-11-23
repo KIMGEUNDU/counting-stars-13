@@ -19,3 +19,17 @@ interface ReviewItem {
   score: number;
   nickName: string;
 }
+
+interface DetailProductSelect {
+  option1: string;
+  option2: string;
+  option3: string;
+  rest?: string[];
+}
+
+interface DetailProductResult {
+  name: string;
+  option: string;
+  quantity: number;
+  price: string;
+}
