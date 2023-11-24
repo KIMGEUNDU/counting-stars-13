@@ -45,7 +45,15 @@ function DetailProductOption() {
           quantity={1}
           price="4,900"
         />
-        <DetailButton />
+        <DetailButton
+          btn1="장바구니 담기"
+          btn2="찜하기"
+          btn3="바로 구매하기"
+          onClick1={() => console.log('확인')}
+          onClick2={() => console.log('확인')}
+          onClick3={() => console.log('확인')}
+          style="detailButton"
+        />
       </form>
     </section>
   );
