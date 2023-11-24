@@ -52,7 +52,7 @@ export default function Header() {
               <img src="/logoChar.png" className="min-w-[90px] w-[90px]" />
             </Link>
             {/* <button aria-label="홈페이지로 가기" ></button> */}
-            <div className="flex gap-4 relative">
+            <div className="flex gap-4 relative items-center">
               <ul className="flex w-4/10 text-xs items-center gap-5">
                 <li className="min-w-[32px]">
                   <Link to="/login">로그인</Link>
@@ -70,13 +70,17 @@ export default function Header() {
                   <Link to="/myShopping">+마이쇼핑</Link>
                 </li>
               </ul>
-              <button aria-label="검색 버튼">
+              <Link
+                to="/search"
+                aria-label="검색 버튼"
+                className="inline-block"
+              >
                 <img
                   src="/headerSearch.png"
                   className="min-w-[20px] w-[20px]"
                 />
-              </button>
-              <form className="flex justify-around  w-[70%] h-[40%] absolute bottom-[-1px]  right-0 border-starPink border-[1px] rounded-xl z-30">
+              </Link>
+              {/* <form className="flex justify-around  w-[70%] h-[40%] absolute bottom-[-1px]  right-0 border-starPink border-[1px] rounded-xl z-30">
                 <input
                   type="search"
                   placeholder="검색"
@@ -92,7 +96,7 @@ export default function Header() {
                     className="w-[50%]"
                   />
                 </button>
-              </form>
+              </form> */}
             </div>
           </nav>
         </div>
