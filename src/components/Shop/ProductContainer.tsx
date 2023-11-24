@@ -12,7 +12,7 @@ function ProductContainer() {
             .map((_, i) => (
               <li key={i}>
                 <ProductItem
-                  link="#"
+                  link="/detail"
                   src="https://ggaggamukja.com/web/product/big/202303/9a0d91db522758c9ba7e3a764acca74e.jpg"
                   title="멍돈까스"
                   price="8,000"

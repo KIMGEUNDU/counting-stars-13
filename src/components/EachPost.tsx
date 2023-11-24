@@ -1,7 +1,10 @@
+import { Link } from 'react-router-dom';
+
 type board = {
   tag: string;
   title: string;
   writer: string;
+  link?: string;
   date: string;
   item?: string;
   grade?: string;
@@ -14,6 +17,7 @@ export default function EachPost({
   date,
   item,
   grade,
+  link,
 }: board) {
   return (
     <>
@@ -21,7 +25,12 @@ export default function EachPost({
         <td className="py-4">{tag}</td>
         {item && <td>item</td>}
         {grade && <td>{grade}</td>}
-        <td className="text-left">{title}</td>
+        {link && (
+          <td className="text-left">
+            <Link to={link}>{title}</Link>
+          </td>
+        )}
+        {!link && <td className="text-left">{title}</td>}
         <td>{writer}</td>
         <td className="font-extralight">{date}</td>
       </tr>

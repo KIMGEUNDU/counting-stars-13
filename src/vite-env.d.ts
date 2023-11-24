@@ -33,3 +33,12 @@ interface DetailProductResult {
   quantity: number;
   price: string;
 }
+
+interface QnaReviewTable {
+  title: string;
+  writer: string;
+  content: string;
+  date?: string;
+  view?: string;
+  score?: number;
+}

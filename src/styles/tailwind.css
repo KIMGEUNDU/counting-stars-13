@@ -20,7 +20,11 @@
   }
 
   .detailButton {
-    @apply w-40 py-3 border-[1px] border-gray-300 font-semibold;
+    @apply w-1/2 py-3 border-[1px] border-gray-300 font-semibold;
+  }
+
+  .quaReviewDetailButton {
+    @apply w-[10%] py-1 border border-gray-300;
   }
 
   .informationList {
@@ -60,4 +64,47 @@
 .dimmedImg:hover > .productOption {
   visibility: visible;
   z-index: 1;
+}
+
+.pageDetailTitle::after {
+  content: '';
+  height: 15px;
+  border: 1px solid #d9d9d9;
+  position: absolute;
+  top: 50%;
+  right: -15%;
+  transform: translateY(-50%);
+}
+
+.QnaReviewTable th {
+  border-left: 0;
+  border-right: 1px solid #d9d9d9;
+  background-color: #f8f8f8;
+  font-weight: 400;
+  width: 10%;
+}
+
+.QnaReviewTable td {
+  border-right: 0;
+}
+
+.QnaReviewTable th,
+.QnaReviewTable td {
+  border-top: 1px solid #d9d9d9;
+  padding: 15px;
+}
+.pageListOrder th {
+  font-weight: 400;
+  width: 10%;
+}
+
+.pageListOrder th,
+.pageListOrder td {
+  border: 1px solid #d9d9d9;
+  padding: 8px 10px;
+}
+
+.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+  min-height: 400px;
+  margin-bottom: 20px;
 }
