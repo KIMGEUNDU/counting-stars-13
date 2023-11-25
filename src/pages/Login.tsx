@@ -4,33 +4,47 @@ import PageMainTitle from 'components/PageMainTitle';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { emailReg, pwReg } from '@/utils/loginReg';
 
 export default function Login() {
-  const [isLogin, setLogin] = useState({
+  //아이디 비밀번호 정보 값
+  const [isLoginInfo, setLoginInfo] = useState({
     email: '',
     password: '',
   });
-  console.log(isLogin);
+  //로그인 확인
+  const [isLogin, setLogin] = useState(false);
+  console.log(isLoginInfo);
 
   const navigate = useNavigate();
 
   const handleLoginClick = async (e: any) => {
     e.preventDefault();
+    if (!emailReg(isLoginInfo.email)) {
+      return alert(
+        '아이디는 영문자로 시작하는 영문자 또는 숫자 4~16자로 입력해주세요.'
+      );
+    }
+    if (!pwReg(isLoginInfo.password)) {
+      return alert('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.');
+    }
     try {
       const response = await axios.post(
         'https://localhost/api/users/login',
-        isLogin
+        isLoginInfo
       );
+      setLogin(true);
 
       if (response.data.ok === 1) {
         navigate('/');
       }
     } catch (e) {
-      console.error(e);
+      setLogin(false);
+      return alert('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
   };
   const handleLoginInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLogin({ ...isLogin, [e.target.name]: e.target.value });
+    setLoginInfo({ ...isLoginInfo, [e.target.name]: e.target.value });
   };
 
   return (
