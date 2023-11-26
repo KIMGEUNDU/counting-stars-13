@@ -1,24 +1,33 @@
+//TODO: 토스트로 알리기
+//TODO: 로그인시 로컬스토리지에 값 넣어주기
+//TODO: 츄스텐드로 값올려주기
 import debounce from './../utils/debounce';
 import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
-import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { emailReg, pwReg } from '@/utils/loginReg';
+import { useLogin, useLoginInfo } from '@/store/useLogin';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
-  const [isLoginInfo, setLoginInfo] = useState({
-    email: '',
-    password: '',
-  });
+
+  const { isLoginInfo, setLoginInfo } = useLoginInfo();
+  const { isLogin, setLogin } = useLogin();
+  // const [isLoginInfo, setLoginInfo] = useState({
+  //   email: '',
+  //   password: '',
+  // });
+
   //로그인 확인
-  const [isLogin, setLogin] = useState(false);
-  console.log(isLoginInfo);
+  // const [isLogin, setLogin] = useState(false);
+  console.log(isLogin);
 
   const navigate = useNavigate();
 
-  const handleLoginClick = async (e: any) => {
+  const handleLoginClick = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
     if (!emailReg(isLoginInfo.email)) {
       return alert(
