@@ -1,19 +1,20 @@
-import PageMainTitle from 'components/PageMainTitle';
+import Thead from '@/components/QnA,Review/Thead';
 import EachPost from 'components/EachPost';
+import PageMainTitle from 'components/PageMainTitle';
+import { Helmet } from 'react-helmet-async';
 
 export default function Community() {
   return (
     <>
+      <Helmet>
+        <title>공지사항</title>
+      </Helmet>
+
       <main className="min-h-[60vh]">
         <PageMainTitle title="공지사항" />
         <section className="w-4/5 mx-auto border-t-2 border-gray-300">
           <table className="w-full">
-            <thead className="border-b border-gray-300 bg-gray-100">
-              <th className="py-4 text-center w-12 font-normal">번호</th>
-              <th className="font-normal">제목</th>
-              <th className="w-24 font-normal">작성자</th>
-              <th className="w-24 font-normal">작성일</th>
-            </thead>
+            <Thead />
             <tbody className="text-center">
               <EachPost
                 tag="공지"

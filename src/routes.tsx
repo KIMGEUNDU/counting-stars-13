@@ -10,8 +10,10 @@ const Brand = lazy(() => import('pages/Brand'));
 const Shop = lazy(() => import('pages/Shop'));
 const Community = lazy(() => import('pages/Community'));
 const Qna = lazy(() => import('pages/Qna'));
+const QnaDetail = lazy(() => import('pages/QnaDetail'));
 const WriteQna = lazy(() => import('./pages/WriteQna'));
 const Review = lazy(() => import('pages/Review'));
+const ReviewDetail = lazy(() => import('pages/ReviewDetail'));
 const WriteReview = lazy(() => import('./pages/WriteReview'));
 const EditMember = lazy(() => import('pages/EditMember'));
 const Detail = lazy(() => import('pages/Detail'));
@@ -22,6 +24,7 @@ const FindPw = lazy(() => import('pages/FindPw'));
 const MyCart = lazy(() => import('pages/MyCart'));
 const MyShopping = lazy(() => import('pages/MyShopping'));
 const MyOrder = lazy(() => import('pages/MyOrder'));
+const Search = lazy(() => import('pages/Search'));
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -32,9 +35,12 @@ const router = createHashRouter(
       <Route path="detail/:id" element={<Detail />} />
       <Route path="community" element={<Community />} />
       <Route path="qna" element={<Qna />} />
+      <Route path="qna-detail" element={<QnaDetail />} />
       <Route path="write-qna" element={<WriteQna />} />
       <Route path="review" element={<Review />} />
+      <Route path="review-detail" element={<ReviewDetail />} />
       <Route path="write-review" element={<WriteReview />} />
+      <Route path="search" element={<Search />} />
 
       <Route path="join" element={<Join />} />
       <Route path="edit" element={<EditMember />} />
