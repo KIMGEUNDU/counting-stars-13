@@ -2,11 +2,15 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import ProductItem from '@/components/Shop/ProductItem';
+import { Helmet } from 'react-helmet-async';
 
 export default function Search() {
   const productNum: number = 0;
   return (
     <>
+      <Helmet>
+        <title>검색</title>
+      </Helmet>
       <main>
         <PageMap route="상품 검색" />
         <PageMainTitle title="상품 검색" />
