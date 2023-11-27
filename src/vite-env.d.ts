@@ -2,6 +2,7 @@
 
 interface ContainerTitle {
   title: string;
+  onClick?: () => void;
 }
 
 interface ProductItem {
@@ -9,6 +10,9 @@ interface ProductItem {
   src: string;
   title: string;
   price: string;
+  date?: string;
+  key?: number;
+  id?: number;
 }
 
 interface ReviewItem {
@@ -41,4 +45,30 @@ interface QnaReviewTable {
   date?: string;
   view?: string;
   score?: number;
+}
+interface Data {
+  active: boolean;
+  createdAt: string;
+  descriptImages: string[];
+  detailImages: string[];
+  extra: object;
+  mainImages: string[];
+  name: string;
+  options: string[];
+  price: number;
+  seller_id: number;
+  shippingFees: number;
+  show: boolean;
+  updatedAt: string;
+  _id: number;
+}
+
+interface joinInfo {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  phone: number;
+  type: 'user';
+  emailAgree: false;
 }
