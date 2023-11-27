@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="w-full flex flex-col items-center">
       <div className="h-16 w-full bg-starPink my-8"></div>
-      <section className="w-4/5 flex justify-evenly">
+      <section className="w-4/5 flex justify-between">
         <ul className="font-bold">
           <li className="mb-4">
             <Link to="/brand">Brand</Link>
@@ -18,7 +18,7 @@ export default function Footer() {
           </li>
         </ul>
         <div className="-mt-3">
-          <Logo width="w-24 m-0" />
+          <Logo width="w-24" />
           <ul className="flex flex-col gap-2 text-gray-400">
             <li>(주)별,해달 | 대표 : 윤동주</li>
             <li>
