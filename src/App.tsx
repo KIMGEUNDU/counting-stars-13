@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Loading from './pages/Loading';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,7 +20,7 @@ function App() {
     <>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
-          <Suspense fallback={<div>...로딩 중</div>}>
+          <Suspense fallback={<Loading />}>
             <RouterProvider router={router} />
           </Suspense>
           <ReactQueryDevtools />
