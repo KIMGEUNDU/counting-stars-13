@@ -6,22 +6,15 @@ import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { emailReg, pwReg } from '@/utils/loginReg';
-import { useLogin, useLoginInfo } from '@/store/useLogin';
+// import { emailReg, pwReg } from '@/utils/loginReg';
+import { useLoginInfo } from '@/store/useLogin';
+import { useUserInfo } from '@/store/useUserInfo';
+import { Helmet } from 'react-helmet-async';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
-
   const { isLoginInfo, setLoginInfo } = useLoginInfo();
-  const { isLogin, setLogin } = useLogin();
-  // const [isLoginInfo, setLoginInfo] = useState({
-  //   email: '',
-  //   password: '',
-  // });
-
-  //로그인 확인
-  // const [isLogin, setLogin] = useState(false);
-  console.log(isLogin);
+  const { setUserInfo } = useUserInfo();
 
   const navigate = useNavigate();
 
@@ -29,26 +22,32 @@ export default function Login() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    if (!emailReg(isLoginInfo.email)) {
-      return alert(
-        '아이디는 영문자로 시작하는 영문자 또는 숫자 4~16자로 입력해주세요.'
-      );
-    }
-    if (!pwReg(isLoginInfo.password)) {
-      return alert('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.');
-    }
+    // if (!emailReg(isLoginInfo.email)) {
+    //   return alert(
+    //     '아이디는 영문자로 시작하는 영문자 또는 숫자 4~16자로 입력해주세요.'
+    //   );
+    // }
+    // if (!pwReg(isLoginInfo.password)) {
+    //   return alert('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.');
+    // }
     try {
       const response = await axios.post(
         'https://localhost/api/users/login',
         isLoginInfo
       );
-      setLogin(true);
+      const responseItem = response.data.item;
 
+      localStorage.clear();
+
+      localStorage.setItem('id', responseItem._id);
+      localStorage.setItem('accessToken', responseItem.token.accessToken);
+      localStorage.setItem('refreshToken', responseItem.token.refreshToken);
+
+      setUserInfo(response);
       if (response.data.ok === 1) {
         navigate('/');
       }
     } catch (e) {
-      setLogin(false);
       return alert('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
   };
@@ -58,6 +57,9 @@ export default function Login() {
 
   return (
     <>
+      <Helmet>
+        <title>로그인</title>
+      </Helmet>
       <main className="min-h-[60vh]">
         <PageMainTitle title="로그인" />
         <section className="w-4/5 min-h-[60vh] mx-auto border border-gray-300 flex flex-col justify-center">
@@ -83,7 +85,7 @@ export default function Login() {
                 </label>
                 <input
                   name="password"
-                  type="text"
+                  type="password"
                   id="memeberPw"
                   className="border border-gray-200 p-2 text-sm w-full"
                   placeholder="비밀번호"

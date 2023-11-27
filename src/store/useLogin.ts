@@ -26,3 +26,12 @@ export const useLogin = create<useLogin>((set) => ({
   isLogin: false,
   setLogin: (val) => set({ isLogin: val }),
 }));
+
+// interface useLogin {
+//   isLogin: string | null;
+//   setLogin: (val: string) => void;
+// }
+// export const useLogin = create<useLogin>((set) => ({
+//   isLogin: '',
+//   setLogin: (val) => set({ isLogin: val }),
+// }));
