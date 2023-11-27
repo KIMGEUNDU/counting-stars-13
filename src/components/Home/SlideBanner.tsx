@@ -8,7 +8,7 @@ import 'styles/slideBanner.css';
 
 export default function SlideBanner() {
   return (
-    <div className="slideBanner w-full h-screen">
+    <div className="slideBanner w-full">
       <Swiper
         modules={[Navigation, Pagination, A11y, Autoplay]}
         spaceBetween={50}
@@ -23,7 +23,7 @@ export default function SlideBanner() {
       >
         <SwiperSlide>
           <img
-            className="w-full h-full"
+            className="w-full"
             src="https://ggaggamukja.com/web/upload/dailyshop/pc%EB%A9%94%EC%9D%B8%EB%B0%B0%EB%84%88-2.jpg"
             alt="별해달 X 스너플 도그비어 캠핑 세트"
           />

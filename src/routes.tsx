@@ -31,8 +31,8 @@ const router = createHashRouter(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
       <Route path="brand" element={<Brand />} />
-      <Route path="shop" element={<Shop />} />
-      <Route path="detail" element={<Detail />} />
+      <Route path="shop/:id" element={<Shop />} />
+      <Route path="detail/:id" element={<Detail />} />
       <Route path="community" element={<Community />} />
       <Route path="qna" element={<Qna />} />
       <Route path="qna-detail" element={<QnaDetail />} />

@@ -4,7 +4,7 @@ import ProductOption from '../Detail/ProductOption';
 function ProductItem({ link, src, title, price }: ProductItem) {
   return (
     <div className="relative">
-      <Link to={link} className="flex flex-col gap-3">
+      <Link to={`/detail/${link}`} className="flex flex-col gap-3">
         <figure className="dimmedImg flex flex-col gap-3 justify-center items-center py-3">
           <div className="w-60 h-60 overflow-hidden">
             <img src={src} alt={title} className="scaleImg" />
@@ -13,7 +13,7 @@ function ProductItem({ link, src, title, price }: ProductItem) {
           <figcaption className="text-sm">{title}</figcaption>
         </figure>
       </Link>
-      <p className="font-semibold">{price}</p>
+      <p className="font-semibold">{price.toLocaleString()}원</p>
     </div>
   );
 }
