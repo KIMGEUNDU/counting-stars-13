@@ -5,11 +5,13 @@ import DetailProductSelect from './DetailProductSelect';
 function DetailProductOption({ data }: { data: any }) {
   if (data) {
     return (
-      <section className="w-[45%] text-left">
+      <section className="w-full text-left max-w-[500px]">
         <table className="detailTable w-full">
           <caption className="hidden">상품 설명</caption>
           <thead className="text-2xl font-bold border-b border-b-gray-300">
-            <tr>{data.name}</tr>
+            <tr>
+              <th>{data.name}</th>
+            </tr>
           </thead>
           <tbody className="border-b border-b-gray-300 flex flex-col gap-2">
             <tr className="font-bold text-lg pt-5">
