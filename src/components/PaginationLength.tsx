@@ -9,6 +9,7 @@ function PaginationLength({ length }: { length: number }) {
         .fill('')
         .map((_, i) => (
           <button
+            key={i}
             type="button"
             className={`hover:bg-starPink hover:text-white px-2 rounded-sm ${
               pageNumber === i + 1 ? 'bg-starPink text-white' : ''
