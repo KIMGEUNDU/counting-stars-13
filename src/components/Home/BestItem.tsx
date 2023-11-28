@@ -37,28 +37,36 @@ function BestItem() {
         <button
           type="button"
           onClick={() => handleClick('party')}
-          className="filterButton bg-zinc-900 text-white"
+          className={`filterButton ${
+            category === 'party' ? 'bg-zinc-900 text-white' : ''
+          }`}
         >
           #특별한_날
         </button>
         <button
           type="button"
           onClick={() => handleClick('special')}
-          className="filterButton"
+          className={`filterButton ${
+            category === 'special' ? 'bg-zinc-900 text-white' : ''
+          }`}
         >
           #자연식
         </button>
         <button
           type="button"
           onClick={() => handleClick('gum')}
-          className="filterButton"
+          className={`filterButton ${
+            category === 'gum' ? 'bg-zinc-900 text-white' : ''
+          }`}
         >
           #육포
         </button>
         <button
           type="button"
           onClick={() => handleClick('bone')}
-          className="filterButton"
+          className={`filterButton ${
+            category === 'bone' ? 'bg-zinc-900 text-white' : ''
+          }`}
         >
           #천연껌
         </button>
