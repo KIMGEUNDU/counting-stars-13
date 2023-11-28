@@ -1,25 +1,11 @@
-import getData from '@/api/getData';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
-import { useData } from '@/store/useData';
-import { useQuery } from '@tanstack/react-query';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
-import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 export default function Review() {
-  const { data, setData } = useData();
-  const { data: fetchData, isLoading } = useQuery(['replies'], () =>
-    getData('replies')
-  );
-
-  useEffect(() => {
-    if (fetchData) {
-      // setData(fetchData);
-      console.log(fetchData);
-    }
-  }, [fetchData, setData]);
+  // 현재 후기 조회안됨
 
   return (
     <>
@@ -34,7 +20,7 @@ export default function Review() {
             <Thead info="상품 정보" score="평점" />
             <tbody className="text-center">
               <EachPost
-                tag="3"
+                tag={3}
                 title="이벤트 타이틀"
                 writer="윤**"
                 date="2023-11-21 17:11:18"
@@ -43,7 +29,7 @@ export default function Review() {
                 link="/review-detail"
               />
               <EachPost
-                tag="2"
+                tag={2}
                 title="이벤트 타이틀"
                 writer="윤**"
                 date="2023-11-21 17:11:18"
@@ -52,7 +38,7 @@ export default function Review() {
                 link="/review-detail"
               />
               <EachPost
-                tag="1"
+                tag={1}
                 title="이벤트 타이틀"
                 writer="윤**"
                 date="2023-11-21 17:11:18"
