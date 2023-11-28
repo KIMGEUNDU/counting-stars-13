@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 type board = {
-  tag: string;
+  tag: number;
   title: string;
   writer: string;
   link?: string;
@@ -19,11 +19,15 @@ export default function EachPost({
   grade,
   link,
 }: board) {
+  const writerPrivate = (writer: string) => {
+    return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
+  };
+
   return (
     <>
       <tr className="border-b border-gray-200">
         <td className="py-4">{tag}</td>
-        {item && <td>item</td>}
+        {item && <td className="w-1/4">{item}</td>}
         {grade && <td>{grade}</td>}
         {link && (
           <td className="text-left">
@@ -31,8 +35,8 @@ export default function EachPost({
           </td>
         )}
         {!link && <td className="text-left">{title}</td>}
-        <td>{writer}</td>
-        <td className="font-extralight">{date}</td>
+        <td>{writerPrivate(writer)}</td>
+        <td className="font-extralight w-1/6">{date}</td>
       </tr>
     </>
   );
