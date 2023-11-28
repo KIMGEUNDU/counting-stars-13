@@ -6,7 +6,12 @@ function ProductInformation({ imgArray }: { imgArray: string[] }) {
       <div className="pt-24" id="infoLink">
         <DetailProductInformationList select={1} />
         {imgArray.map((v, i) => (
-          <img key={i} src={v} alt="상품이름 정보" className="mx-auto" />
+          <img
+            key={i}
+            src={v}
+            alt="상품이름 정보"
+            className={`mx-auto ${i === 0 ? 'pt-20' : ''}`}
+          />
         ))}
       </div>
     );
