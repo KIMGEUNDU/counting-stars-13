@@ -5,8 +5,8 @@ function ProductInformation({ imgArray }: { imgArray: string[] }) {
     return (
       <div className="pt-24" id="infoLink">
         <DetailProductInformationList select={1} />
-        {imgArray.map((v) => (
-          <img src={v} alt="상품이름 정보" />
+        {imgArray.map((v, i) => (
+          <img key={i} src={v} alt="상품이름 정보" className="mx-auto" />
         ))}
       </div>
     );
