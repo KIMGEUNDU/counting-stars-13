@@ -3,20 +3,31 @@ import axios from 'axios';
 import { useRef } from 'react';
 
 function ModalSearch() {
-  const { setData } = useData();
+  const { data, setPageData, setPageNumber, setDataLength } = useData();
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   const handleSearch = () => {
     async function getData() {
       const getData = await axios.get('https://localhost/api/products');
       const allData = getData?.data.item;
-
-      setData(
-        allData.filter(
-          (v: Data) =>
-            searchRef.current && v.name.includes(searchRef.current.value)
-        )
+      const result = allData.filter(
+        (v: Data) =>
+          searchRef.current && v.name.includes(searchRef.current.value)
       );
+
+      if (searchRef.current && searchRef.current.value === '') {
+        setPageNumber(1);
+        setPageData(data.slice(0, 10));
+        setDataLength(data.length);
+      } else if (result.length === 0) {
+        setPageData(result);
+        setPageNumber(0);
+        setDataLength(result.length);
+      } else {
+        setPageData(result);
+        setPageNumber(0);
+        setDataLength(result.length);
+      }
     }
 
     getData();
