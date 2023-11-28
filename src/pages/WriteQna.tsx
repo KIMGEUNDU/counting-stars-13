@@ -7,6 +7,7 @@ import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -36,15 +37,16 @@ export default function WriteQna() {
       selectId,
     };
 
-    console.log(title);
-    console.log(content);
-    console.log(attachFile);
-    console.log(selectId);
-
-    // {ok: 0, message: 'authorization 헤더가 없습니다.'}
-    // 아마 로그인안해서 에러나는 듯?
     // replies는 구매후기이니 카테고리 생기면 변경
-    const response = await axios.post('https://localhost/api/replies', newQna);
+    const response = await axios.post(
+      'https://localhost/api/replies/',
+      newQna,
+      {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      }
+    );
 
     if (response.data.ok === 1) {
       toast('업로드하였습니다 :)', {
@@ -52,7 +54,7 @@ export default function WriteQna() {
         duration: 2000,
       });
 
-      navigate(`/qna-detail/${response.data.id}`);
+      navigate(`/qna-detail`);
     }
   };
 
