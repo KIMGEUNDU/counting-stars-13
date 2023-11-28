@@ -1,9 +1,17 @@
 import { useData } from '@/store/useData';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect } from 'react';
 
 function ProductSelect({ title, onClick }: ContainerTitle) {
-  const { selectId, selectData, setSelectData } = useData();
+  const {
+    selectId,
+    setSelectId,
+    selectData,
+    setSelectData,
+    selectOrderId,
+    setSelectOrderId,
+  } = useData();
 
   useEffect(() => {
     async function getData() {
@@ -14,21 +22,38 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
       setSelectData(response.data.item);
     }
 
+    async function getOrderData() {
+      const response = await axios.get(
+        `https://localhost/api/products/${selectOrderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+        }
+      );
+
+      setSelectData(response.data.item);
+    }
+
     if (selectId) {
+      setSelectOrderId(null);
       getData();
     }
-  }, [selectId, setSelectData]);
+
+    if (selectOrderId) {
+      setSelectId(null);
+      getOrderData();
+    }
+  }, [selectId, selectOrderId, setSelectData, setSelectId, setSelectOrderId]);
 
   return (
     <article className="border border-gray-300 mb-4 flex items-center p-4">
       <img
-        src={
-          selectData && selectId ? selectData.detailImages[0] : '/noImage.gif'
-        }
-        alt={selectData && selectId ? selectData.name : '상품 기본 이미지'}
+        src={selectData ? selectData.detailImages[0] : '/noImage.gif'}
+        alt={selectData ? selectData.name : '상품 기본 이미지'}
         className="border-r border-gray-200 pr-4 w-28 h-28"
       />
-      {selectData && selectId && (
+      {selectData && (
         <>
           <div className="py-3 px-2 flex flex-col">
             <p className="font-bold">{selectData.name}</p>
@@ -43,7 +68,7 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
           </button>
         </>
       )}
-      {!selectData && !selectId && (
+      {!selectData && (
         <p className="pl-4 align-middle">
           <button type="button" className="border py-3 w-36" onClick={onClick}>
             {title}
