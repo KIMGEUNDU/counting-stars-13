@@ -1,11 +1,15 @@
 //TODO: 로그인시 헤더 변경
 import { useLogin } from '@/store/useLogin';
+import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const { setLogin } = useLogin();
+  //로그인시 저장되는 유저 정보
+  const { setUserInfo } = useUserInfo();
+
   //로컬 스토리지의 아이디 값 가져오기
   let isLoginState = localStorage.getItem('id');
 
@@ -14,9 +18,9 @@ export default function Header() {
   }, []);
   const navigate = useNavigate();
   const handleLogout = () => {
-    console.log('로그아웃');
     localStorage.clear();
     setLogin(false);
+    setUserInfo({});
     navigate('/');
   };
   return (
