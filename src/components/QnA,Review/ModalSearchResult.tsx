@@ -4,18 +4,19 @@ function ModalSearchResult({
   src,
   title,
   price,
-  key,
   id,
-}: Pick<ProductItem, 'src' | 'title' | 'price' | 'key' | 'id'>) {
+}: Pick<ProductItem, 'src' | 'title' | 'price' | 'id'>) {
   const { setSelectId, modal, setModal } = useData();
 
   const handleSelectId = (id: number | undefined) => {
-    setSelectId(id);
+    if (id) {
+      setSelectId(id);
+    }
     setModal(!modal);
   };
 
   return (
-    <tr key={key} className="border-b border-b-300">
+    <tr className="border-b border-b-300">
       <td className="h-20 py-2">
         <img src={src} alt={title} className="h-full m-auto" />
       </td>

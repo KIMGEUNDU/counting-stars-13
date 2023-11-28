@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function WriteQna() {
   const { title, content, attachFile } = useForm();
-  const { modal, setModal, selectData, setSelectId, setSelectData } = useData();
+  const { modal, setModal, selectId, setSelectId, setSelectData } = useData();
   const navigate = useNavigate();
 
   // Qna 등록하기
@@ -33,8 +33,13 @@ export default function WriteQna() {
       title,
       content,
       attachFile,
-      selectData,
+      selectId,
     };
+
+    console.log(title);
+    console.log(content);
+    console.log(attachFile);
+    console.log(selectId);
 
     // {ok: 0, message: 'authorization 헤더가 없습니다.'}
     // 아마 로그인안해서 에러나는 듯?
@@ -62,9 +67,11 @@ export default function WriteQna() {
 
   // 새로 Qna 페이지 들어올때는 리셋, 왜 안돼?
   useEffect(() => {
-    setSelectId(0);
-    setSelectData(null);
-  }, [setSelectData, setSelectId]);
+    if (selectId) {
+      setSelectId(null);
+      setSelectData(null);
+    }
+  }, [selectId, setSelectData, setSelectId]);
 
   return (
     <>
