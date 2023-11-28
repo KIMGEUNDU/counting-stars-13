@@ -3,9 +3,11 @@ import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import { idReg, emailReg, pwReg, phoneReg } from '@/utils/loginReg';
-// import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 export default function Join() {
+  const navigate = useNavigate();
+
   const [joinInfo, setJoinInfo] = useState({
     id: '',
     email: '',
@@ -13,57 +15,59 @@ export default function Join() {
     name: '',
     phone: '',
     type: 'user',
-    emailAgree: false,
+    emailAgree: '',
   });
-  console.log(joinInfo);
 
   const [phoneNumberList, setPhoneNumberList] = useState({
-    phoneFont: '',
-    phoneMiddel: '',
+    phoneFont: '010',
+    phoneMiddle: '',
     phoneLast: '',
   });
+  const { phoneFont, phoneMiddle, phoneLast } = phoneNumberList;
+
+  useEffect(() => {});
   const [checkPassword, setCheckPassword] = useState('');
 
+  // 회원가입정보값 가져오기
+  const { phone, password, name, id, email } = joinInfo;
+
+  //비밀번호 중복체크
   const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckPassword(e.target.value);
   };
-  const { phone, password, name, id, email } = joinInfo;
-  const { phoneFont, phoneMiddel, phoneLast } = phoneNumberList;
 
-  const phoneNumber = phoneFont + phoneMiddel + phoneLast;
-  console.log(phoneNumber);
-
-  useEffect(() => {
-    if (phone.length === 11) {
-      setJoinInfo({
-        ...joinInfo,
-        phone: phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'),
-      });
-    } else if (phone.length === 13) {
-      setJoinInfo({
-        ...joinInfo,
-        phone: phone
-          //하이픈이 입력되면 공백으로 변경되고 하이픈이 다시 생성됨
-          .replace(/-/g, '')
-          .replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'),
-      });
-    }
-  }, [phone]);
-
+  // 인풋에 값을 쓰면 값이 담김
   const handleJoinInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setJoinInfo({ ...joinInfo, [e.target.name]: e.target.value });
   };
+  const handleSelectPhoneNumberList = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setPhoneNumberList({ ...phoneNumberList, phoneFont: e.target.value });
+  };
+  const handlePhoneNumberList = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumberList({
+      ...phoneNumberList,
+      [e.target.name]: e.target.value,
+    });
+  };
+  useEffect(() => {
+    setJoinInfo({ ...joinInfo, phone: phoneFont + phoneMiddle + phoneLast });
+  }, [phoneNumberList]);
+
   const handleAgreeInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.checked);
 
-    // e.target.value === 'on' ? (e.target.checked = true) : false;
     setJoinInfo({ ...joinInfo, [e.target.name]: e.target.checked });
   };
+  console.log(joinInfo);
 
   const handleJoin = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    console.log(joinInfo);
+
     if (!idReg(id) || !id) {
       return alert(
         '아이디는 영문자로 시작하는 영문자 또는 숫자 4~16자로 입력해주세요.'
@@ -84,45 +88,34 @@ export default function Join() {
     if (!phone || phoneReg(phone)) {
       return alert('전화번호 형식을 확인해주세요.');
     }
-    // if (typeof phone == 'string') {
-    //   return alert('전화번호를 숫자로 적어주세요');
-    // }
+
     if (!emailReg(email) || !email) {
       return alert('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.');
     }
-    // try {
-    //   const response = await axios.post(
-    //     'https://localhost/api/users/login',
-    //     isLoginInfo
-    //   );
-    //   const responseItem = response.data.item;
+    try {
+      const response = await axios.post(
+        'https://localhost/api/users',
+        joinInfo
+      );
+      // const responseItem = response.data.item;
 
-    //   localStorage.clear();
-    //   localStorage.setItem('id', responseItem._id);
-    //   localStorage.setItem('accessToken', responseItem.token.accessToken);
-    //   localStorage.setItem('refreshToken', responseItem.token.refreshToken);
-
-    //   setUserInfo(response);
-    //   if (response.data.ok === 1) {
-    //     navigate('/');
-    //   }
-    // } catch (e) {
-    //   return alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-    // }
+      if (response.data.ok === 1) {
+        navigate('/');
+        console.log('회원가입 성공');
+      }
+    } catch (e) {
+      return alert('회원가입 오류.');
+    }
   };
 
   const [isAllAgree, setAllAgree] = useState(false);
 
-  const allAgree = (e) => {
+  const allAgree = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.checked ? setAllAgree(true) : setAllAgree(false);
   };
 
-  const allAgreeElem = (e) => {
+  const allAgreeElem = (e: React.ChangeEvent<HTMLInputElement>) => {
     isAllAgree ? (e.target.checked = true) : (e.target.checked = false);
-  };
-
-  const handlePhoneNumberList = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumberList({ ...phoneNumberList, [e.target.name]: e.target.value });
   };
 
   return (
@@ -225,7 +218,7 @@ export default function Join() {
                   <select
                     name="phoneFont"
                     id=""
-                    onChange={handlePhoneNumberList}
+                    onChange={handleSelectPhoneNumberList}
                   >
                     <option value="011">010</option>
                     <option value="011">011</option>
@@ -283,7 +276,7 @@ export default function Join() {
                     className="mr-1 w-5"
                     name="allAgree"
                     id="allAgree"
-                    onClick={allAgree}
+                    onChange={allAgree}
                   />
                   <label htmlFor="allAgree">
                     이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두
@@ -308,7 +301,7 @@ export default function Join() {
                       className="mr-1"
                       name="agreeUse"
                       id="termAgree"
-                      onClick={allAgreeElem}
+                      onChange={allAgreeElem}
                     />
                     <label htmlFor="termAgree">동의함</label>
                   </div>
@@ -323,7 +316,6 @@ export default function Join() {
                     className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
                     readOnly
                     value={terms.privacy}
-                    onClick={allAgreeElem}
                   ></textarea>
                   <div className="flex flex-row">
                     <p className="mr-2">
@@ -334,7 +326,7 @@ export default function Join() {
                       className="mr-1"
                       name="privacyAgree"
                       id="privacyAgree"
-                      onClick={allAgreeElem}
+                      onChange={allAgreeElem}
                     />
                     <label htmlFor="privacyAgree">동의함</label>
                   </div>
@@ -359,7 +351,7 @@ export default function Join() {
                       className="mr-1"
                       name="emailAgree"
                       id="emailAgree"
-                      onClick={allAgreeElem}
+                      // onChange={allAgreeElem}
                     />
                     <label htmlFor="emailAgree">동의함</label>
                   </div>
