@@ -9,7 +9,7 @@ interface ProductItem {
   link: string;
   src: string;
   title: string;
-  price: string;
+  price: string | number;
   date?: string;
   key?: number;
   id?: number;
@@ -36,6 +36,7 @@ interface DetailProductResult {
   option: string;
   quantity: number;
   price: string;
+  required: boolean;
 }
 
 interface QnaReviewTable {
@@ -45,7 +46,9 @@ interface QnaReviewTable {
   date?: string;
   view?: string;
   score?: number;
+  writerId?: string;
 }
+
 interface Data {
   active: boolean;
   createdAt: string;
@@ -71,4 +74,21 @@ interface joinInfo {
   phone: number;
   type: 'user';
   emailAgree: false;
+}
+
+interface OrderData {
+  image: string;
+  name: string;
+  price: number;
+  quantity: number;
+  _id: number;
+}
+
+interface UserOrderData {
+  address: { name: string, value: string; };
+  cost: { products: number, shippingFees: number, total: number; };
+  createdAt: string;
+  products: OrderData[];
+  user_id: number;
+  _id: number;
 }
