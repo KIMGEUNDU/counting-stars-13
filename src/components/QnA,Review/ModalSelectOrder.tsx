@@ -3,23 +3,30 @@ import PaginationNumber from '../PaginationNumber';
 import ModalSelectOrderResult from './ModalSelectOrderResult';
 import axios from 'axios';
 import { useData } from '@/store/useData';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 
 function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
-  const { data, setData } = useData();
+  const { orderData, setOrderData } = useData();
 
-  // orders 구매 목록 조회
+  // 주문목록 조회
   useEffect(() => {
-    async function getData() {
-      const allOrdersData = await axios.get('https://localhost/api/orders');
+    async function getOrderData() {
+      const response = await axios.get(`https://localhost/api/orders`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
 
-      // 10개씩 가져오기
-      // setData(allData?.data.item.slice(0, 10));
-      setData(allOrdersData?.data.item);
+      const productsArray = response.data.item.map(
+        (v: UserOrderData) => v.products
+      );
+
+      // 스프레드로 가져올수있는데 타입에러가 난다.
+      setOrderData(...productsArray);
     }
-    getData();
-  }, [setData]);
 
-  console.log(data);
+    getOrderData();
+  }, [setOrderData]);
 
   return (
     <div
@@ -40,20 +47,19 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
           <th className="font-normal py-1 w-[20%]">선택</th>
         </thead>
         <tbody>
-          {Array(5)
-            .fill('')
-            .map((_, i) => (
-              <ModalSelectOrderResult
-                key={i}
-                src="https://ggaggamukja.com/web/product/big/202303/10e4612462adca4ed8178f25e12e8083.jpg"
-                title="멍피자 멍치킨 피크닉 세트"
-                date="2023-10-10 08:24:33"
-                price="23,000"
-              />
-            ))}
+          {orderData.map((v, i) => (
+            <ModalSelectOrderResult
+              key={i}
+              src={v.image}
+              title={v.name}
+              date="2023-10-10 08:24:33"
+              price={v.price}
+              id={v._id}
+            />
+          ))}
         </tbody>
       </table>
-      <PaginationNumber length={2} />
+      <PaginationNumber length={Math.ceil(orderData.length / 10)} />
     </div>
   );
 }

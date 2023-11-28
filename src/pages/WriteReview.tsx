@@ -5,7 +5,9 @@ import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import ModalSelectOrder from '@/components/QnA,Review/ModalSelectOrder';
 import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
+import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -17,8 +19,9 @@ export default function WriteReview() {
   const scoreRef = useRef<HTMLSelectElement | null>(null);
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
+  const { selectOrderId } = useData();
 
-  // 후기 등록하기
+  // 후기 등록하기 -> 된다!
   const handleRegistReview = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -34,14 +37,18 @@ export default function WriteReview() {
       content,
       score: scoreRef.current?.value,
       attachFile,
+      orderId: selectOrderId,
     };
 
     const response = await axios.post(
       'https://localhost/api/replies',
-      newReview
+      newReview,
+      {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      }
     );
-
-    console.log(response);
 
     if (response.data.ok === 1) {
       toast('업로드하였습니다 :)', {
@@ -49,7 +56,9 @@ export default function WriteReview() {
         duration: 2000,
       });
 
-      navigate(`/qna-detail`);
+      console.log(newReview);
+
+      navigate(`/review-detail`);
     }
   };
 

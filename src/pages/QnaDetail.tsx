@@ -1,4 +1,3 @@
-import getData from '@/api/getData';
 import DetailButton from '@/components/Detail/DetailButton';
 import PageMap from '@/components/PageMap';
 import CommentInput from '@/components/QnA,Review/CommentInput';
@@ -8,22 +7,42 @@ import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import RelatedPosts from '@/components/QnA,Review/RelatedPosts';
 import { useComment } from '@/store/useComment';
-import { useQuery } from '@tanstack/react-query';
+import { useUserInfo } from '@/store/useUserInfo';
+import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 
 function QnaDetail() {
-  const { qna } = useComment();
-  // const { userInfo, setUserInfo } = useUserInfo();
-  // const { data } = useQuery(['users'], () => getData('users/2'));
   const navigate = useNavigate();
+  // 로그인유저정보
+  const { userInfo, setUserInfo } = useUserInfo();
+  // 임시 큐엔에이값
+  const { qna } = useComment();
 
+  // 답변누르면 댓글에 포커스
   const focusInput = () => {
-    const textarea = document.querySelector('#comment');
+    const textarea = document.querySelector<HTMLTextAreaElement>('#comment');
     if (textarea) {
       textarea.focus();
     }
   };
+
+  // 로그인유저정보 받아오기
+  useEffect(() => {
+    async function getUsers() {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+
+      setUserInfo(res.data.item);
+    }
+
+    getUsers();
+  }, [setUserInfo]);
 
   return (
     <>
@@ -51,11 +70,17 @@ function QnaDetail() {
         />
 
         {qna &&
-          qna.map((v) => (
-            <CommentItem writer={v.writer} date={v.date} content={v.content} />
+          qna.map((v, i) => (
+            <CommentItem
+              key={i}
+              writer={v.writer}
+              date={v.date}
+              content={v.content}
+              writerId={v.writerId}
+            />
           ))}
 
-        <CommentInput writer="윤동주" pw="123456" />
+        {userInfo && <CommentInput writer={userInfo.name} />}
         <PageListOrder
           prev="배송일정 문의드립니다."
           next="배송완료처리"

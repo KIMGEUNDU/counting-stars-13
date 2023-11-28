@@ -7,7 +7,7 @@ function PageDetailTable({
   score,
 }: QnaReviewTable) {
   const writerPrivate = (writer: string) => {
-    return writer.substring(0, 2) + '*'.repeat(`${writer}`.length - 2);
+    return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
   };
 
   return (

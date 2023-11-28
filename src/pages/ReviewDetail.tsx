@@ -43,10 +43,7 @@ function ReviewDetail() {
           style="quaReviewDetailButton"
           center="center"
         />
-        <p className="center text-sm p-3 my-5 border border-gray-300 bg-gray-50">
-          회원에게만 댓글 작성 권한이 있습니다.
-        </p>
-        <CommentInput writer="윤동주" pw="123456" />
+        <CommentInput writer="윤동주" />
         <PageListOrder
           prev="배송도 빠르고 상품이 정말 좋아요! 자주 이용할게요ㅎㅎ"
           next="와~퀄리티 뭡니까요? 애들 진짜 찍을세도 없이 순삭해요~ 엄청 맛있나봐요 까까묵자 덕분에 행복한 생파가 되었네요 앞으로도 자주 이용할게요!!"

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 type board = {
-  tag: number;
+  tag: number | string;
   title: string;
   writer: string;
   link?: string;
