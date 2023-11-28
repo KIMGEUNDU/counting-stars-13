@@ -7,7 +7,18 @@ import ModalSearch from './ModalSearch';
 import ModalSearchResult from './ModalSearchResult';
 
 function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
-  const { data, setData, dataLength, setDataLength } = useData();
+  const {
+    data,
+    setData,
+    dataLengthPage,
+    setDataLengthPage,
+    dataLength,
+    setDataLength,
+    pageData,
+    setPageData,
+    setPageNumber,
+    pageNumber,
+  } = useData();
 
   const getProducts = async () =>
     await axios
@@ -19,14 +30,25 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
   useEffect(() => {
     if (fetchData) {
       setData(fetchData);
-      setDataLength(Math.ceil(fetchData.length / 10));
+      setDataLength(fetchData.length);
+      setPageData(data.slice(0, 10));
+      setDataLengthPage(Math.ceil(data.length / 10));
+      setPageNumber(1);
     }
-  }, [fetchData, setData, setDataLength]);
+  }, [
+    data,
+    fetchData,
+    setData,
+    setDataLength,
+    setDataLengthPage,
+    setPageData,
+    setPageNumber,
+  ]);
 
   return (
     <div
       id="modal"
-      className="bg-white border border-gray-300 w-[600px] h-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-10 overflow-y-scroll"
+      className="bg-white border border-gray-300 w-[600px] h-[700px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-10 overflow-y-scroll"
     >
       <div className="flex justify-between bg-starPink p-3 font-bold">
         <h3>상품 선택</h3>
@@ -38,11 +60,11 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       <p className="px-10 pb-2">
         총
         <span className="font-bold text-amber-900 pl-1">
-          {data ? data.length : 0}
+          {data ? dataLength : 0}
         </span>
         개의 상품이 검색되었습니다.
       </p>
-      <table className="w-[85%] m-auto">
+      <table className="w-[85%] m-auto mb-7">
         <thead className="border-t border-t-gray-400 border-b border-b-gray-300 bg-gray-50">
           <tr>
             <th className="font-normal py-1 w-[20%]">상품 이미지</th>
@@ -52,7 +74,8 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         </thead>
         <tbody>
           {data &&
-            data.map((v, i) => (
+            pageData &&
+            pageData.map((v, i) => (
               <ModalSearchResult
                 key={i}
                 src={v.detailImages[0]}
@@ -76,7 +99,9 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
           )}
         </tbody>
       </table>
-      <PaginationNumber length={data ? dataLength : 1} />
+      {pageNumber > 0 && (
+        <PaginationNumber length={data ? dataLengthPage : 1} />
+      )}
     </div>
   );
 }

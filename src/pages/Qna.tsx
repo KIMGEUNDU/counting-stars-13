@@ -17,30 +17,19 @@ export default function Qna() {
           <table className="w-full">
             <Thead info="상품 정보" />
             <tbody className="text-center">
-              <EachPost
-                tag="3"
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="까까묵자 생일 파티 세트"
-                link="/qna-detail"
-              />
-              <EachPost
-                tag="2"
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="바캉스 도시락 세트"
-                link="/qna-detail"
-              />
-              <EachPost
-                tag="1"
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="콤비네이션 타르트"
-                link="/qna-detail"
-              />
+              {Array(5)
+                .fill(0)
+                .map((_, i) => (
+                  <EachPost
+                    key={i}
+                    tag={i + 1}
+                    title="이벤트 타이틀"
+                    writer="윤동주"
+                    date="2023-11-21 17:11:18"
+                    item="까까묵자 생일 파티 세트"
+                    link="/qna-detail"
+                  />
+                ))}
             </tbody>
           </table>
           <WriterButton link="/write-qna" />
