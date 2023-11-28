@@ -5,6 +5,8 @@ import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
 
 export default function Qna() {
+  // 현재 qna 컬렉션없음
+
   return (
     <>
       <Helmet>
