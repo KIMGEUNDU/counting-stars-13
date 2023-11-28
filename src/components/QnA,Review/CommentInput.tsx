@@ -1,11 +1,13 @@
 import { useComment } from '@/store/useComment';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { writeDate } from '@/utils/writeDate';
 import { FormEvent, useRef } from 'react';
 
-function CommentInput({ writer, pw }: { writer: string; pw: string }) {
+function CommentInput({ writer }: { writer: string }) {
   const { setQna } = useComment();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
 
+  // 임시 댓글 달기
   const uploadComment = (e: FormEvent) => {
     e.preventDefault();
 
@@ -14,9 +16,11 @@ function CommentInput({ writer, pw }: { writer: string; pw: string }) {
         writer,
         content: commentRef.current.value,
         date: writeDate(),
+        writerId: String(AUTH_ID),
       };
 
       setQna(comment);
+      commentRef.current.value = '';
     }
   };
 
@@ -35,16 +39,6 @@ function CommentInput({ writer, pw }: { writer: string; pw: string }) {
           className="border border-gray-300 ml-3 px-1 w-1/6"
           required
         />
-        <label htmlFor="pw" className="ml-3">
-          비밀번호 :
-        </label>
-        <input
-          id="pw"
-          type="password"
-          defaultValue={pw}
-          className="border border-gray-300 ml-3 px-1 w-1/6"
-          required
-        />
       </fieldset>
       <fieldset className="flex">
         <label htmlFor="comment" className="hidden">
@@ -55,7 +49,7 @@ function CommentInput({ writer, pw }: { writer: string; pw: string }) {
           id="comment"
           cols={30}
           rows={10}
-          className="w-full h-12 border border-gray-300 mr-3"
+          className="w-full h-12 border border-gray-300 mr-3 focus:outline-2 focus:outline-starPink p-2"
           required
           ref={commentRef}
         />
