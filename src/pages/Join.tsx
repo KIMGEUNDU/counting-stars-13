@@ -3,6 +3,7 @@ import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import { idReg, emailReg, pwReg, phoneReg } from '@/utils/loginReg';
+// import axios from 'axios';
 
 export default function Join() {
   const [joinInfo, setJoinInfo] = useState({
@@ -16,13 +17,22 @@ export default function Join() {
   });
   console.log(joinInfo);
 
+  const [phoneNumberList, setPhoneNumberList] = useState({
+    phoneFont: '',
+    phoneMiddel: '',
+    phoneLast: '',
+  });
   const [checkPassword, setCheckPassword] = useState('');
 
   const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckPassword(e.target.value);
   };
-
   const { phone, password, name, id, email } = joinInfo;
+  const { phoneFont, phoneMiddel, phoneLast } = phoneNumberList;
+
+  const phoneNumber = phoneFont + phoneMiddel + phoneLast;
+  console.log(phoneNumber);
+
   useEffect(() => {
     if (phone.length === 11) {
       setJoinInfo({
@@ -50,7 +60,9 @@ export default function Join() {
     setJoinInfo({ ...joinInfo, [e.target.name]: e.target.checked });
   };
 
-  const handleJoin = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleJoin = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
     if (!idReg(id) || !id) {
       return alert(
@@ -78,6 +90,25 @@ export default function Join() {
     if (!emailReg(email) || !email) {
       return alert('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.');
     }
+    // try {
+    //   const response = await axios.post(
+    //     'https://localhost/api/users/login',
+    //     isLoginInfo
+    //   );
+    //   const responseItem = response.data.item;
+
+    //   localStorage.clear();
+    //   localStorage.setItem('id', responseItem._id);
+    //   localStorage.setItem('accessToken', responseItem.token.accessToken);
+    //   localStorage.setItem('refreshToken', responseItem.token.refreshToken);
+
+    //   setUserInfo(response);
+    //   if (response.data.ok === 1) {
+    //     navigate('/');
+    //   }
+    // } catch (e) {
+    //   return alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+    // }
   };
 
   const [isAllAgree, setAllAgree] = useState(false);
@@ -88,6 +119,10 @@ export default function Join() {
 
   const allAgreeElem = (e) => {
     isAllAgree ? (e.target.checked = true) : (e.target.checked = false);
+  };
+
+  const handlePhoneNumberList = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumberList({ ...phoneNumberList, [e.target.name]: e.target.value });
   };
 
   return (
@@ -187,7 +222,11 @@ export default function Join() {
                   </span>
                 </td>
                 <td className="p-3">
-                  <select name="" id="">
+                  <select
+                    name="phoneFont"
+                    id=""
+                    onChange={handlePhoneNumberList}
+                  >
                     <option value="011">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -198,12 +237,16 @@ export default function Join() {
                   -
                   <input
                     type="text"
+                    name="phoneMiddle"
+                    onChange={handlePhoneNumberList}
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone"
                   />
                   -
                   <input
                     type="text"
+                    name="phoneLast"
+                    onChange={handlePhoneNumberList}
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
                   />
