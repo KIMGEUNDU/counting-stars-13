@@ -47,7 +47,6 @@ export default function Shop() {
         setCategory('파티용품/굿즈');
         break;
     }
-    console.log(isLoading, error);
   }, [category, id, isLoading, error]);
 
   return (
