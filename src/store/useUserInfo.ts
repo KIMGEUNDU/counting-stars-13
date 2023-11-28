@@ -1,10 +1,23 @@
 import { create } from 'zustand';
 
-interface UserInfo {
-  userInfo: object | null;
-  setUserInfo: (val: object) => void;
+interface LoginUser {
+  address: string;
+  createdAt: string;
+  email: string;
+  name: string;
+  phone: string;
+  type: string;
+  updatedAt: string;
+  _id: number;
+  extra?: object;
 }
+
+interface UserInfo {
+  userInfo: LoginUser | null;
+  setUserInfo: (userInfo: LoginUser | null) => void;
+}
+
 export const useUserInfo = create<UserInfo>((set) => ({
-  userInfo: {},
-  setUserInfo: (val) => set({ userInfo: val }),
+  userInfo: null,
+  setUserInfo: (userInfo) => set({ userInfo }),
 }));
