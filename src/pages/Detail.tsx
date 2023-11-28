@@ -22,7 +22,7 @@ function Detail() {
   return (
     <div>
       <PageMap route="SHOP" />
-      <div className="center flex justify-between py-10 border-b-[1px] border-b-gray-300 mb-20">
+      <div className="center flex justify-between py-10 border-b-[1px] border-b-gray-300">
         <DetailImg src={data?.mainImages[0]} alt={data?.name} />
         <DetailProductOption data={data} />
       </div>
