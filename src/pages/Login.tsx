@@ -1,6 +1,3 @@
-//TODO: 토스트로 알리기
-//TODO: 로그인시 로컬스토리지에 값 넣어주기
-//TODO: 츄스텐드로 값올려주기
 import debounce from './../utils/debounce';
 import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
@@ -37,7 +34,6 @@ export default function Login() {
       );
       console.log(response);
       const responseItem = response.data.item;
-      fetchData(responseItem.token.accessToken, responseItem._id);
       console.log(responseItem.token.accessToken);
 
       localStorage.clear();
@@ -51,22 +47,6 @@ export default function Login() {
       }
     } catch (e) {
       return alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-    }
-  };
-
-  // 보호된 엔드포인트에 요청 보내는 함수
-  const fetchData = async (token: string, id: string) => {
-    try {
-      const response = await axios.get(`https://localhost/api/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // 서버로부터 받은 데이터 처리
-      console.log('데이터:', response.data);
-    } catch (error) {
-      console.error('데이터 가져오기 실패:', error);
     }
   };
 
