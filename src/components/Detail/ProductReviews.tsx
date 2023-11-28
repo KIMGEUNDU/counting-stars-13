@@ -4,7 +4,7 @@ import PaginationNumber from '../PaginationNumber';
 
 function ProductReviews() {
   return (
-    <div className="py-10">
+    <div className="pt-24" id="reviewLink">
       <DetailProductInformationList select={4} />
       <InformationTable title="상품후기" length={5} />
       <PaginationNumber length={2} />

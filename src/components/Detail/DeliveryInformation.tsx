@@ -2,7 +2,7 @@ import DetailProductInformationList from './DetailProductInformationList';
 
 function DeliveryInformation() {
   return (
-    <div className="py-10">
+    <div className="pt-24" id="shippingGuideLink">
       <DetailProductInformationList select={2} />
       <ul className="py-10">
         <li className="font-bold py-5">상품결제정보</li>

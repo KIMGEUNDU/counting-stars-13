@@ -2,7 +2,7 @@ import DetailProductInformationList from './DetailProductInformationList';
 
 function ExchangeReturnInformation() {
   return (
-    <div className="py-10">
+    <div className="pt-24" id="exchangeLink">
       <DetailProductInformationList select={3} />
       <div className="py-10">
         <p className="font-bold text-lg">교환 및 반품정보</p>

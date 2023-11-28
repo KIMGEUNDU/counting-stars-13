@@ -20,14 +20,18 @@ function Detail() {
   });
 
   return (
-    <div>
+    <section>
       <PageMap route="SHOP" />
-      <div className="center flex justify-between py-10 border-b-[1px] border-b-gray-300 mb-20">
-        <DetailImg src={data?.mainImages[0]} alt={data?.name} />
+      <article className="center flex justify-center gap-10 py-10 border-b border-b-gray-300">
+        <DetailImg
+          alt={data?.name}
+          main={data?.mainImages}
+          detail={data?.detailImages}
+        />
         <DetailProductOption data={data} />
-      </div>
+      </article>
       <DetailProductInformation imgArray={data?.descriptImages} />
-    </div>
+    </section>
   );
 }
 

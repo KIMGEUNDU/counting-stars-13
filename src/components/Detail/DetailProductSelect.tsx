@@ -14,7 +14,7 @@ function DetailProductSelect({
         id="selectOption"
         className="border-[1px] border-gray-300 grow p-1"
       >
-        <option value="" selected disabled>
+        <option value="" disabled>
           -[필수] 옵션을 선택해 주세요 -
         </option>
         <option value="" disabled>

@@ -47,7 +47,6 @@ export default function Shop() {
         setCategory('파티용품/굿즈');
         break;
     }
-    console.log(isLoading, error);
   }, [category, id, isLoading, error]);
 
   return (
@@ -60,19 +59,19 @@ export default function Shop() {
         </p>
         <ul className="flex gap-7 border-t border-t-gray-400 border-b border-b-gray-300 py-3">
           <li className="text-gray-600 hover:text-black">
-            <button>신상품</button>
+            <button type="button">신상품</button>
           </li>
           <li className="text-gray-600 hover:text-black">
-            <button>상품명</button>
+            <button type="button">상품명</button>
           </li>
           <li className="text-gray-600 hover:text-black">
-            <button>낮은 가격</button>
+            <button type="button">낮은 가격</button>
           </li>
           <li className="text-gray-600 hover:text-black">
-            <button>높은 가격</button>
+            <button type="button">높은 가격</button>
           </li>
           <li className="text-gray-600 hover:text-black">
-            <button>사용 후기</button>
+            <button type="button">사용 후기</button>
           </li>
         </ul>
         <ul className="flex gap-4 flex-wrap text-center py-3">

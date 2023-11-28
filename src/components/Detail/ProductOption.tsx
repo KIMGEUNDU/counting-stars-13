@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 function ProductOption() {
   return (
     <div className="productOption invisible absolute bottom-16 left-1/2 -translate-x-1/2 bg-white w-40 flex justify-center items-center py-2 px-2">
@@ -13,11 +11,9 @@ function ProductOption() {
       >
         <img src="/like.png" alt="찜하기" className="w-5 h-5" />
       </button>
-      <Link to="/detail">
-        <button type="button" className="pl-3">
-          <img src="/productMore.png" alt="상세보기" className="w-4 h-4" />
-        </button>
-      </Link>
+      <button type="button" className="pl-3">
+        <img src="/productMore.png" alt="상세보기" className="w-4 h-4" />
+      </button>
     </div>
   );
 }
