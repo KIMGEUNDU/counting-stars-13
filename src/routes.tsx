@@ -35,10 +35,10 @@ const router = createHashRouter(
       <Route path="detail/:id" element={<Detail />} />
       <Route path="community" element={<Community />} />
       <Route path="qna" element={<Qna />} />
-      <Route path="qna-detail" element={<QnaDetail />} />
+      <Route path="qna-detail/:id" element={<QnaDetail />} />
       <Route path="write-qna" element={<WriteQna />} />
       <Route path="review" element={<Review />} />
-      <Route path="review-detail" element={<ReviewDetail />} />
+      <Route path="review-detail/:id" element={<ReviewDetail />} />
       <Route path="write-review" element={<WriteReview />} />
       <Route path="search" element={<Search />} />
 
