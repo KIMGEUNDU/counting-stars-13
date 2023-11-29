@@ -16,7 +16,7 @@
   }
 
   .detailTableHead {
-    @apply w-[130px] font-normal;
+    @apply w-32 font-normal;
   }
 
   .detailButton {
