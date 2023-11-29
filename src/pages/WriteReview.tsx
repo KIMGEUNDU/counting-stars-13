@@ -35,7 +35,7 @@ export default function WriteReview() {
     const newReview = {
       title,
       content,
-      score: scoreRef.current?.value,
+      grade: scoreRef.current?.value,
       attachFile,
       orderId: selectOrderId,
     };

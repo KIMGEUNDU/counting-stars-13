@@ -27,10 +27,13 @@ interface useData {
   setPageNumber: (pageNumber: number) => void;
   // 주문목록 데이터
   orderData: OrderData[];
-  setOrderData: (order: OrderData[]) => void;
+  setOrderData: (orderData: OrderData) => void;
   // 선택한 주문데이터 아이디
   selectOrderId: number | null;
   setSelectOrderId: (selectOrderId: number | null) => void;
+  // 정렬용 데이터
+  sortData: Data[];
+  setSortData: (data: Data[]) => void;
 }
 
 export const useData = create<useData>((set) => ({
@@ -54,4 +57,6 @@ export const useData = create<useData>((set) => ({
   setOrderData: (orderData) => set({ orderData }),
   selectOrderId: null,
   setSelectOrderId: (selectOrderId) => set({ selectOrderId }),
+  sortData: [],
+  setSortData: (sortData) => set({ sortData }),
 }));

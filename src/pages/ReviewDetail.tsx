@@ -4,14 +4,53 @@ import CommentInput from '@/components/QnA,Review/CommentInput';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import PassWordInput from '@/components/QnA,Review/PassWordInput';
 import RelatedPosts from '@/components/QnA,Review/RelatedPosts';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
+import { dummyData } from '@/store/dummyData';
+import { useUserInfo } from '@/store/useUserInfo';
+import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function ReviewDetail() {
   const navigate = useNavigate();
+  const { reviewData } = dummyData();
+  const { id } = useParams();
+  const dataId = Number(id) - 1;
+  const length = reviewData.length;
+  const current = reviewData[dataId];
+  const prev = reviewData[dataId - 1];
+  const next = reviewData[dataId + 1];
+  // 로그인유저정보
+  const { userInfo, setUserInfo } = useUserInfo();
+
+  // 수정이벤트
+  const handleEdit = () => {
+    toast('해당 기능은 지원되지않습니다', {
+      icon: '⭐',
+      duration: 2000,
+    });
+  };
+
+  // 로그인유저정보 받아오기
+  useEffect(() => {
+    async function getUsers() {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+
+      setUserInfo(res.data.item);
+    }
+
+    getUsers();
+  }, [setUserInfo]);
+
+  console.log(prev);
 
   return (
     <>
@@ -23,33 +62,36 @@ function ReviewDetail() {
         <PageMap route="게시판" category="상품 사용후기" />
         <PageDetailTitle title="상품 사용후기" explan="상품 사용후기입니다." />
         <ReviewProductItem
-          link="/detail"
-          thumbnail="https://ggaggamukja.com/web/product/tiny/202207/df23e3ddade9622add9aeccc4dafcea7.jpg"
-          name="한우 소간 육포"
-          price="4,500"
+          link={`/detail/${current.productId}`}
+          thumbnail={current.productImg}
+          name={current.productName}
+          price={current.productPrice}
         />
         <PageDetailTable
-          title="만족"
-          writer="윤동주"
-          score={5}
-          content="잘먹고 용량도 괜찮습니다"
+          title={current.title}
+          writer={current.writer}
+          grade={current.grade}
+          content={current.content}
         />
-        <PassWordInput />
         <DetailButton
           btn1="목록"
-          btn3="수정"
+          btn3="삭제"
           onClick1={() => navigate('/review')}
-          onClick3={() => navigate('/')}
+          onClick3={handleEdit}
           style="quaReviewDetailButton"
           center="center"
         />
-        <CommentInput writer="윤동주" />
-        <PageListOrder
-          prev="배송도 빠르고 상품이 정말 좋아요! 자주 이용할게요ㅎㅎ"
-          next="와~퀄리티 뭡니까요? 애들 진짜 찍을세도 없이 순삭해요~ 엄청 맛있나봐요 까까묵자 덕분에 행복한 생파가 되었네요 앞으로도 자주 이용할게요!!"
-          prevLink="/detail"
-          nextLink="/detail"
-        />
+        {userInfo && <CommentInput writer={userInfo.name} />}
+        {
+          <PageListOrder
+            prev={prev ? prev.title : ''}
+            next={next ? next.title : ''}
+            prevLink={prev ? `/review-detail/${prev._id}` : ''}
+            nextLink={next ? `/review-detail/${next._id}` : ''}
+            _id={Number(id)}
+            length={length}
+          />
+        }
         <RelatedPosts />
       </div>
     </>

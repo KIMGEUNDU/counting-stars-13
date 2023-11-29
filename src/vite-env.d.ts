@@ -37,15 +37,17 @@ interface DetailProductResult {
   quantity: number;
   price: string;
   required: boolean;
+  handleClickUp: () => void;
+  handleClickDown: () => void;
 }
 
 interface QnaReviewTable {
   title: string;
   writer: string;
-  content: string;
+  content: string | undefined;
   date?: string;
   view?: string;
-  score?: number;
+  grade?: number;
   writerId?: string;
 }
 
@@ -91,4 +93,19 @@ interface UserOrderData {
   products: OrderData[];
   user_id: number;
   _id: number;
+}
+
+interface QnaReviewData {
+  _id: string,
+  title: string,
+  writer: string,
+  date: string,
+  content?: string,
+  tag?: string,
+  grade?: number,
+  attachFile?: string;
+  productId?: number;
+  productName?: string;
+  productPrice?: number;
+  productImg?: string;
 }

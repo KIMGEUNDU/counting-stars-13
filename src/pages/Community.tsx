@@ -1,9 +1,18 @@
+import PaginationNumber from '@/components/PaginationNumber';
 import Thead from '@/components/QnA,Review/Thead';
+import { dummyData } from '@/store/dummyData';
+import { sortQnaReviewData } from '@/utils/getProductsData';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
 
 export default function Community() {
+  // 공지사항
+  const { notice } = dummyData();
+
+  // id순으로 정렬
+  const sortNotice = sortQnaReviewData(notice);
+
   return (
     <>
       <Helmet>
@@ -16,26 +25,18 @@ export default function Community() {
           <table className="w-full">
             <Thead />
             <tbody className="text-center">
-              <EachPost
-                tag="공지"
-                title="이벤트 타이틀"
-                writer="윤동주"
-                date="2013-11-21 17:11:18"
-              />
-              <EachPost
-                tag="공지"
-                title="이벤트 타이틀"
-                writer="윤동주"
-                date="2013-11-21 17:11:18"
-              />
-              <EachPost
-                tag="공지"
-                title="이벤트 타이틀"
-                writer="윤동주"
-                date="2013-11-21 17:11:18"
-              />
+              {sortNotice.map((v, i) => (
+                <EachPost
+                  key={i}
+                  tag={v.tag}
+                  title={v.title}
+                  writer={v.writer}
+                  date={v.date}
+                />
+              ))}
             </tbody>
           </table>
+          <PaginationNumber length={Math.ceil(notice.length / 10)} />
         </section>
       </main>
     </>

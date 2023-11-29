@@ -7,10 +7,10 @@ function RelatedPosts() {
       <table className="w-full">
         <thead className="bg-gray-50 border-t border-t-gray-500 border-b border-b-gray-300 text-center">
           <tr>
-            <td className="w-1/12 py-2">번호</td>
-            <td className="w-1/12 py-2">상품명</td>
-            <td className="w-9/12 py-2">제목</td>
-            <td className="w-1/12 py-2">작성자</td>
+            <th className="w-1/12 py-2">번호</th>
+            <th className="w-1/12 py-2">상품명</th>
+            <th className="w-9/12 py-2">제목</th>
+            <th className="w-1/12 py-2">작성자</th>
           </tr>
         </thead>
         <tbody>

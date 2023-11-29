@@ -4,7 +4,7 @@ function PageDetailTable({
   content,
   date,
   view,
-  score,
+  grade,
 }: QnaReviewTable) {
   const writerPrivate = (writer: string) => {
     return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
@@ -13,14 +13,16 @@ function PageDetailTable({
   return (
     <div className="center">
       <table className="QnaReviewTable w-full border-t-2 border-t-gray-500 border-b border-b-gray-300 text-left">
-        <tr>
-          <th>제목</th>
-          <td>{title}</td>
-        </tr>
-        <tr>
-          <th>작성자</th>
-          <td>{writerPrivate(writer)}</td>
-        </tr>
+        <tbody>
+          <tr>
+            <td>제목</td>
+            <td>{title}</td>
+          </tr>
+          <tr>
+            <td>작성자</td>
+            <td>{writerPrivate(writer)}</td>
+          </tr>
+        </tbody>
       </table>
       <ul className="flex border-b border-b-gray-200 py-5 px-2">
         {date && (
@@ -31,18 +33,18 @@ function PageDetailTable({
             <li className="text-gray-400">{view}</li>
           </>
         )}
-        {score && (
+        {grade && (
           <>
             <li className="pr-2 font-semibold">평점</li>
             <li>
-              {Array(score)
+              {Array(grade)
                 .fill('★')
                 .map((v, i) => (
                   <span key={i} className="text-starRed">
                     {v}
                   </span>
                 ))}
-              {Array(5 - score)
+              {Array(5 - grade)
                 .fill('★')
                 .map((v, i) => (
                   <span key={i} className="text-gray-400">

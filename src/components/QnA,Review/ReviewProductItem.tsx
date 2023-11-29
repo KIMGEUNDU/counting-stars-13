@@ -1,10 +1,11 @@
+import { commaPrice } from '@/utils/getProductsData';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface ReviewProductItem {
   link: string;
-  thumbnail: string;
-  name: string;
-  price: string;
+  thumbnail: string | undefined;
+  name: string | undefined;
+  price: number | undefined;
 }
 
 function ReviewProductItem({
@@ -22,7 +23,11 @@ function ReviewProductItem({
           <Link to={link}>
             <h3 className="font-semibold">{name}</h3>
           </Link>
-          <span className="text-blue-500 font-semibold">{price}원</span>
+          {price && (
+            <span className="text-blue-500 font-semibold">
+              {commaPrice(price)}원
+            </span>
+          )}
         </div>
         <button
           type="button"
