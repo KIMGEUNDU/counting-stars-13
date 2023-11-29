@@ -1,14 +1,15 @@
 //TODO: 로그인시 헤더 변경
 import { useLogin } from '@/store/useLogin';
-import { useUserInfo } from '@/store/useUserInfo';
+// import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function Header() {
   const { setLogin } = useLogin();
-  //로그인시 저장되는 유저 정보
-  const { setUserInfo } = useUserInfo();
+  //TODO:로그인시 저장되는 유저 정보
+  // const { setUserInfo } = useUserInfo();
 
   //로컬 스토리지의 아이디 값 가져오기
   let isLoginState = localStorage.getItem('id');
@@ -20,7 +21,12 @@ export default function Header() {
   const handleLogout = () => {
     localStorage.clear();
     setLogin(false);
-    setUserInfo({});
+    //TODO: 로그아웃시 츄스텐드에 있는 회원정보 초기화
+    // setUserInfo({...key: ''});
+    toast('로그아웃 되었습니다.', {
+      icon: '🔒',
+      duration: 2500,
+    });
     navigate('/');
   };
   return (

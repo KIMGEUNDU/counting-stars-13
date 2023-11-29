@@ -10,6 +10,7 @@ interface LoginUser {
   updatedAt: string;
   _id: number;
   extra?: object;
+  emailAgree: boolean;
 }
 
 interface UserInfo {
