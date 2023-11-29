@@ -6,4 +6,119 @@
   html {
     font-family: Pretendard, sans-serif;
   }
+
+  .filterButton {
+    @apply bg-gray-100 px-6 py-1 rounded-xl active:bg-zinc-900 active:text-white;
+  }
+
+  .center {
+    @apply w-4/5 m-auto;
+  }
+
+  .detailTableHead {
+    @apply w-[130px] font-normal;
+  }
+
+  .detailButton {
+    @apply w-1/2 py-3 border border-gray-300 font-semibold;
+  }
+
+  .quaReviewDetailButton {
+    @apply w-[10%] py-1 border border-gray-300;
+  }
+
+  .informationList {
+    @apply border border-gray-300 border-b-starBlack w-1/5 text-center text-gray-500;
+  }
+
+  .informationListSelect {
+    @apply border border-starBlack border-b-0 w-1/5 text-center py-5 font-bold;
+  }
+
+  .detailProductListButton {
+    @apply w-36 py-1 border border-gray-300;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: #000000;
+  text-emphasis-color: #000000;
+}
+
+input::-webkit-autofill,
+input::-webkit-autofill:hover,
+input::-webkit-autofill:focus,
+input::-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dimmedImg {
+  position: relative;
+}
+
+.dimmedImg:hover::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 240px;
+  height: 240px;
+  background-color: black;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.dimmedImg:hover > .scaleImg {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.dimmedImg:hover > .productOption {
+  visibility: visible;
+  z-index: 1;
+}
+
+.pageDetailTitle::after {
+  content: '';
+  height: 15px;
+  border: 1px solid #d9d9d9;
+  position: absolute;
+  top: 50%;
+  right: -15%;
+  transform: translateY(-50%);
+}
+
+.QnaReviewTable th {
+  border-left: 0;
+  border-right: 1px solid #d9d9d9;
+  background-color: #f8f8f8;
+  font-weight: 400;
+  width: 10%;
+}
+
+.QnaReviewTable td {
+  border-right: 0;
+}
+
+.QnaReviewTable th,
+.QnaReviewTable td {
+  border-top: 1px solid #d9d9d9;
+  padding: 15px;
+}
+.pageListOrder th {
+  font-weight: 400;
+  width: 10%;
+}
+
+.pageListOrder th,
+.pageListOrder td {
+  border: 1px solid #d9d9d9;
+  padding: 8px 10px;
+}
+
+.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+  min-height: 400px;
+  margin-bottom: 20px;
 }
