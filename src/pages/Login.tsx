@@ -8,6 +8,7 @@ import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
@@ -16,6 +17,9 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setLoginInfo({ email: '', password: '' });
+  }, []);
   const handleLoginClick = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
