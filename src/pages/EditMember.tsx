@@ -4,10 +4,13 @@ import PageMainTitle from 'components/PageMainTitle';
 import toast from 'react-hot-toast';
 import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect, useState } from 'react';
+import { usePhoneNumber } from '@/store/usePhoneNumber';
+import { phoneNumber } from '@/components/EditMember/phoneNumber';
 
 export default function EditMember() {
   const { userInfo } = useUserInfo();
   //회원정보조회 정보
+  const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
 
   const [editMemberInfo, setEditMemberInfo] = useState({
     email: '',
@@ -23,6 +26,13 @@ export default function EditMember() {
   console.log(editMemberInfo.emailAgree);
 
   // console.log(EditMemberInfo);
+  const { phone } = editMemberInfo;
+
+  // 번호 앞자리, 뒷자리 나누기 값
+  useEffect(() => {
+    phoneNumber(phone, setPhoneNumber);
+  }, [phone]);
+  console.log(isPhoneNumber);
 
   const handleGetuserInfo = async () => {
     try {
@@ -36,6 +46,8 @@ export default function EditMember() {
       );
       const item = response.data.item;
       setEditMemberInfo(item);
+      console.log(item);
+
       //가져온정보 넣기
     } catch (e) {
       return toast('정보가 불러와지지 않음', {
@@ -47,10 +59,11 @@ export default function EditMember() {
   useEffect(() => {
     handleGetuserInfo();
   }, []);
-  const handleEdit = (e) => {
+
+  const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.value });
   };
-  const handleCheckboxEdit = (e) => {
+  const handleCheckboxEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.checked });
   };
   console.log(editMemberInfo.emailAgree);
@@ -196,7 +209,13 @@ export default function EditMember() {
                   </span>
                 </td>
                 <td className="p-3">
-                  <select name="phoneNumber" id="inputPhone0">
+                  <select
+                    name="phoneNumber"
+                    id="inputPhone0"
+                    //TODO: 휴대폰 앞자리 바꾸기
+                    value={isPhoneNumber.phoneFirst}
+                    // onClick={(e) => (e.target.value = e.target.value)}
+                  >
                     <option value="011">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -209,12 +228,14 @@ export default function EditMember() {
                     type="text"
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone1"
+                    defaultValue={isPhoneNumber.phoneMiddle}
                   />
                   -
                   <input
                     type="text"
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
+                    defaultValue={isPhoneNumber.phoneLast}
                   />
                 </td>
               </tr>
@@ -227,7 +248,7 @@ export default function EditMember() {
                     id="smsOk"
                     className="mr-1"
                     checked={editMemberInfo.emailAgree}
-                    onClick={handleCheckboxEdit}
+                    onChange={handleCheckboxEdit}
                   />
                   <label htmlFor="smsOk" className="mr-2">
                     수신 여부
