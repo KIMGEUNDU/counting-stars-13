@@ -1,11 +1,32 @@
+import PaginationNumber from '@/components/PaginationNumber';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
+import { dummyData } from '@/store/dummyData';
+import { useData } from '@/store/useData';
+import { useForm } from '@/store/useForm';
+import { sortQnaReviewData } from '@/utils/getProductsData';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 export default function Review() {
-  // 현재 후기 조회안됨
+  const { setSelectId, setSelectData, setSelectOrderId } = useData();
+  const { setAttachFile } = useForm();
+  // 현재 후기 조회안됨 -> 곧 API 구현 예정
+  // 더미데이터 가지고오기
+  const { reviewData } = dummyData();
+
+  // id순으로 정렬하기
+  const sortReviewData = sortQnaReviewData(reviewData);
+
+  // 새로 Review 페이지 들어올때는 리셋
+  useEffect(() => {
+    setSelectId(null);
+    setSelectData(null);
+    setSelectOrderId(null);
+    setAttachFile('');
+  }, []);
 
   return (
     <>
@@ -15,39 +36,26 @@ export default function Review() {
 
       <main className="min-h-[60vh]">
         <PageMainTitle title="상품 후기" />
-        <section className="w-4/5 mx-auto border-t-2 border-gray-300">
+        <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">
             <Thead info="상품 정보" score="평점" />
             <tbody className="text-center">
-              <EachPost
-                tag={3}
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="당근 와플"
-                grade="⭐⭐⭐⭐⭐"
-                link="/review-detail"
-              />
-              <EachPost
-                tag={2}
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="멍피자 멍치킨 피크닉 세트"
-                grade="⭐⭐⭐⭐⭐"
-                link="/review-detail"
-              />
-              <EachPost
-                tag={1}
-                title="이벤트 타이틀"
-                writer="윤**"
-                date="2023-11-21 17:11:18"
-                item="한우 소간 육포"
-                grade="⭐⭐⭐⭐⭐"
-                link="/review-detail"
-              />
+              {sortReviewData.map((v, i) => (
+                <EachPost
+                  key={i}
+                  tag={v._id ? v._id : ''}
+                  title={v.title}
+                  writer={v.writer}
+                  date={v.date}
+                  item={v.productName}
+                  itemImg={v.productImg}
+                  grade={v.grade}
+                  link={`/review-detail/${v._id}`}
+                />
+              ))}
             </tbody>
           </table>
+          <PaginationNumber length={Math.ceil(reviewData.length / 10)} />
           <WriterButton link="/write-review" />
         </section>
       </main>

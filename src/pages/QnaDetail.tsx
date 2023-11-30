@@ -5,36 +5,55 @@ import CommentItem from '@/components/QnA,Review/CommentItem';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import RelatedPosts from '@/components/QnA,Review/RelatedPosts';
+import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
+import { dummyData } from '@/store/dummyData';
 import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function QnaDetail() {
   const navigate = useNavigate();
+  const { qnaData, deleteQnaData } = dummyData();
+  const { id } = useParams();
+  const dataId = Number(id) - 1;
+  const length = qnaData.length;
+  const current = qnaData[dataId];
+  const prev = qnaData[dataId - 1];
+  const next = qnaData[dataId + 1];
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
-  // 임시 큐엔에이값
+  // 임시 qna댓글값
   const { qna } = useComment();
+  const idFilterComment = qna.filter((v) => v.qnaId === Number(id));
 
-  // 답변누르면 댓글에 포커스
-  const focusInput = () => {
-    const textarea = document.querySelector<HTMLTextAreaElement>('#comment');
-    if (textarea) {
-      textarea.focus();
+  // 삭제이벤트
+  const handleDelete = () => {
+    const answer = confirm('정말 삭제하시겠습니까?');
+    const deleteReview = qnaData.filter((v) => v._id !== Number(id));
+
+    if (answer) {
+      deleteQnaData(deleteReview);
+
+      toast('삭제되었습니다.', {
+        icon: '⭐',
+        duration: 2000,
+      });
+
+      navigate('/qna');
     }
   };
 
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID}`, {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
         headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
@@ -51,43 +70,56 @@ function QnaDetail() {
       </Helmet>
 
       <div>
-        <PageMap route="게시판" category="상품 Q&A" />
+        <PageMap route="qna" category="상품 Q&A" />
         <PageDetailTitle title="상품 Q&A" explan="상품 Q&A입니다." />
+        {current.productId && (
+          <ReviewProductItem
+            link={`/detail/${current.productId}`}
+            thumbnail={current.productImg}
+            name={current.productName}
+            price={current.productPrice}
+          />
+        )}
         <PageDetailTable
-          title="졸리다"
-          writer="윤동주"
-          date="2023-10-10 20:01:45"
-          view="10"
-          content="10월2일날 주문했습니다. 언제쯤 받을수있을까요...?"
+          title={current.title}
+          writer={current.writer}
+          grade={current.grade}
+          date={current.date}
+          attachFile={current.attachFile}
+          content={current.content}
         />
         <DetailButton
           btn1="목록"
-          btn3="답변"
+          btn3="삭제"
           onClick1={() => navigate('/qna')}
-          onClick3={focusInput}
+          onClick3={handleDelete}
           style="quaReviewDetailButton"
           center="center"
+          writer={current.writer}
         />
 
-        {qna &&
-          qna.map((v, i) => (
+        {idFilterComment &&
+          idFilterComment.map((v, i) => (
             <CommentItem
               key={i}
+              _id={v._id}
               writer={v.writer}
               date={v.date}
               content={v.content}
               writerId={v.writerId}
+              collection="qna"
             />
           ))}
 
-        {userInfo && <CommentInput writer={userInfo.name} />}
+        {userInfo && <CommentInput writer={userInfo.name} collection="qna" />}
         <PageListOrder
-          prev="배송일정 문의드립니다."
-          next="배송완료처리"
-          prevLink="/detail"
-          nextLink="/detail"
+          prev={prev ? prev.title : ''}
+          next={next ? next.title : ''}
+          prevLink={prev ? `/qna-detail/${prev._id}` : ''}
+          nextLink={next ? `/qna-detail/${next._id}` : ''}
+          _id={Number(id)}
+          length={length}
         />
-        <RelatedPosts />
       </div>
     </>
   );

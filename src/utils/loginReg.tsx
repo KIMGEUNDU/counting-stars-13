@@ -12,7 +12,7 @@ export function pwReg(text: string) {
 //이메일: 영문자로 시작하는 영문자 또는 숫자 4~16자
 export function emailReg(text: string) {
   const re =
-    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i; //이메일 정규식
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 
   return re.test(String(text).toLowerCase());
 }

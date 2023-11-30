@@ -27,7 +27,7 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
         `https://localhost/api/products/${selectOrderId}`,
         {
           headers: {
-            Authorization: `Bearer ${AUTH_TOKEN}`,
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
           },
         }
       );

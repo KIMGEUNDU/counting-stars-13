@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 interface useData {
   // 전체 데이터
-  data: Data[];
-  setData: (data: Data[]) => void;
+  data: Data[] | QnaReviewData[];
+  setData: (data: Data[] | QnaReviewData[]) => void;
   // 페이지네이션 데이터
-  pageData: Data[];
-  setPageData: (pageData: Data[]) => void;
+  pageData: Data[] | QnaReviewData[];
+  setPageData: (pageData: Data[] | QnaReviewData[]) => void;
   // 전체 데이터 페이지 길이
   dataLengthPage: number;
   setDataLengthPage: (dataLengthPage: number | undefined) => void;
@@ -27,7 +27,7 @@ interface useData {
   setPageNumber: (pageNumber: number) => void;
   // 주문목록 데이터
   orderData: OrderData[];
-  setOrderData: (order: OrderData[]) => void;
+  setOrderData: (orderData: OrderData[]) => void;
   // 선택한 주문데이터 아이디
   selectOrderId: number | null;
   setSelectOrderId: (selectOrderId: number | null) => void;

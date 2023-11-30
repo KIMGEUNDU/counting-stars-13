@@ -16,7 +16,7 @@ function DetailImg({
   };
 
   return (
-    <section className="flex flex-wrap justify-between w-[45%] max-w-[500px] gap-3">
+    <section className="flex flex-wrap justify-between w-[45%] max-w-[500px] gap-3 absolute left-0">
       <img
         src={main ? main[mainImageNum] : ''}
         alt={alt}

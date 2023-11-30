@@ -1,11 +1,23 @@
+import { useState } from 'react';
 import DetailButton from './DetailButton';
 import DetailProductResult from './DetailProductResult';
 import DetailProductSelect from './DetailProductSelect';
 
 function DetailProductOption({ data }: { data: any }) {
+  const [quantity, setQuantity] = useState(1);
+
+  const handleClickUp = () => {
+    if (quantity > 98) return;
+    setQuantity((prevCount) => prevCount + 1);
+  };
+
+  const handleClickDown = () => {
+    if (quantity < 2) return;
+    setQuantity((prevCount) => prevCount - 1);
+  };
   if (data) {
     return (
-      <section className="w-full text-left max-w-[500px]">
+      <section className="w-full text-left max-w-[500px] ml-auto">
         <table className="detailTable w-full">
           <caption className="hidden">상품 설명</caption>
           <thead className="text-2xl font-bold border-b border-b-gray-300">
@@ -15,7 +27,7 @@ function DetailProductOption({ data }: { data: any }) {
           </thead>
           <tbody className="border-b border-b-gray-300 flex flex-col gap-2">
             <tr className="font-bold text-lg pt-5">
-              <th className="w-[130px]">판매가</th>
+              <th className="w-32">판매가</th>
               <td>{data.price.toLocaleString()}원</td>
             </tr>
             <tr>
@@ -28,22 +40,21 @@ function DetailProductOption({ data }: { data: any }) {
             </tr>
           </tbody>
         </table>
-        <form className="">
+        <form>
           {data?.options.length > 0 && (
-            <DetailProductSelect
-              option1="기본단품"
-              option2="5팩 (5% 할인) (+18,380원)"
-              option3="10팩 (10% 할인) (+39,200원)"
+            <DetailProductSelect data={data} option={data.options} />
+          )}
+          {data?.options.length === 0 && (
+            <DetailProductResult
+              name={data?.name}
+              price={data?.price}
+              option=""
+              quantity={quantity}
+              required={data?.options.length > 0}
+              handleClickUp={handleClickUp}
+              handleClickDown={handleClickDown}
             />
           )}
-
-          <DetailProductResult
-            name={data?.name}
-            price={data?.price}
-            option="- 기본 단품"
-            quantity={1}
-            required={data?.options.length > 0}
-          />
 
           <DetailButton
             btn1="장바구니 담기"

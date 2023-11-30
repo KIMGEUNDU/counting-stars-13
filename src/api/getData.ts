@@ -5,7 +5,7 @@ export default async function getData(collection: string) {
   await axios
     .get(`https://localhost/api/${collection}`, {
       headers: {
-        Authorization: `Bearer ${AUTH_TOKEN}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     })
     .then((res) => res.data.item);

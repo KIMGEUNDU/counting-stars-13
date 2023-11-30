@@ -5,21 +5,80 @@ import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import Modal from '@/components/QnA,Review/Modal';
 import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
+import { dummyData } from '@/store/dummyData';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { useUserInfo } from '@/store/useUserInfo';
+import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { writeDate } from '@/utils/writeDate';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export default function WriteQna() {
-  const { title, content, attachFile } = useForm();
-  const { modal, setModal, selectId, setSelectId, setSelectData } = useData();
+  const titleRef = useRef<HTMLInputElement | null>(null);
+  const { content, attachFile } = useForm();
+  const { modal, setModal, selectId, selectData } = useData();
+  const { qnaData, setQnaData } = dummyData();
   const navigate = useNavigate();
+  // 로그인유저정보
+  const { userInfo, setUserInfo } = useUserInfo();
 
-  // Qna 등록하기
+  // Qna 등록하기 (Axios)
+  // const handleAxiosRegistQna = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!content) {
+  //     toast('내용을 입력해주세요 :)', {
+  //       icon: '⭐',
+  //       duration: 2000,
+  //     });
+  //   } else if (!selectData) {
+  //   toast('상품을 선택해주세요 :)', {
+  //     icon: '⭐',
+  //     duration: 2000,
+  //   });
+  // }
+
+  // const newQna = {
+  //   _id: qnaData.length + 1,
+  //   title,
+  //   writer: userInfo.name,
+  //   date: writeDate(),
+  //   content,
+  //   attachFile,
+  //   productId: selectId,
+  //   productName: selectData.name,
+  //   productPrice: selectData.price,
+  //   productImg: selectData.detailImages[0],
+  // };
+
+  // if (userInfo && selectData && selectId) {
+  //   // replies는 구매후기이니 카테고리 생기면 변경
+  //   const response = await axios.post(
+  //     'https://localhost/api/replies/',
+  //     newQna,
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${AUTH_TOKEN()}`,
+  //       },
+  //     }
+  //   );
+
+  //   if (response.data.ok === 1) {
+  //     toast('업로드하였습니다 :)', {
+  //       icon: '⭐',
+  //       duration: 2000,
+  //     });
+
+  //     navigate(`/qna-detail/${newQna._id}`);
+  //   }
+  // }
+  // };
+
+  // Qna 등록하기 (DummyData)
   const handleRegistQna = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -28,33 +87,35 @@ export default function WriteQna() {
         icon: '⭐',
         duration: 2000,
       });
+    } else if (!selectId) {
+      toast('상품을 선택해주세요 :)', {
+        icon: '⭐',
+        duration: 2000,
+      });
     }
 
-    const newQna = {
-      title,
-      content,
-      attachFile,
-      selectId,
-    };
+    if (titleRef.current && userInfo && selectData && selectId) {
+      const newQna = {
+        _id: qnaData.length + 1,
+        title: titleRef.current.value,
+        writer: userInfo.name,
+        date: writeDate(),
+        content,
+        attachFile,
+        productId: selectId,
+        productName: selectData.name,
+        productPrice: selectData.price,
+        productImg: selectData.detailImages[0],
+      };
 
-    // replies는 구매후기이니 카테고리 생기면 변경
-    const response = await axios.post(
-      'https://localhost/api/replies/',
-      newQna,
-      {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
-        },
-      }
-    );
+      setQnaData(newQna);
 
-    if (response.data.ok === 1) {
       toast('업로드하였습니다 :)', {
         icon: '⭐',
         duration: 2000,
       });
 
-      navigate(`/qna-detail`);
+      navigate(`/qna-detail/${newQna._id}`);
     }
   };
 
@@ -67,13 +128,24 @@ export default function WriteQna() {
     });
   }
 
-  // 새로 Qna 페이지 들어올때는 리셋, 왜 안돼?
+  // 로그인유저정보 받아오기
   useEffect(() => {
-    if (selectId) {
-      setSelectId(null);
-      setSelectData(null);
+    async function getUsers() {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      setUserInfo(res.data.item);
     }
-  }, [selectId, setSelectData, setSelectId]);
+
+    getUsers();
+  }, [setUserInfo]);
+
+  // console.log('selectId = ' + selectId);
+  // console.log('selectData = ' + selectData);
+  // console.log('userInfo = ' + userInfo);
 
   return (
     <>
@@ -88,7 +160,7 @@ export default function WriteQna() {
           {modal && <Modal onClick={() => setModal(!modal)} />}
           <table className="w-full border-t border-gray-300">
             <tbody>
-              <FormTitleInput />
+              <FormTitleInput titleRef={titleRef} />
               <FormCkEditor />
               <FormAttachFile />
             </tbody>

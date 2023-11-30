@@ -1,5 +1,73 @@
+import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
 import PageMainTitle from 'components/PageMainTitle';
+import toast from 'react-hot-toast';
+import { useUserInfo } from '@/store/useUserInfo';
+import { useEffect, useState } from 'react';
+import { usePhoneNumber } from '@/store/usePhoneNumber';
+import { phoneNumber } from '@/components/EditMember/phoneNumber';
+
 export default function EditMember() {
+  const { userInfo } = useUserInfo();
+  //회원정보조회 정보
+  const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
+
+  const [editMemberInfo, setEditMemberInfo] = useState({
+    email: '',
+    name: '',
+    createdAt: '',
+    phone: '',
+    address: '',
+    updatedAt: '',
+    type: '',
+    extra: '',
+    emailAgree: userInfo?.emailAgree,
+  });
+  console.log(editMemberInfo.emailAgree);
+
+  // console.log(EditMemberInfo);
+  const { phone } = editMemberInfo;
+
+  // 번호 앞자리, 뒷자리 나누기 값
+  useEffect(() => {
+    phoneNumber(phone, setPhoneNumber);
+  }, [phone]);
+  console.log(isPhoneNumber);
+
+  const handleGetuserInfo = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost/api/users/${AUTH_ID()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        }
+      );
+      const item = response.data.item;
+      setEditMemberInfo(item);
+      console.log(item);
+
+      //가져온정보 넣기
+    } catch (e) {
+      return toast('정보가 불러와지지 않음', {
+        icon: '😢',
+        duration: 2000,
+      });
+    }
+  };
+  useEffect(() => {
+    handleGetuserInfo();
+  }, []);
+
+  const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.value });
+  };
+  const handleCheckboxEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.checked });
+  };
+  console.log(editMemberInfo.emailAgree);
+
   return (
     <>
       <main className="w-full">
@@ -13,7 +81,9 @@ export default function EditMember() {
             />
             <p className="pl-4 align-middle">
               ✨별,해달을 이용해주셔서 감사합니다.
-              <span className="text-blue-700 font-bold"> 이동호 </span>
+              <span className="text-blue-700 font-bold m-1">
+                {editMemberInfo.name}
+              </span>
               님은
               <span className="font-bold"> [일반회원]</span>
               입니다.
@@ -23,16 +93,19 @@ export default function EditMember() {
             <tbody>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 w-40 p-3">
-                  <label htmlFor="inputId">아이디</label>
+                  <label htmlFor="inputId">이메일</label>
                   <span className="text-starRed font-extrabold text-xl align-middle pl-1">
                     *
                   </span>
                 </td>
                 <td className="flex flex-row p-3">
                   <input
+                    name="email"
                     type="text"
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputId"
+                    defaultValue={editMemberInfo.email}
+                    onChange={handleEdit}
                   />
                   <p>(영문 소문자/숫자, 4~16자)</p>
                 </td>
@@ -82,6 +155,7 @@ export default function EditMember() {
                     type="text"
                     className="border border-gray-300 rounded w-32"
                     id="inputName"
+                    defaultValue={editMemberInfo.name}
                   />
                 </td>
               </tr>
@@ -135,7 +209,13 @@ export default function EditMember() {
                   </span>
                 </td>
                 <td className="p-3">
-                  <select name="phoneNumber" id="inputPhone0">
+                  <select
+                    name="phoneNumber"
+                    id="inputPhone0"
+                    //TODO: 휴대폰 앞자리 바꾸기
+                    value={isPhoneNumber.phoneFirst}
+                    // onClick={(e) => (e.target.value = e.target.value)}
+                  >
                     <option value="011">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -148,33 +228,39 @@ export default function EditMember() {
                     type="text"
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone1"
+                    defaultValue={isPhoneNumber.phoneMiddle}
                   />
                   -
                   <input
                     type="text"
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
+                    defaultValue={isPhoneNumber.phoneLast}
                   />
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">SMS 수신 여부</td>
                 <td className="p-3">
-                  <input type="checkbox" name="" id="smsOk" className="mr-1" />
+                  <input
+                    type="checkbox"
+                    name="emailAgree"
+                    id="smsOk"
+                    className="mr-1"
+                    checked={editMemberInfo.emailAgree}
+                    onChange={handleCheckboxEdit}
+                  />
                   <label htmlFor="smsOk" className="mr-2">
-                    수신함
+                    수신 여부
                   </label>
-                  <input type="checkbox" name="" id="smsNo" className="mr-1" />
-                  <label htmlFor="smsNo" className="mr-2">
-                    수신안함
-                  </label>
+
                   <p className="font-extralight">
                     쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수
                     있습니다.
                   </p>
                 </td>
               </tr>
-              <tr className="border-b border-gray-300">
+              {/* <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
                   <label htmlFor="emailInput">이메일</label>
                   <span className="text-starRed font-extrabold text-xl align-middle pl-1">
@@ -188,8 +274,8 @@ export default function EditMember() {
                     id="emailInput"
                   />
                 </td>
-              </tr>
-              <tr className="border-b border-gray-300">
+              </tr> */}
+              {/* <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">이메일 수신 여부</td>
                 <td className="p-3">
                   <input
@@ -215,7 +301,7 @@ export default function EditMember() {
                     있습니다.
                   </p>
                 </td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
           <h2 className="font-bold text-lg mt-10 mb-2">추가 정보</h2>

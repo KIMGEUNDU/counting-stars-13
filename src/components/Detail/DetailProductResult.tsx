@@ -6,6 +6,8 @@ function DetailProductResult({
   quantity,
   price,
   required,
+  handleClickUp,
+  handleClickDown,
 }: DetailProductResult) {
   return (
     <>
@@ -15,7 +17,11 @@ function DetailProductResult({
           <span className="text-xs">{option}</span>
         </div>
         <div className="flex items-center gap-2">
-          <ProductQuantity value={quantity} />
+          <ProductQuantity
+            value={quantity}
+            handleClickUp={handleClickUp}
+            handleClickDown={handleClickDown}
+          />
           {required && (
             <button type="button">
               <img src="/cancel.png" alt="옵션 닫기" className="w-4" />
@@ -27,7 +33,7 @@ function DetailProductResult({
       <p className="py-6 border-b border-b-gray-300">
         <span className="font-bold">총 상품 금액</span>&#40;수량&#41;:
         <span className="font-bold text-2xl pl-2">
-          {price.toLocaleString()} 원
+          {(+price * quantity).toLocaleString()} 원
         </span>
         &#40;{quantity}개&#41;
       </p>
