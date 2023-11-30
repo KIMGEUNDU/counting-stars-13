@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 
 type board = {
-  tag: number | string | undefined;
-  title: string;
+  tag: string | number;
+  title: string | undefined;
   writer: string;
   link?: string;
-  date: string;
+  date: string | undefined;
   item?: string;
   grade?: number;
+  itemImg?: string;
+  attachFile?: string | undefined;
 };
 
 export default function EachPost({
@@ -18,6 +20,8 @@ export default function EachPost({
   item,
   grade,
   link,
+  itemImg,
+  attachFile,
 }: board) {
   const writerPrivate = (writer: string) => {
     if (writer !== '별해달') {
@@ -34,23 +38,39 @@ export default function EachPost({
   return (
     <>
       <tr className="border-b border-gray-200">
-        <td className="py-4 w-1/12">{tag}</td>
-        {item && <td className=" whitespace-nowrap w-[12%]">{item}</td>}
+        <td className={`py-4 w-1/12 ${tag === '공지' ? 'font-bold' : ''}`}>
+          {tag}
+        </td>
+        {item && (
+          <td className="w-[13%] whitespace-nowrap h-10">
+            <div className="flex justify-left items-center">
+              <img className="w-10 h-full pr-1" src={itemImg} alt={item} />
+              <span className="">{item}</span>
+            </div>
+          </td>
+        )}
         {grade && <td className="truncate w-[12%]">{starGrade(grade)}</td>}
         {link && (
-          <td className="text-left w-1/2">
+          <td className="text-left w-1/3 px-3">
             <Link to={link} className="line-clamp-1">
               {title}
+              {attachFile && (
+                <img
+                  className="w-2 inline ml-2"
+                  src="/attachFile.png"
+                  alt="첨부파일 있음"
+                />
+              )}
             </Link>
           </td>
         )}
         {!link && (
-          <td className="text-left">
-            <span className="">{title}</span>
+          <td className="text-left w-1/3 px-3">
+            <span className="line-clamp-1">{title}</span>
           </td>
         )}
         <td className="w-[10%]">{writerPrivate(writer)}</td>
-        <td className="font-extralight w-[10%]">{date}</td>
+        <td className="font-extralight w-[12%]">{date}</td>
       </tr>
     </>
   );
