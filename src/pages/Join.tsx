@@ -1,13 +1,20 @@
+//TODO: phone input에 숫자만 찍히게
 import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { emailReg, pwReg, phoneReg } from '@/utils/loginReg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 export default function Join() {
+  const emailInput = useRef<HTMLInputElement>(null);
+  const passwordInput = useRef<HTMLInputElement>(null);
+  const checkPasswordInput = useRef<HTMLInputElement>(null);
+  const nameInput = useRef<HTMLInputElement>(null);
+  const phoneInput = useRef<HTMLInputElement>(null);
+
   const navigate = useNavigate();
   const [joinInfo, setJoinInfo] = useState({
     id: '',
@@ -18,6 +25,12 @@ export default function Join() {
     type: 'user',
     emailAgree: false,
   });
+  // 유효성검사 상태관리
+  const [validationInfo, setValidationInfo] = useState({
+    password: '',
+    name: '',
+    phone: '',
+  });
   //이메일 중복체크 여부
   const [checkEmail, setCheckEmail] = useState(false);
   const [phoneNumberList, setPhoneNumberList] = useState({
@@ -26,6 +39,7 @@ export default function Join() {
     phoneLast: '',
   });
   const [isAgree, setAgree] = useState({
+    allAgree: false,
     useAgree: false,
     privacyAgree: false,
     emailAgree: false,
@@ -34,7 +48,6 @@ export default function Join() {
 
   // 회원가입정보값 가져오기
   const { phone, password, name, email } = joinInfo;
-
   const { phoneFont, phoneMiddle, phoneLast } = phoneNumberList;
 
   //비밀번호 중복체크
@@ -46,6 +59,60 @@ export default function Join() {
   const handleJoinInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setJoinInfo({ ...joinInfo, [e.target.name]: e.target.value });
   };
+  // 비밀번호 확인 검사
+  useEffect(() => {
+    if (checkPassword.length === 0) {
+      return setValidationInfo({
+        ...validationInfo,
+        password: '',
+      });
+    }
+    password !== checkPassword
+      ? setValidationInfo({
+          ...validationInfo,
+          password: '😢비밀번호 확인이 일치하지 않습니다.',
+        })
+      : setValidationInfo({
+          ...validationInfo,
+          password: '😀완료 되었습니다',
+        });
+  }, [checkPassword]);
+
+  // 이름 유효성 검사
+  useEffect(() => {
+    if (joinInfo.name.length === 0) {
+      return setValidationInfo({
+        ...validationInfo,
+        name: '',
+      });
+    }
+    joinInfo.name.length >= 20
+      ? setValidationInfo({
+          ...validationInfo,
+          name: '😢이름 형식을 확인해주세요.',
+        })
+      : setValidationInfo({ ...validationInfo, name: '' });
+  }, [joinInfo.name]);
+
+  //휴대전화 유효성 검사
+  useEffect(() => {
+    if (joinInfo.phone.length <= 3) {
+      return setValidationInfo({
+        ...validationInfo,
+        phone: '',
+      });
+    }
+    phoneReg(joinInfo.phone) || joinInfo.phone.length <= 9
+      ? setValidationInfo({
+          ...validationInfo,
+          phone: '✏️휴대전화 번호를 9자리이상 적어주세요.',
+        })
+      : setValidationInfo({
+          ...validationInfo,
+          phone: '😀완료 되었습니다',
+        });
+  }, [joinInfo.phone]);
+
   //핸드폰 맨앞지리 담는 함수
   const handleSelectPhoneNumberList = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -66,6 +133,12 @@ export default function Join() {
 
   //이메일 중복체크
   const handleCheckEmail = async () => {
+    if (!emailReg(email) || !email) {
+      return toast('이메일 형식을 확인해주세요.', {
+        icon: '😢',
+        duration: 2000,
+      });
+    }
     try {
       const response = await axios.get(
         `https://localhost/api/users/email?email=${joinInfo.email}`
@@ -85,11 +158,19 @@ export default function Join() {
     }
   };
 
+  //회원가입 버튼 눌렀을 때
   const handleJoin = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
 
+    if (!emailReg(email) || !email) {
+      (emailInput.current as HTMLInputElement).focus();
+      return toast('이메일 형식을 확인해주세요.', {
+        icon: '😢',
+        duration: 2000,
+      });
+    }
     if (!checkEmail) {
       return toast('이메일 중복체크를 진행해주세요.', {
         icon: '😢',
@@ -98,18 +179,24 @@ export default function Join() {
     }
 
     if (!pwReg(password) || !password) {
+      (passwordInput.current as HTMLInputElement).focus();
+
       return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
         icon: '😢',
         duration: 2000,
       });
     }
     if (password !== checkPassword) {
+      (checkPasswordInput.current as HTMLInputElement).focus();
+
       return toast('비밀번호 확인이 비밀번호와 일치하지 않습니다.', {
         icon: '😢',
         duration: 2000,
       });
     }
-    if (!name || name.length > 6) {
+    if (!name || name.length >= 20) {
+      (nameInput.current as HTMLInputElement).focus();
+
       return toast('이름을 확인해주세요.', {
         icon: '😢',
         duration: 2000,
@@ -117,20 +204,15 @@ export default function Join() {
     }
 
     if (!phone || phoneReg(phone) || phone.length <= 9) {
+      (phoneInput.current as HTMLInputElement).focus();
       return toast('전화번호 형식을 확인해주세요.', {
         icon: '😢',
         duration: 2000,
       });
     }
 
-    if (!emailReg(email) || !email) {
-      return toast('이메일 형식을 확인해주세요.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
     if (!isAgree.useAgree || !isAgree.privacyAgree) {
-      return toast('필수약관동의란을 확인해주세요.', {
+      return toast('필수 약관 동의란을 확인해주세요.', {
         icon: '😢',
         duration: 2000,
       });
@@ -154,7 +236,10 @@ export default function Join() {
   const [isAllAgree, setAllAgree] = useState(false);
   //모두 동의 체크박스 기능
   const allAgree = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.checked === true ? setAllAgree(true) : setAllAgree(false);
+    e.target.checked ? setAllAgree(true) : setAllAgree(false);
+    e.target.checked
+      ? setAgree({ ...isAgree, allAgree: true })
+      : setAgree({ ...isAgree, allAgree: false });
     console.log(isAllAgree);
   };
   //각자 동의 체크박스 기능
@@ -183,6 +268,31 @@ export default function Join() {
     setAgree({ ...isAgree, [e.target.name]: e.target.checked });
   };
 
+  useEffect(() => {
+    if (!isAgree.emailAgree && !isAgree.privacyAgree && !isAgree.useAgree) {
+      setAllAgree(false);
+    }
+    if (!isAgree.emailAgree || !isAgree.privacyAgree || !isAgree.useAgree) {
+      setAgree({ ...isAgree, allAgree: false });
+    }
+    if (isAgree.emailAgree && isAgree.privacyAgree && isAgree.useAgree) {
+      return setAgree({ ...isAgree, allAgree: true });
+    }
+  }, [isAgree.emailAgree, isAgree.privacyAgree, isAgree.useAgree]);
+
+  useEffect(() => {
+    if (isAgree.allAgree) {
+      setAgree({
+        allAgree: true,
+        emailAgree: true,
+        privacyAgree: true,
+        useAgree: true,
+      });
+    }
+    if (isAgree.allAgree) {
+      return setAllAgree(true);
+    }
+  }, [isAgree.allAgree]);
   console.log(isAgree);
   console.log(isAllAgree);
   console.log(joinInfo.emailAgree);
@@ -205,6 +315,7 @@ export default function Join() {
                 </td>
                 <td className="flex flex-row p-3">
                   <input
+                    ref={emailInput}
                     name="email"
                     onChange={handleJoinInfo}
                     type="text"
@@ -216,9 +327,8 @@ export default function Join() {
                     onClick={handleCheckEmail}
                     className="border-2 text-sm font-bold bg-gray-50 text-gray-500 py-0.5 px-1 mx-1.5 hover:bg-gray-200 rounded-lg"
                   >
-                    이메일확인
+                    중복확인
                   </button>
-                  <p className="text-gray-500 ">(이메일 형식)</p>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -230,6 +340,7 @@ export default function Join() {
                 </td>
                 <td className="flex flex-row p-3">
                   <input
+                    ref={passwordInput}
                     name="password"
                     onChange={handleJoinInfo}
                     type="password"
@@ -247,8 +358,9 @@ export default function Join() {
                     *
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="p-3 flex items-center gap-2">
                   <input
+                    ref={checkPasswordInput}
                     name="checkPassword"
                     type="password"
                     className="border border-gray-300 rounded w-32"
@@ -256,6 +368,15 @@ export default function Join() {
                     required
                     onChange={handleCheckPassword}
                   />
+                  <p
+                    className={
+                      password !== checkPassword
+                        ? 'text-red-400 text-sm font-semibold '
+                        : 'text-blue-400 text-sm font-semibold'
+                    }
+                  >
+                    {validationInfo.password}
+                  </p>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -265,8 +386,9 @@ export default function Join() {
                     *
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="p-3 flex items-center gap-2">
                   <input
+                    ref={nameInput}
                     name="name"
                     onChange={handleJoinInfo}
                     type="text"
@@ -274,10 +396,13 @@ export default function Join() {
                     id="inputName"
                     required
                   />
+                  <p className="text-red-400 text-sm font-semibold">
+                    {validationInfo.name}
+                  </p>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3">
+                <td className="bg-gray-100 p-3 ">
                   <label htmlFor="inputPhone">휴대전화</label>
                   <label htmlFor="inputPhone2" className="sr-only">
                     휴대전화
@@ -286,7 +411,7 @@ export default function Join() {
                     *
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="p-3 flex items-center gap-0.5">
                   <select
                     name="phoneFont"
                     id=""
@@ -301,6 +426,7 @@ export default function Join() {
                   </select>
                   -
                   <input
+                    ref={phoneInput}
                     type="text"
                     name="phoneMiddle"
                     onChange={handlePhoneNumberList}
@@ -315,26 +441,17 @@ export default function Join() {
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
                   />
+                  <p
+                    className={
+                      phoneReg(joinInfo.phone) || joinInfo.phone.length <= 9
+                        ? 'text-red-400 text-sm font-semibold '
+                        : 'text-blue-400 text-sm font-semibold'
+                    }
+                  >
+                    {validationInfo.phone}
+                  </p>
                 </td>
               </tr>
-              {/* <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3">
-                  <label htmlFor="emailInput">이메일</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="p-3">
-                  <input
-                    name="email"
-                    onChange={handleJoinInfo}
-                    type="email"
-                    className="border border-gray-300 rounded w-32"
-                    id="emailInput"
-                    required
-                  />
-                </td>
-              </tr> */}
             </tbody>
           </table>
 
@@ -348,14 +465,8 @@ export default function Join() {
                     className="mr-1 w-5"
                     name="allAgree"
                     id="allAgree"
+                    checked={isAgree.allAgree}
                     onChange={allAgree}
-                    checked={
-                      !isAgree.useAgree ||
-                      !isAgree.privacyAgree ||
-                      !isAgree.emailAgree
-                        ? false
-                        : true
-                    }
                   />
                   <label htmlFor="allAgree">
                     이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두
