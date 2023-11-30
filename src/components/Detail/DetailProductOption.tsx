@@ -17,7 +17,7 @@ function DetailProductOption({ data }: { data: any }) {
   };
   if (data) {
     return (
-      <section className="w-full text-left max-w-[500px]">
+      <section className="w-full text-left max-w-[500px] ml-auto">
         <table className="detailTable w-full">
           <caption className="hidden">상품 설명</caption>
           <thead className="text-2xl font-bold border-b border-b-gray-300">
@@ -42,13 +42,7 @@ function DetailProductOption({ data }: { data: any }) {
         </table>
         <form>
           {data?.options.length > 0 && (
-            <DetailProductSelect
-              data={data}
-              option={data.options}
-              quantity={quantity}
-              handleClickUp={handleClickUp}
-              handleClickDown={handleClickDown}
-            />
+            <DetailProductSelect data={data} option={data.options} />
           )}
           {data?.options.length === 0 && (
             <DetailProductResult
