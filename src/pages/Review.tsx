@@ -11,14 +11,7 @@ import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 export default function Review() {
-  const {
-    data,
-    setData,
-    setPageData,
-    setSelectId,
-    setSelectData,
-    setSelectOrderId,
-  } = useData();
+  const { setSelectId, setSelectData, setSelectOrderId } = useData();
   const { setAttachFile } = useForm();
   // 현재 후기 조회안됨 -> 곧 API 구현 예정
   // 더미데이터 가지고오기
@@ -34,15 +27,6 @@ export default function Review() {
     setSelectOrderId(null);
     setAttachFile('');
   }, []);
-
-  // 실험중
-  // useEffect(() => {
-  //   setData(sortReviewData);
-  //   setPageData(data.slice(0, 10));
-  // }, [setData]);
-
-  // console.log('리뷰페이지 ');
-  // console.log(data);
 
   return (
     <>
