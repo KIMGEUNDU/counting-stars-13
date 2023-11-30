@@ -37,10 +37,10 @@ export default function EditMember() {
   const handleGetuserInfo = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/users/${AUTH_ID}`,
+        `https://localhost/api/users/${AUTH_ID()}`,
         {
           headers: {
-            Authorization: `Bearer ${AUTH_TOKEN}`,
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
           },
         }
       );
