@@ -1,3 +1,5 @@
+import { useUserInfo } from '@/store/useUserInfo';
+
 interface DetailButton {
   btn1: string;
   btn2?: string;
@@ -7,6 +9,7 @@ interface DetailButton {
   onClick3: () => void;
   style: string;
   center?: string;
+  writer?: string;
 }
 
 function DetailButton({
@@ -18,7 +21,11 @@ function DetailButton({
   onClick3,
   style,
   center,
+  writer,
 }: DetailButton) {
+  // 로그인유저정보
+  const { userInfo } = useUserInfo();
+
   return (
     <div className={`${center} flex gap-4 justify-between py-5 mb-10`}>
       <button type="button" className={style} onClick={onClick1}>
@@ -29,13 +36,15 @@ function DetailButton({
           {btn2}
         </button>
       )}
-      <button
-        type="button"
-        className={`${style} bg-starBlack text-white`}
-        onClick={onClick3}
-      >
-        {btn3}
-      </button>
+      {userInfo && userInfo.name === writer && (
+        <button
+          type="button"
+          className={`${style} bg-starBlack text-white`}
+          onClick={onClick3}
+        >
+          {btn3}
+        </button>
+      )}
     </div>
   );
 }

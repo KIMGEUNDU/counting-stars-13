@@ -20,7 +20,7 @@ function ModalSelectOrderResult({
         `https://localhost/api/products/${selectOrderId}`,
         {
           headers: {
-            Authorization: `Bearer ${AUTH_TOKEN}`,
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
           },
         }
       );

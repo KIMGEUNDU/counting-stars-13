@@ -32,7 +32,7 @@ function ReviewProductItem({
         <button
           type="button"
           onClick={() => navigator(link)}
-          className="bg-starBlack text-white px-2 py-1 mt-5 w-1/6"
+          className="bg-starBlack text-white px-4 py-1 mt-5 max-w-fit"
         >
           상품 상세보기
         </button>

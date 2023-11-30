@@ -13,7 +13,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     async function getOrderData() {
       const response = await axios.get(`https://localhost/api/orders`, {
         headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
@@ -21,8 +21,9 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         (v: UserOrderData) => v.products
       );
 
-      // 스프레드로 가져올수있는데 타입에러가 난다.
-      setOrderData(...productsArray);
+      // 스프레드로 가져올수있는데 타입에러가 난다. -> 이러면되려나
+      // 주문목록 다 되면 시도해볼 예정
+      setOrderData(productsArray.join());
     }
 
     getOrderData();
@@ -41,25 +42,43 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       </div>
       <table className="w-11/12 m-auto">
         <thead className="border-t border-t-gray-400 border-b border-b-gray-300 bg-gray-50">
-          <th className="font-normal py-1 w-[20%]">상품 이미지</th>
-          <th className="font-normal py-1 w-[40%]">상품 정보</th>
-          <th className="font-normal py-1">주문 일시</th>
-          <th className="font-normal py-1 w-[20%]">선택</th>
+          <tr>
+            <th className="font-normal py-1 w-[20%]">상품 이미지</th>
+            <th className="font-normal py-1 w-[40%]">상품 정보</th>
+            <th className="font-normal py-1">주문 일시</th>
+            <th className="font-normal py-1 w-[20%]">선택</th>
+          </tr>
         </thead>
         <tbody>
-          {orderData.map((v, i) => (
-            <ModalSelectOrderResult
-              key={i}
-              src={v.image}
-              title={v.name}
-              date="2023-10-10 08:24:33"
-              price={v.price}
-              id={v._id}
-            />
-          ))}
+          {orderData &&
+            orderData.map((v, i) => (
+              <ModalSelectOrderResult
+                key={i}
+                src={v.image}
+                title={v.name}
+                date="2023-10-10 08:24:33"
+                price={v.price}
+                id={v._id}
+              />
+            ))}
+          {orderData.length === 0 && (
+            <tr>
+              <td
+                colSpan={4}
+                className="text-center py-3 text-starPink font-bold"
+              >
+                주문목록이 없습니다 : &#41;
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          )}
         </tbody>
       </table>
-      <PaginationNumber length={Math.ceil(orderData.length / 10)} />
+      <PaginationNumber
+        length={orderData ? Math.ceil(orderData.length / 10) : 1}
+      />
     </div>
   );
 }
