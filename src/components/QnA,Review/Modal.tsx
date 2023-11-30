@@ -35,20 +35,12 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       setDataLengthPage(Math.ceil(data.length / 10));
       setPageNumber(1);
     }
-  }, [
-    data,
-    fetchData,
-    setData,
-    setDataLength,
-    setDataLengthPage,
-    setPageData,
-    setPageNumber,
-  ]);
+  }, []);
 
   return (
     <div
       id="modal"
-      className="bg-white border border-gray-300 w-[600px] h-[700px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-10 overflow-y-scroll"
+      className="bg-white border border-gray-300 w-[600px] h-[700px] absolute top-[20%] left-1/2  -translate-x-1/2 z-10 overflow-y-scroll"
     >
       <div className="flex justify-between bg-starPink p-3 font-bold">
         <h3>상품 선택</h3>
@@ -78,9 +70,9 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
             pageData.map((v, i) => (
               <ModalSearchResult
                 key={i}
-                src={v.detailImages[0]}
-                title={v.name}
-                price={String(v.price)}
+                src={(v as Data).detailImages[0]}
+                title={(v as Data).name}
+                price={String((v as Data).price)}
                 id={v._id}
               />
             ))}
