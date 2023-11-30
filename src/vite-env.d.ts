@@ -41,14 +41,22 @@ interface DetailProductResult {
   handleClickDown: () => void;
 }
 
-interface QnaReviewTable {
-  title: string;
-  writer: string;
-  content: string | undefined;
-  date?: string;
-  view?: string;
-  grade?: number;
+interface QnaReviewData {
+  _id?: number,
+  title?: string,
+  writer: string,
   writerId?: string;
+  date?: string | undefined,
+  attachFile?: string,
+  content?: string,
+  tag?: string,
+  grade?: number,
+  attachFile?: string;
+  productId?: number;
+  productName?: string;
+  productPrice?: number;
+  productImg?: string;
+  qnaId?: number;
 }
 
 interface Data {
@@ -93,19 +101,4 @@ interface UserOrderData {
   products: OrderData[];
   user_id: number;
   _id: number;
-}
-
-interface QnaReviewData {
-  _id: string,
-  title: string,
-  writer: string,
-  date: string,
-  content?: string,
-  tag?: string,
-  grade?: number,
-  attachFile?: string;
-  productId?: number;
-  productName?: string;
-  productPrice?: number;
-  productImg?: string;
 }
