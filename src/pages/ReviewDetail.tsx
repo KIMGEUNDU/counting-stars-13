@@ -1,12 +1,13 @@
 import DetailButton from '@/components/Detail/DetailButton';
 import PageMap from '@/components/PageMap';
 import CommentInput from '@/components/QnA,Review/CommentInput';
+import CommentItem from '@/components/QnA,Review/CommentItem';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import RelatedPosts from '@/components/QnA,Review/RelatedPosts';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { dummyData } from '@/store/dummyData';
+import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
@@ -17,7 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function ReviewDetail() {
   const navigate = useNavigate();
-  const { reviewData } = dummyData();
+  const { reviewData, deleteReviewData } = dummyData();
   const { id } = useParams();
   const dataId = Number(id) - 1;
   const length = reviewData.length;
@@ -26,21 +27,33 @@ function ReviewDetail() {
   const next = reviewData[dataId + 1];
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
+  // 임시 qna댓글값
+  const { review } = useComment();
+  const idFilterComment = review.filter((v) => v.qnaId === Number(id));
 
-  // 수정이벤트
-  const handleEdit = () => {
-    toast('해당 기능은 지원되지않습니다', {
-      icon: '⭐',
-      duration: 2000,
-    });
+  // 삭제이벤트
+  const handleDelete = () => {
+    const answer = confirm('정말 삭제하시겠습니까?');
+    const deleteReview = reviewData.filter((v) => v._id !== Number(id));
+
+    if (answer) {
+      deleteReviewData(deleteReview);
+
+      toast('삭제되었습니다.', {
+        icon: '⭐',
+        duration: 2000,
+      });
+
+      navigate('/review');
+    }
   };
 
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID}`, {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
         headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
@@ -50,8 +63,6 @@ function ReviewDetail() {
     getUsers();
   }, [setUserInfo]);
 
-  console.log(prev);
-
   return (
     <>
       <Helmet>
@@ -59,29 +70,46 @@ function ReviewDetail() {
       </Helmet>
 
       <div>
-        <PageMap route="게시판" category="상품 사용후기" />
+        <PageMap route="review" category="상품 사용후기" />
         <PageDetailTitle title="상품 사용후기" explan="상품 사용후기입니다." />
-        <ReviewProductItem
-          link={`/detail/${current.productId}`}
-          thumbnail={current.productImg}
-          name={current.productName}
-          price={current.productPrice}
-        />
+        {current.productId && (
+          <ReviewProductItem
+            link={`/detail/${current.productId}`}
+            thumbnail={current.productImg}
+            name={current.productName}
+            price={current.productPrice}
+          />
+        )}
         <PageDetailTable
           title={current.title}
           writer={current.writer}
           grade={current.grade}
+          date={current.date}
           content={current.content}
         />
         <DetailButton
           btn1="목록"
           btn3="삭제"
           onClick1={() => navigate('/review')}
-          onClick3={handleEdit}
+          onClick3={handleDelete}
           style="quaReviewDetailButton"
           center="center"
+          writer={current.writer}
         />
-        {userInfo && <CommentInput writer={userInfo.name} />}
+        {idFilterComment &&
+          idFilterComment.map((v, i) => (
+            <CommentItem
+              key={i}
+              writer={v.writer}
+              date={v.date}
+              content={v.content}
+              writerId={v.writerId}
+              collection="review"
+            />
+          ))}
+        {userInfo && (
+          <CommentInput writer={userInfo.name} collection="review" />
+        )}
         {
           <PageListOrder
             prev={prev ? prev.title : ''}
@@ -92,7 +120,6 @@ function ReviewDetail() {
             length={length}
           />
         }
-        <RelatedPosts />
       </div>
     </>
   );
