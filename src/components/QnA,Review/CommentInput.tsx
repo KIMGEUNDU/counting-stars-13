@@ -2,10 +2,18 @@ import { useComment } from '@/store/useComment';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { writeDate } from '@/utils/writeDate';
 import { FormEvent, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
-function CommentInput({ writer }: { writer: string }) {
-  const { setQna } = useComment();
+function CommentInput({
+  writer,
+  collection,
+}: {
+  writer: string;
+  collection: string;
+}) {
+  const { qna, setQna, review, setReview } = useComment();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
+  const { id } = useParams();
 
   // 임시 댓글 달기
   const uploadComment = (e: FormEvent) => {
@@ -13,13 +21,19 @@ function CommentInput({ writer }: { writer: string }) {
 
     if (commentRef.current && commentRef.current.value) {
       const comment = {
+        _id: collection === 'qna' ? qna.length + 1 : review.length + 1,
         writer,
         content: commentRef.current.value,
         date: writeDate(),
-        writerId: String(AUTH_ID),
+        writerId: String(AUTH_ID()),
+        qnaId: Number(id),
       };
 
-      setQna(comment);
+      if (collection === 'qna') {
+        setQna(comment);
+      } else {
+        setReview(comment);
+      }
       commentRef.current.value = '';
     }
   };
@@ -52,6 +66,12 @@ function CommentInput({ writer }: { writer: string }) {
           className="w-full h-12 border border-gray-300 mr-3 focus:outline-2 focus:outline-starPink p-2"
           required
           ref={commentRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              uploadComment(e);
+            }
+          }}
         />
         <button
           type="submit"

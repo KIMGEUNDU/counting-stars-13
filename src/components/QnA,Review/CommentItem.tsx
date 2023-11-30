@@ -3,16 +3,22 @@ import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import toast from 'react-hot-toast';
 
 function CommentItem({
+  _id,
   writer,
   date,
   content,
   writerId,
-}: Pick<QnaReviewTable, 'writer' | 'date' | 'content' | 'writerId'>) {
-  const { qna, setDelete } = useComment();
+  collection,
+}: QnaReviewData & {
+  collection: string;
+}) {
+  const { qna, setDeleteQna, review, setDeleteReview } = useComment();
+  const userId = AUTH_ID();
 
   // 댓글삭제하기
   const deleteComment = () => {
-    const result = qna.filter((v) => v.content !== content);
+    const resultQna = qna.filter((v) => v._id !== _id);
+    const resultReview = review.filter((v) => v._id !== _id);
 
     const answer = confirm('정말 삭제하시겠습니까?');
 
@@ -22,7 +28,11 @@ function CommentItem({
         duration: 2000,
       });
 
-      setDelete(result);
+      if (collection === 'qna') {
+        setDeleteQna(resultQna);
+      } else {
+        setDeleteReview(resultReview);
+      }
     }
   };
 
@@ -31,7 +41,7 @@ function CommentItem({
       <div className="flex gap-4 border-b border-b-gray-300 p-3">
         <span className="font-semibold">{writer}</span>
         <span>{date}</span>
-        {writerId === AUTH_ID && (
+        {writerId === userId && (
           <button type="button" onClick={deleteComment}>
             <img src="/deleteIcon.png" alt="삭제하기" className="w-5 h-5" />
           </button>
