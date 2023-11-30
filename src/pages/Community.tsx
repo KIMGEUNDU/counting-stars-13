@@ -28,7 +28,7 @@ export default function Community() {
               {sortNotice.map((v, i) => (
                 <EachPost
                   key={i}
-                  tag={v.tag}
+                  tag={v.tag ? v.tag : ''}
                   title={v.title}
                   writer={v.writer}
                   date={v.date}
