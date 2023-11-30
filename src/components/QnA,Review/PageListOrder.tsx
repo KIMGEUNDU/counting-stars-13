@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
 interface PageListOrder {
-  prev: string;
-  next: string;
+  prev: string | undefined;
+  next: string | undefined;
   prevLink: string;
   nextLink: string;
   _id: number;
@@ -20,38 +20,38 @@ function PageListOrder({
   return (
     <table className="pageListOrder center text-left text-sm mb-10">
       <tbody>
-        {_id !== 1 && (
-          <tr>
-            <th>
-              <img
-                src="/pageListArrow.png"
-                alt="이전글"
-                aria-hidden
-                className="w-3 h-3 inline mr-2"
-              />
-              이전글
-            </th>
-            <td>
-              <p className="w-1/3 truncate">
-                <Link to={prevLink}>{prev}</Link>
-              </p>
-            </td>
-          </tr>
-        )}
         {_id !== length && (
           <tr>
-            <th>
+            <th className="whitespace-nowrap">
               <img
                 src="/pageListArrow.png"
                 alt="다음글"
                 aria-hidden
-                className="w-3 h-3 rotate-180 inline mr-2"
+                className="w-3 h-3 inline mr-2"
               />
               다음글
             </th>
             <td>
               <p className="w-1/3 truncate">
                 <Link to={nextLink}>{next}</Link>
+              </p>
+            </td>
+          </tr>
+        )}
+        {_id !== 1 && (
+          <tr>
+            <th className="whitespace-nowrap">
+              <img
+                src="/pageListArrow.png"
+                alt="이전글"
+                aria-hidden
+                className="w-3 h-3 rotate-180 inline mr-2"
+              />
+              이전글
+            </th>
+            <td>
+              <p className="w-1/3 truncate">
+                <Link to={prevLink}>{prev}</Link>
               </p>
             </td>
           </tr>
