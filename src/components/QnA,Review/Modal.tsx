@@ -35,7 +35,15 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       setDataLengthPage(Math.ceil(data.length / 10));
       setPageNumber(1);
     }
-  }, []);
+  }, [
+    data,
+    fetchData,
+    setData,
+    setDataLength,
+    setDataLengthPage,
+    setPageData,
+    setPageNumber,
+  ]);
 
   return (
     <div
