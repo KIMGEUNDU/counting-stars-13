@@ -20,7 +20,8 @@ import { useNavigate } from 'react-router-dom';
 export default function WriteQna() {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { content, attachFile } = useForm();
-  const { modal, setModal, selectId, selectData } = useData();
+  const { modal, setModal, selectId, selectData, setData, setPageData } =
+    useData();
   const { qnaData, setQnaData } = dummyData();
   const navigate = useNavigate();
   // 로그인유저정보
@@ -143,9 +144,11 @@ export default function WriteQna() {
     getUsers();
   }, [setUserInfo]);
 
-  // console.log('selectId = ' + selectId);
-  // console.log('selectData = ' + selectData);
-  // console.log('userInfo = ' + userInfo);
+  // data, pageData 리셋
+  useEffect(() => {
+    setData([]);
+    setPageData([]);
+  }, []);
 
   return (
     <>

@@ -5,9 +5,14 @@ function PageDetailTable({
   date,
   grade,
   attachFile,
-}: QnaReviewData) {
+  collection,
+}: QnaReviewData & { collection: boolean }) {
   const writerPrivate = (writer: string) => {
-    return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
+    if (writer === '별해달') {
+      return writer;
+    } else {
+      return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
+    }
   };
 
   return (
@@ -55,10 +60,21 @@ function PageDetailTable({
       </ul>
       {attachFile && (
         <p className="py-5">
-          <img className="w-48 h-auto m-auto" src={attachFile} alt="첨부파일" />
+          <img
+            className={`h-auto m-auto ${collection ? 'w-[700px]' : 'w-48'}`}
+            src={attachFile}
+            alt="첨부파일"
+          />
         </p>
       )}
-      <p className="py-10 px-2 border-b border-b-gray-200">{content}</p>
+      {!collection && (
+        <p className="py-10 px-2 border-b border-b-gray-200">{content}</p>
+      )}
+      {collection && (
+        <code className="py-10 px-2 border-b border-b-gray-200 text-4xl text-center">
+          {content}
+        </code>
+      )}
     </div>
   );
 }
