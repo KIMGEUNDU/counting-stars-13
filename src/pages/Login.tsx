@@ -105,7 +105,7 @@ export default function Login() {
                   id="memberId"
                   className="border border-gray-200 mb-2 p-2 text-sm w-full"
                   placeholder="이메일"
-                  onChange={debounce(handleLoginInfo, 1000)}
+                  onChange={debounce(handleLoginInfo, 300)}
                 />
                 <label htmlFor="memberPw" className="sr-only">
                   비밀번호
@@ -116,7 +116,7 @@ export default function Login() {
                   id="memeberPw"
                   className="border border-gray-200 p-2 text-sm w-full"
                   placeholder="비밀번호"
-                  onChange={debounce(handleLoginInfo, 1000)}
+                  onChange={debounce(handleLoginInfo, 300)}
                 />
               </div>
               <button

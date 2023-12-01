@@ -1,4 +1,4 @@
-//TODO: 로그인시 헤더 변경
+//notice란을 삭제
 import { useLogin } from '@/store/useLogin';
 // import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ export default function Header() {
   // const { setUserInfo } = useUserInfo();
 
   //로컬 스토리지의 아이디 값 가져오기
-  let isLoginState = localStorage.getItem('id');
+  const isLoginState = localStorage.getItem('id');
 
   useEffect(() => {
     localStorage.getItem('token') ? setLogin(true) : setLogin(false);
@@ -64,9 +64,6 @@ export default function Header() {
                 <Link to="/community ">Community</Link>
 
                 <div className=" group/edit group-hover/item:visible  invisible  absolute bg-white rounded-md py-1 border w-32 text-center text-sm font-medium  left-[-13px] mt-2">
-                  <Link to="/community" className="block py-1">
-                    Notice
-                  </Link>
                   <Link to="/qna" className="block py-1">
                     Q&A
                   </Link>

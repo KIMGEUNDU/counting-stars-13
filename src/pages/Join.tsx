@@ -1,4 +1,8 @@
 //TODO: phone input에 숫자만 찍히게
+//✔️TODO: 회원가입되면 토스트되게
+// ✔️TODO: 회원가입 전화번호 오류 중간자리(3~4자리) 끝자리(4자리)
+// ✔️TODO: phone input 4자리 적으면 다음으로 넘어가게
+
 import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
@@ -14,6 +18,7 @@ export default function Join() {
   const checkPasswordInput = useRef<HTMLInputElement>(null);
   const nameInput = useRef<HTMLInputElement>(null);
   const phoneInput = useRef<HTMLInputElement>(null);
+  const LastPhoneInput = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
   const [joinInfo, setJoinInfo] = useState({
@@ -102,14 +107,15 @@ export default function Join() {
         phone: '',
       });
     }
-    phoneReg(joinInfo.phone) || joinInfo.phone.length <= 9
+    phoneNumberList.phoneMiddle.length < 3 ||
+    phoneNumberList.phoneLast.length < 4
       ? setValidationInfo({
           ...validationInfo,
-          phone: '✏️휴대전화 번호를 9자리이상 적어주세요.',
+          phone: '✏️휴대전화 번호를 10자리이상 적어주세요.',
         })
       : setValidationInfo({
           ...validationInfo,
-          phone: '😀완료 되었습니다',
+          phone: '',
         });
   }, [joinInfo.phone]);
 
@@ -129,6 +135,10 @@ export default function Join() {
   // 핸드폰 번호 합쳐서 JoinInfo에 담기
   useEffect(() => {
     setJoinInfo({ ...joinInfo, phone: phoneFont + phoneMiddle + phoneLast });
+    if (phoneNumberList.phoneMiddle.length > 3) {
+      (LastPhoneInput.current as HTMLInputElement).focus();
+    }
+    console.log(phoneNumberList);
   }, [phoneNumberList]);
 
   //이메일 중복체크
@@ -226,7 +236,10 @@ export default function Join() {
 
       if (response.data.ok === 1) {
         navigate('/');
-        console.log('회원가입 성공');
+        toast(`회원가입이 완료 되었습니다.`, {
+          icon: '🎉',
+          duration: 2500,
+        });
       }
     } catch (e) {
       return alert('회원가입 오류.');
@@ -435,6 +448,7 @@ export default function Join() {
                   />
                   -
                   <input
+                    ref={LastPhoneInput}
                     type="text"
                     name="phoneLast"
                     onChange={handlePhoneNumberList}
@@ -443,9 +457,9 @@ export default function Join() {
                   />
                   <p
                     className={
-                      phoneReg(joinInfo.phone) || joinInfo.phone.length <= 9
+                      phoneReg(joinInfo.phone) || joinInfo.phone.length <= 10
                         ? 'text-red-400 text-sm font-semibold '
-                        : 'text-blue-400 text-sm font-semibold'
+                        : ''
                     }
                   >
                     {validationInfo.phone}
