@@ -76,11 +76,11 @@ export default function Shop() {
         </ul>
         <ul className="flex gap-4 flex-wrap text-center py-3">
           {data &&
-            data.map((item: any) => {
+            data.map((item: ProductData) => {
               return (
                 <li key={item._id}>
                   <ProductItem
-                    link={item._id}
+                    link={`${item._id}`}
                     src={item.mainImages[0]}
                     title={item.name}
                     price={item.price}

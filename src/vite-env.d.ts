@@ -42,15 +42,15 @@ interface DetailProductResult {
 }
 
 interface QnaReviewData {
-  _id?: number,
-  title?: string,
-  writer: string,
+  _id?: number;
+  title?: string;
+  writer: string;
   writerId?: string;
-  date?: string | undefined,
-  attachFile?: string,
-  content?: string,
-  tag?: string,
-  grade?: number,
+  date?: string | undefined;
+  attachFile?: string;
+  content?: string;
+  tag?: string;
+  grade?: number;
   attachFile?: string;
   productId?: number;
   productName?: string;
@@ -95,10 +95,39 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string, value: string; };
-  cost: { products: number, shippingFees: number, total: number; };
+  address: { name: string; value: string };
+  cost: { products: number; shippingFees: number; total: number };
   createdAt: string;
   products: OrderData[];
   user_id: number;
   _id: number;
+}
+
+interface ProductData {
+  _id: number;
+  seller_id: number;
+  price: number;
+  shippingFees: number;
+  show: boolean;
+  active: boolean;
+  name: string;
+  options: { [key: string]: string }[];
+  mainImages: string[];
+  detailImages: string[];
+  descriptImages: string[];
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  quantity: number;
+  buyQuantity: number;
+  extra: {
+    isNew: boolean;
+    isBest: boolean;
+    category: string[];
+    sort: number;
+  };
+}
+
+interface optionObject {
+  [key: string]: string;
 }
