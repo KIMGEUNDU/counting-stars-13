@@ -10,7 +10,6 @@ function DetailProductSelect({
   const [info] = useState<{ [key: string]: number }>({});
   const [count, setCount] = useState<{ [key: string]: number }>({});
   const [selectOption, setSelectOption] = useState<string[]>([]);
-
   useEffect(() => {
     option.map((item: string | optionObject) => {
       if (typeof item === 'string') {
@@ -19,7 +18,7 @@ function DetailProductSelect({
       }
       if (item instanceof Object) {
         const optionName = Object.values(item)[0] as string;
-        if (!optionName.includes('+')) {
+        if (!optionName.includes('+') && !optionName.includes('-')) {
           info[optionName] = data.price;
           count[optionName] = 0;
           return;
@@ -58,7 +57,7 @@ function DetailProductSelect({
 
   return (
     <>
-      <fieldset className="py-5 flex">
+      <fieldset className="py-5 flex border-b border-gray-300">
         <label htmlFor="selectOption" className="w-32">
           옵션 선택
         </label>
@@ -98,7 +97,7 @@ function DetailProductSelect({
         selectOption.map((item: string, index) => (
           <fieldset
             key={index}
-            className="border-b border-t border-t-gray-500 border-b-gray-500 py-3 flex justify-between items-center"
+            className="border-b border-b-gray-200 py-3 flex justify-between items-center"
           >
             <div className="min-w-[50%]">
               <p className="text-sm">{data?.name}</p>
@@ -127,11 +126,11 @@ function DetailProductSelect({
                 </button>
               )}
             </div>
-            {!item.includes('+') && (
+            {!item.includes('+') && !item.includes('-') && (
               <span className="text-sm">{data.price.toLocaleString()} 원</span>
             )}
-            {item.includes('+') && (
-              <span className="text-sm">{info[item].toLocaleString()}원</span>
+            {(item.includes('+') || item.includes('-')) && (
+              <span className="text-sm">{info[item].toLocaleString()} 원</span>
             )}
           </fieldset>
         ))}
