@@ -3,7 +3,7 @@ import DetailButton from './DetailButton';
 import DetailProductResult from './DetailProductResult';
 import DetailProductSelect from './DetailProductSelect';
 
-function DetailProductOption({ data }: { data: any }) {
+function DetailProductOption({ data }: { data: ProductData }) {
   const [quantity, setQuantity] = useState(1);
 
   const handleClickUp = () => {
@@ -47,7 +47,7 @@ function DetailProductOption({ data }: { data: any }) {
           {data?.options.length === 0 && (
             <DetailProductResult
               name={data?.name}
-              price={data?.price}
+              price={`${data?.price}`}
               option=""
               quantity={quantity}
               required={data?.options.length > 0}
