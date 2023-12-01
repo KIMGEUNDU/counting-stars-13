@@ -38,11 +38,11 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
   }, [
     data,
     fetchData,
-    setData,
-    setDataLength,
-    setDataLengthPage,
-    setPageData,
-    setPageNumber,
+    // setData,
+    // setDataLength,
+    // setDataLengthPage,
+    // setPageData,
+    // setPageNumber,
   ]);
 
   return (
