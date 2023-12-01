@@ -32,7 +32,7 @@ export default function Header() {
   return (
     <header className="relative z-50">
       <div className="w-full border-b-2 flex justify-center fixed h-[96px] bg-white">
-        <div className=" w-4/5 ">
+        <div className="center">
           <h1 className="sr-only">별해달</h1>
           <nav className="flex gap-9 justify-between">
             <ul className="w-4/10 flex items-center gap-14 font-bold">
@@ -61,8 +61,7 @@ export default function Header() {
               </li>
 
               <li className="group/item  px-2 py-5 relative">
-                <Link to="/community ">Community</Link>
-
+                Community
                 <div className=" group/edit group-hover/item:visible  invisible  absolute bg-white rounded-md py-1 border w-32 text-center text-sm font-medium  left-[-13px] mt-2">
                   <Link to="/qna" className="block py-1">
                     Q&A
@@ -73,12 +72,11 @@ export default function Header() {
                 </div>
               </li>
             </ul>
-            <Link to="/" aria-label="홈페이지로 가기" className="mx-12">
+            <Link to="/" aria-label="홈페이지로 가기">
               <img src="/logoChar.png" className="min-w-[90px] w-[90px]" />
             </Link>
-            {/* <button aria-label="홈페이지로 가기" ></button> */}
             <div className="flex gap-4 relative items-center">
-              <ul className="flex w-4/10 text-xs items-center gap-5">
+              <ul className="flex w-4/10 items-center gap-5">
                 <li className="min-w-[47px]">
                   {isLoginState ? (
                     <Link
@@ -125,23 +123,6 @@ export default function Header() {
                   className="min-w-[20px] w-[20px]"
                 />
               </Link>
-              {/* <form className="flex justify-around  w-[70%] h-[40%] absolute bottom-[-1px]  right-0 border-starPink border-[1px] rounded-xl z-30">
-                <input
-                  type="search"
-                  placeholder="검색"
-                  className="w-[70%] mx-2 "
-                />
-                <button
-                  aria-label="검색 버튼"
-                  className="text-end mt-1 w-[15%]"
-                >
-                  <img
-                    src="/headerSearch.png"
-                    width="75%"
-                    className="w-[50%]"
-                  />
-                </button>
-              </form> */}
             </div>
           </nav>
         </div>
