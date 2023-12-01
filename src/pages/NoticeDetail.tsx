@@ -1,7 +1,5 @@
 import DetailButton from '@/components/Detail/DetailButton';
 import PageMap from '@/components/PageMap';
-import CommentInput from '@/components/QnA,Review/CommentInput';
-import CommentItem from '@/components/QnA,Review/CommentItem';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
@@ -17,7 +15,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function NoticeDetail() {
   const navigate = useNavigate();
-  const { notice } = dummyData();
+  const { notice, deleteNoticeData } = dummyData();
   const { id } = useParams();
   const dataId = Number(id) - 1;
   const length = notice.length;
@@ -34,7 +32,7 @@ function NoticeDetail() {
     const deleteNotice = notice.filter((v) => v._id !== Number(id));
 
     if (answer) {
-      deleteQnaData(deleteNotice);
+      deleteNoticeData(deleteNotice);
 
       toast('삭제되었습니다.', {
         icon: '⭐',

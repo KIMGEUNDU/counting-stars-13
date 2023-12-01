@@ -54,7 +54,7 @@ export default function EachPost({
             </div>
           </td>
         )}
-        {grade && <td className="truncate w-[12%] pl-6">{starGrade(grade)}</td>}
+        {grade && <td className="truncate w-1/12 pl-6">{starGrade(grade)}</td>}
         {link && (
           <td
             className={`text-left w-1/3 px-5 ${

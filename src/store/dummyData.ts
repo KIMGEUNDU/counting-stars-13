@@ -5,6 +5,8 @@ interface dummyData {
   deleteQnaData: (qnaData: QnaReviewData[]) => void;
   setQnaData: (qnaData: QnaReviewData) => void;
   notice: QnaReviewData[];
+  deleteNoticeData: (notice: QnaReviewData[]) => void;
+  setNoticeData: (notice: QnaReviewData) => void;
   reviewData: QnaReviewData[];
   deleteReviewData: (ReviewData: QnaReviewData[]) => void;
   setReviewData: (reviewData: QnaReviewData) => void;
@@ -501,6 +503,8 @@ export const dummyData = create<dummyData>((set) => ({
   ],
   deleteQnaData: (qnaData) => set({ qnaData }),
   deleteReviewData: (reviewData) => set({ reviewData }),
+  deleteNoticeData: (notice) => set({ notice }),
   setQnaData: (qnaData) => set((state) => ({ qnaData: [...state.qnaData, qnaData] })),
   setReviewData: (reviewData) => set((state) => ({ reviewData: [...state.reviewData, reviewData] })),
+  setNoticeData: (notice) => set((state) => ({ notice: [...state.notice, notice] })),
 }));
