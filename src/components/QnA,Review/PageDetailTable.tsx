@@ -6,7 +6,7 @@ function PageDetailTable({
   grade,
   attachFile,
   collection,
-}: QnaReviewData & { collection: boolean }) {
+}: QnaReviewData & { collection?: boolean }) {
   const writerPrivate = (writer: string) => {
     if (writer === '별해달') {
       return writer;
