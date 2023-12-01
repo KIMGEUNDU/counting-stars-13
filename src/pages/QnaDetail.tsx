@@ -66,7 +66,7 @@ function QnaDetail() {
   return (
     <>
       <Helmet>
-        <title>글 제목</title>
+        <title>{current.title}</title>
       </Helmet>
 
       <div>

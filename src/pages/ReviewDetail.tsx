@@ -66,7 +66,7 @@ function ReviewDetail() {
   return (
     <>
       <Helmet>
-        <title>글제목</title>
+        <title>{current.title}</title>
       </Helmet>
 
       <div>
@@ -85,6 +85,7 @@ function ReviewDetail() {
           writer={current.writer}
           grade={current.grade}
           date={current.date}
+          attachFile={current.attachFile}
           content={current.content}
         />
         <DetailButton
