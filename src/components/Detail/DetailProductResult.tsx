@@ -28,7 +28,7 @@ function DetailProductResult({
             </button>
           )}
         </div>
-        <span className="text-sm">{price.toLocaleString()} 원</span>
+        <span className="text-sm">{(+price).toLocaleString()} 원</span>
       </fieldset>
       <p className="py-6 border-b border-b-gray-300">
         <span className="font-bold">총 상품 금액</span>&#40;수량&#41;:
