@@ -1,4 +1,3 @@
-import { commaPrice } from '@/utils/getProductsData';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface ReviewProductItem {
@@ -25,7 +24,7 @@ function ReviewProductItem({
           </Link>
           {price && (
             <span className="text-blue-500 font-semibold">
-              {commaPrice(price)}원
+              {price.toLocaleString()}원
             </span>
           )}
         </div>
