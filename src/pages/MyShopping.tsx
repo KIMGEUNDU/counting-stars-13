@@ -11,7 +11,7 @@ export default function MyShopping() {
         <PageMainTitle title="마이쇼핑" />
         <div className="w-[80%] mx-auto mt-5">
           <section className="flex items-center gap-5 border-2 p-4 mb-8">
-            <img src="/public/avatar.gif" className=" pr-4 border-r-[1px]" />
+            <img src="/avatar.gif" className=" pr-4 border-r-[1px]" />
             <p>
               저희 쇼핑몰을 이용해주셔서 감사합니다. <strong>{name}</strong>님은
               <span className="font-bold text-starRed"> {memberGrade} </span>
@@ -69,7 +69,7 @@ export default function MyShopping() {
             </Link>
             <Link to="/edit" className="block w-1/4 border h-72 px-5">
               <img
-                src="/public/myShoppingProfile.png"
+                src="/myShoppingProfile.png"
                 className="m-auto w-12 mt-14 mb-6"
               />
               <span className="text-lg font-bold">Profile</span>
