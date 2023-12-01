@@ -14,7 +14,7 @@ function PageMap({
       </Link>
       <Link to={`/${route}`}>
         <span className={category ? '' : 'font-bold text-black'}>
-          {route} {category ? '＞' : ''}
+          {route.toUpperCase()} {category ? '＞' : ''}
         </span>
       </Link>
       {category && <span className="font-bold text-black">{category}</span>}
