@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type board = {
@@ -10,6 +11,7 @@ type board = {
   grade?: number;
   itemImg?: string;
   attachFile?: string | undefined;
+  collection?: string;
 };
 
 export default function EachPost({
@@ -22,7 +24,10 @@ export default function EachPost({
   link,
   itemImg,
   attachFile,
+  collection,
 }: board) {
+  const [view, setView] = useState(false);
+
   const writerPrivate = (writer: string) => {
     if (writer !== '별해달') {
       return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
@@ -49,27 +54,59 @@ export default function EachPost({
             </div>
           </td>
         )}
-        {grade && <td className="truncate w-[12%]">{starGrade(grade)}</td>}
+        {grade && <td className="truncate w-[12%] pl-6">{starGrade(grade)}</td>}
         {link && (
-          <td className="text-left w-1/3 px-3">
-            <Link to={link} className="line-clamp-1">
-              {title}
-              {attachFile && (
-                <img
-                  className="w-2 inline ml-2"
-                  src="/attachFile.png"
-                  alt="첨부파일 있음"
-                />
-              )}
+          <td
+            className={`text-left w-1/3 px-5 ${
+              tag === '공지' && collection === 'qna'
+                ? 'col-span-2'
+                : tag === '공지' && collection === 'review'
+                ? 'col-span-3'
+                : ''
+            }`}
+          >
+            <Link
+              to={link}
+              onMouseOver={() => setView(true)}
+              onMouseLeave={() => setView(false)}
+            >
+              <div className="flex relative max-w-fit">
+                <span
+                  className={`line-clamp-1 ${
+                    tag === '공지' ? 'font-bold' : ''
+                  }`}
+                >
+                  {title}
+                </span>
+                {attachFile && (
+                  <>
+                    <img
+                      className="inline w-2 ml-2"
+                      src="/attachFile.png"
+                      alt="첨부파일 있음"
+                    />
+                    <img
+                      className={`absolute top-0 -right-16 ${
+                        view ? 'w-14' : 'w-0'
+                      }`}
+                      src={attachFile}
+                      alt={title + '첨부파일'}
+                      aria-hidden
+                    />
+                  </>
+                )}
+              </div>
             </Link>
           </td>
         )}
-        {!link && (
-          <td className="text-left w-1/3 px-3">
-            <span className="line-clamp-1">{title}</span>
-          </td>
+        {tag === '공지' && collection === 'qna' && <td></td>}
+        {tag === '공지' && collection === 'review' && (
+          <>
+            <td></td>
+            <td></td>
+          </>
         )}
-        <td className="w-[10%]">{writerPrivate(writer)}</td>
+        {writer && <td className="w-[10%]">{writerPrivate(writer)}</td>}
         <td className="font-extralight w-[12%]">{date}</td>
       </tr>
     </>
