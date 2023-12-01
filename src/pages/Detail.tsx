@@ -21,7 +21,7 @@ function Detail() {
 
   return (
     <section>
-      <PageMap route="SHOP" />
+      <PageMap route="Shop" />
       <article className="center flex justify-center gap-10 py-10 border-b border-b-gray-300 relative w-[1080px] min-h-[700px]">
         <DetailImg
           alt={data?.name}
