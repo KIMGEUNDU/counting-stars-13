@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react';
 
-interface optionObject {
-  [key: string]: string;
-}
-
-function DetailProductSelect({ data, option }: { data: any; option: any }) {
-  const [info] = useState({});
-  const [count, setCount] = useState({} as number[]);
-  const [selectOption, setSelectOption] = useState([]);
+function DetailProductSelect({
+  data,
+  option,
+}: {
+  data: ProductData;
+  option: { [key: string]: string }[] | string[];
+}) {
+  const [info] = useState<{ [key: string]: number }>({});
+  const [count, setCount] = useState<{ [key: string]: number }>({});
+  const [selectOption, setSelectOption] = useState<string[]>([]);
 
   useEffect(() => {
     option.map((item: string | optionObject) => {
-      console.log(item);
       if (typeof item === 'string') {
         info[item] = data.price;
         count[item] = 0;
       }
       if (item instanceof Object) {
-        const optionName = Object.values(item)[0];
+        const optionName = Object.values(item)[0] as string;
         if (!optionName.includes('+')) {
           info[optionName] = data.price;
           count[optionName] = 0;
@@ -42,12 +43,12 @@ function DetailProductSelect({ data, option }: { data: any; option: any }) {
 
   const handleClickUp = (item: string) => {
     if (count[item] > 98) return;
-    setCount(() => ({ ...count, ...count[item]++ }));
+    setCount((prevCount) => ({ ...prevCount, [item]: prevCount[item] + 1 }));
   };
 
   const handleClickDown = (item: string) => {
     if (count[item] < 2) return;
-    setCount(() => ({ ...count, ...count[item]-- }));
+    setCount((prevCount) => ({ ...prevCount, [item]: prevCount[item] - 1 }));
   };
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -74,10 +75,11 @@ function DetailProductSelect({ data, option }: { data: any; option: any }) {
 
           {option[0] instanceof Object && (
             <optgroup label={Object.keys(option[0])[0]}>
-              {option.map((item: optionObject, index: number) => {
+              {(option as { [key: string]: string }[]).map((item, index) => {
+                const key = Object.keys(item)[0];
                 return (
-                  <option key={index} value={item[Object.keys(option[0])[0]]}>
-                    {item[Object.keys(option[0])[0]]}
+                  <option key={index} value={item[key]}>
+                    {item[key]}
                   </option>
                 );
               })}
@@ -85,7 +87,7 @@ function DetailProductSelect({ data, option }: { data: any; option: any }) {
           )}
 
           {typeof option[0] === 'string' &&
-            option.map((item: string, index: number) => (
+            (option as string[]).map((item, index) => (
               <option key={index} value={item}>
                 {item}
               </option>

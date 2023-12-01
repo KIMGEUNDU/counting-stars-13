@@ -8,7 +8,7 @@ const Home = lazy(() => import('pages/Home'));
 const RootLayout = lazy(() => import('layout/RootLayout'));
 const Brand = lazy(() => import('pages/Brand'));
 const Shop = lazy(() => import('pages/Shop'));
-const Community = lazy(() => import('pages/Community'));
+const NoticeDetail = lazy(() => import('pages/NoticeDetail'));
 const Qna = lazy(() => import('pages/Qna'));
 const QnaDetail = lazy(() => import('pages/QnaDetail'));
 const WriteQna = lazy(() => import('./pages/WriteQna'));
@@ -32,8 +32,8 @@ const router = createHashRouter(
       <Route index element={<Home />} />
       <Route path="brand" element={<Brand />} />
       <Route path="shop/:id" element={<Shop />} />
+      <Route path="notice/:id" element={<NoticeDetail />} />
       <Route path="detail/:id" element={<Detail />} />
-      <Route path="community" element={<Community />} />
       <Route path="qna" element={<Qna />} />
       <Route path="qna-detail/:id" element={<QnaDetail />} />
       <Route path="write-qna" element={<WriteQna />} />
