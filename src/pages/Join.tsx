@@ -81,7 +81,7 @@ export default function Join() {
           ...validationInfo,
           password: '😀완료 되었습니다',
         });
-  }, [checkPassword]);
+  }, [checkPassword, password]);
 
   // 이름 유효성 검사
   useEffect(() => {
@@ -235,7 +235,7 @@ export default function Join() {
       // const responseItem = response.data.item;
 
       if (response.data.ok === 1) {
-        navigate('/');
+        navigate('/login');
         toast(`회원가입이 완료 되었습니다.`, {
           icon: '🎉',
           duration: 2500,
