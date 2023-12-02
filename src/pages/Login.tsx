@@ -65,7 +65,7 @@ export default function Login() {
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
         navigate('/');
-        toast(`로그인 되었습니다. ${responseItem.name}님`, {
+        toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,
         });
