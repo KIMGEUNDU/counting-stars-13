@@ -188,14 +188,14 @@ export default function Join() {
       });
     }
 
-    if (!pwReg(password) || !password) {
-      (passwordInput.current as HTMLInputElement).focus();
+    // if (!pwReg(password) || !password) {
+    //   (passwordInput.current as HTMLInputElement).focus();
 
-      return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
+    //   return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
+    //     icon: '😢',
+    //     duration: 2000,
+    //   });
+    // }
     if (password !== checkPassword) {
       (checkPasswordInput.current as HTMLInputElement).focus();
 
