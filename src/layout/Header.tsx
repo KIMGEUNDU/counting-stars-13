@@ -78,7 +78,7 @@ export default function Header() {
               <img src="/logoChar.png" className="max-w-[90px]" />
             </Link>
             <div className="w-[45%] flex gap-1 relative justify-end items-center">
-              <ul className="w-[70%] flex items-center justify-between gap-1 text-[1vw]">
+              <ul className="w-[70%] flex items-center justify-between gap-1 text-[0.9vw]">
                 <li>
                   {isLoginState ? (
                     <Link
@@ -118,7 +118,7 @@ export default function Header() {
               <Link
                 to="/search"
                 aria-label="검색 버튼"
-                className="inline-block"
+                className="inline-block absolute -translate-y-1/2 top-1/2 -right-14"
               >
                 <img src="/headerSearch.png" className="max-w-[20px]" />
               </Link>
