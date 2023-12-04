@@ -20,10 +20,10 @@ export default function EditMember() {
     address: '',
     updatedAt: '',
     type: '',
-    extra: '',
+    birthday: '',
     emailAgree: userInfo?.emailAgree,
   });
-  console.log(editMemberInfo.emailAgree);
+  console.log(editMemberInfo);
 
   // console.log(EditMemberInfo);
   const { phone } = editMemberInfo;
@@ -66,7 +66,10 @@ export default function EditMember() {
   const handleCheckboxEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.checked });
   };
-  console.log(editMemberInfo.emailAgree);
+
+  const handleChangePhoneFirst = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPhoneNumber({ ...isPhoneNumber, phoneFirst: e.target.value });
+  };
 
   return (
     <>
@@ -179,6 +182,7 @@ export default function EditMember() {
                   </div>
                   <div className="mb-2">
                     <input
+                      onChange={handleEdit}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
                       id="inputAddress"
@@ -187,6 +191,7 @@ export default function EditMember() {
                   </div>
                   <div>
                     <input
+                      onChange={handleEdit}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
                       id="inputDetailAddress"
@@ -214,7 +219,7 @@ export default function EditMember() {
                     id="inputPhone0"
                     //TODO: 휴대폰 앞자리 바꾸기
                     value={isPhoneNumber.phoneFirst}
-                    // onClick={(e) => (e.target.value = e.target.value)}
+                    onChange={handleChangePhoneFirst}
                   >
                     <option value="011">010</option>
                     <option value="011">011</option>
