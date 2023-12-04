@@ -6,7 +6,14 @@ import { useData } from '@/store/useData';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 
 function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
-  const { orderData, setOrderData } = useData();
+  const {
+    orderData,
+    setOrderData,
+    setPageData,
+    setDataLengthPage,
+    setPageNumber,
+    dataLengthPage,
+  } = useData();
 
   // 주문목록 조회
   useEffect(() => {
@@ -21,64 +28,77 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         (v: UserOrderData) => v.products
       );
 
-      // 스프레드로 가져올수있는데 타입에러가 난다. -> 이러면되려나
+      const orderProducts = [];
+
+      for (const i in productsArray) {
+        for (const j in productsArray[i]) {
+          orderProducts.push(productsArray[i][j]);
+        }
+      }
+
       // 주문목록 다 되면 시도해볼 예정
-      setOrderData(productsArray.join());
+      setOrderData(orderProducts);
     }
 
     getOrderData();
   }, [setOrderData]);
 
+  useEffect(() => {
+    setPageData(orderData.slice(0, 10));
+    setDataLengthPage(Math.ceil(orderData.length / 10));
+    setPageNumber(1);
+  }, []);
+
   return (
-    <div
-      id="modal"
-      className="bg-white border border-gray-300 w-[600px] h-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-10 overflow-y-scroll"
-    >
-      <div className="flex justify-between bg-starPink p-3 font-bold mb-5">
-        <h3>주문정보 선택</h3>
-        <button type="button" onClick={onClick}>
-          x
-        </button>
-      </div>
-      <table className="w-11/12 m-auto">
-        <thead className="border-t border-t-gray-400 border-b border-b-gray-300 bg-gray-50">
-          <tr>
-            <th className="font-normal py-1 w-[20%]">상품 이미지</th>
-            <th className="font-normal py-1 w-[40%]">상품 정보</th>
-            <th className="font-normal py-1">주문 일시</th>
-            <th className="font-normal py-1 w-[20%]">선택</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orderData &&
-            orderData.map((v, i) => (
-              <ModalSelectOrderResult
-                key={i}
-                src={v.image}
-                title={v.name}
-                date="2023-10-10 08:24:33"
-                price={v.price}
-                id={v._id}
-              />
-            ))}
-          {orderData.length === 0 && (
+    <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
+      <div
+        id="modal"
+        className="bg-white border border-gray-300 w-[600px] h-[700px] overflow-y-scroll"
+      >
+        <div className="flex justify-between bg-starPink p-3 font-bold mb-5">
+          <h3>주문정보 선택</h3>
+          <button type="button" onClick={onClick}>
+            x
+          </button>
+        </div>
+        <table className="w-11/12 m-auto">
+          <thead className="border-t border-t-gray-400 border-b border-b-gray-300 bg-gray-50">
             <tr>
-              <td
-                colSpan={4}
-                className="text-center py-3 text-starPink font-bold"
-              >
-                주문목록이 없습니다 : &#41;
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <th className="font-normal py-1 w-[20%]">상품 이미지</th>
+              <th className="font-normal py-1 w-[40%]">상품 정보</th>
+              <th className="font-normal py-1">주문 일시</th>
+              <th className="font-normal py-1 w-[20%]">선택</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-      <PaginationNumber
-        length={orderData ? Math.ceil(orderData.length / 10) : 1}
-      />
+          </thead>
+          <tbody>
+            {orderData &&
+              orderData.map((v, i) => (
+                <ModalSelectOrderResult
+                  key={i}
+                  src={v.image}
+                  title={v.name}
+                  date="2023-10-10 08:24:33"
+                  price={v.price}
+                  id={v._id}
+                />
+              ))}
+            {orderData.length === 0 && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="text-center py-3 text-starPink font-bold"
+                >
+                  주문목록이 없습니다 : &#41;
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <PaginationNumber length={orderData ? dataLengthPage : 1} />
+      </div>
     </div>
   );
 }
