@@ -42,13 +42,16 @@ function DetailProductOption({ data }: { data: ProductData }) {
         </table>
         <form>
           {data?.options.length > 0 && (
-            <DetailProductSelect data={data} option={data.options} />
+            <DetailProductSelect
+              name={data.name}
+              price={data.price}
+              option={data.options}
+            />
           )}
           {data?.options.length === 0 && (
             <DetailProductResult
               name={data?.name}
               price={`${data?.price}`}
-              option=""
               quantity={quantity}
               required={data?.options.length > 0}
               handleClickUp={handleClickUp}

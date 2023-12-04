@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 function DetailProductSelect({
-  data,
+  name,
+  price,
   option,
 }: {
-  data: ProductData;
+  name: string;
+  price: number;
   option: { [key: string]: string }[] | string[];
 }) {
   const [info] = useState<{ [key: string]: number }>({});
@@ -13,32 +16,32 @@ function DetailProductSelect({
   useEffect(() => {
     option.map((item: string | optionObject) => {
       if (typeof item === 'string') {
-        info[item] = data.price;
+        info[item] = price;
         count[item] = 0;
       }
       if (item instanceof Object) {
         const optionName = Object.values(item)[0] as string;
         if (!optionName.includes('+') && !optionName.includes('-')) {
-          info[optionName] = data.price;
+          info[optionName] = price;
           count[optionName] = 0;
           return;
         }
 
         if (optionName.includes('-')) {
-          const price = +optionName.split('-')[1].replace(/[^0-9]/g, '');
-          info[optionName] = data.price - price;
+          const optionPrice = +optionName.split('-')[1].replace(/[^0-9]/g, '');
+          info[optionName] = price - optionPrice;
           count[optionName] = 0;
           return;
         }
 
         if (optionName.includes('+')) {
-          const price = +optionName.split('+')[1].replace(/[^0-9]/g, '');
-          info[optionName] = price + data.price;
+          const optionPrice = +optionName.split('+')[1].replace(/[^0-9]/g, '');
+          info[optionName] = price + optionPrice;
           count[optionName] = 0;
         }
       }
     });
-  }, [option, data.price, info]);
+  }, [option, price, info]);
 
   const handleClickUp = (item: string) => {
     if (count[item] > 98) return;
@@ -52,11 +55,22 @@ function DetailProductSelect({
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (selectOption.includes(e.target.value) || e.target.value === '') return;
+    if (count[e.target.value] === 0) {
+      setCount((prevCount) => ({ ...prevCount, [e.target.value]: 1 }));
+    }
     setSelectOption(selectOption.concat(e.target.value));
+  };
+
+  const optionDelete = (item: string) => {
+    setSelectOption(selectOption.filter((opt) => opt !== item));
+    setCount((prevCount) => ({ ...prevCount, [item]: 0 }));
   };
 
   return (
     <>
+      <Helmet>
+        <title>{name} - 별,해달</title>
+      </Helmet>
       <fieldset className="py-5 flex border-b border-gray-300">
         <label htmlFor="selectOption" className="w-32">
           옵션 선택
@@ -65,6 +79,7 @@ function DetailProductSelect({
           name="selectOption"
           id="selectOption"
           onChange={handleSelect}
+          value={''}
           className="border border-gray-300 grow p-1"
         >
           <option value="">[필수] 옵션을 선택해 주세요</option>
@@ -95,13 +110,10 @@ function DetailProductSelect({
       </fieldset>
       {selectOption.length > 0 &&
         selectOption.map((item: string, index) => (
-          <fieldset
-            key={index}
-            className="border-b border-b-gray-200 py-3 flex justify-between items-center"
-          >
+          <fieldset key={index} className="optionFieldset">
             <div className="min-w-[50%]">
-              <p className="text-sm">{data?.name}</p>
-              <span className="text-xs">{item}</span>
+              <p className="text-sm">{name}</p>
+              <span className="text-sm font-semibold">{item}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="flex border-2 h-9 rounded-lg justify-around mb-2">
@@ -120,14 +132,14 @@ function DetailProductSelect({
                   </button>
                 </div>
               </div>
-              {data?.options.length > 0 && (
-                <button type="button">
+              {option.length > 0 && (
+                <button type="button" onClick={() => optionDelete(item)}>
                   <img src="/cancel.png" alt="옵션 닫기" className="w-4" />
                 </button>
               )}
             </div>
             {!item.includes('+') && !item.includes('-') && (
-              <span className="text-sm">{data.price.toLocaleString()} 원</span>
+              <span className="text-sm">{price.toLocaleString()} 원</span>
             )}
             {(item.includes('+') || item.includes('-')) && (
               <span className="text-sm">{info[item].toLocaleString()} 원</span>
