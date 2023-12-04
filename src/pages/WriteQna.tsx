@@ -1,5 +1,4 @@
 import PageMainTitle from '@/components/PageMainTitle';
-import FormAttachFile from '@/components/QnA,Review/FormAttachFile';
 import FormCkEditor from '@/components/QnA,Review/FormCkEditor';
 import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import Modal from '@/components/QnA,Review/Modal';
@@ -127,6 +126,10 @@ export default function WriteQna() {
         setModal(!modal);
       }
     });
+
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'unset';
   }
 
   // 로그인유저정보 받아오기
@@ -165,7 +168,6 @@ export default function WriteQna() {
             <tbody>
               <FormTitleInput titleRef={titleRef} />
               <FormCkEditor />
-              <FormAttachFile />
             </tbody>
           </table>
           <WriteButton link="/qna" />

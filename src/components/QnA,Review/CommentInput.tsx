@@ -44,16 +44,7 @@ function CommentInput({
       onSubmit={uploadComment}
     >
       <h3 className="font-semibold">댓글달기</h3>
-      <fieldset>
-        <label htmlFor="name">이름 :</label>
-        <input
-          id="name"
-          type="text"
-          defaultValue={writer}
-          className="border border-gray-300 ml-3 px-1 w-1/6"
-          required
-        />
-      </fieldset>
+      <div className="font-semibold">⭐ {writer}</div>
       <fieldset className="flex">
         <label htmlFor="comment" className="hidden">
           댓글입력창
