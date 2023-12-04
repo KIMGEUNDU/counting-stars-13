@@ -81,7 +81,7 @@ export default function Join() {
           ...validationInfo,
           password: '😀완료 되었습니다',
         });
-  }, [checkPassword]);
+  }, [checkPassword, password]);
 
   // 이름 유효성 검사
   useEffect(() => {
@@ -188,14 +188,14 @@ export default function Join() {
       });
     }
 
-    if (!pwReg(password) || !password) {
-      (passwordInput.current as HTMLInputElement).focus();
+    // if (!pwReg(password) || !password) {
+    //   (passwordInput.current as HTMLInputElement).focus();
 
-      return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
+    //   return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
+    //     icon: '😢',
+    //     duration: 2000,
+    //   });
+    // }
     if (password !== checkPassword) {
       (checkPasswordInput.current as HTMLInputElement).focus();
 
@@ -235,7 +235,7 @@ export default function Join() {
       // const responseItem = response.data.item;
 
       if (response.data.ok === 1) {
-        navigate('/');
+        navigate('/login');
         toast(`회원가입이 완료 되었습니다.`, {
           icon: '🎉',
           duration: 2500,

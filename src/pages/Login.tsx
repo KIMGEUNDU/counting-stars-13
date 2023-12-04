@@ -36,12 +36,12 @@ export default function Login() {
         duration: 2000,
       });
     }
-    if (!pwReg(isLoginInfo.password)) {
-      return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
-        icon: '✏️',
-        duration: 2000,
-      });
-    }
+    // if (!pwReg(isLoginInfo.password)) {
+    //   return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
+    //     icon: '✏️',
+    //     duration: 2000,
+    //   });
+    // }
     if (!isLoginInfo.password) {
       return toast('비밀번호를 입력해주세요.', {
         icon: '✏️',
@@ -65,7 +65,7 @@ export default function Login() {
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
         navigate('/');
-        toast(`로그인 되었습니다. ${responseItem.name}님`, {
+        toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,
         });

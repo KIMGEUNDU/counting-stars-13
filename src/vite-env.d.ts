@@ -33,7 +33,6 @@ interface DetailProductSelect {
 
 interface DetailProductResult {
   name: string;
-  option: string;
   quantity: number;
   price: string;
   required: boolean;
@@ -130,4 +129,23 @@ interface ProductData {
 
 interface optionObject {
   [key: string]: string;
+}
+
+interface address {
+  zonecode: string | undefined;
+  address: string | undefined;
+  addressDetail: string | undefined;
+}
+
+interface editMemberInfo {
+  email: string;
+  name: string;
+  password: string | undefined;
+  phone: string;
+  address: address;
+  type: string;
+  emailAgree: boolean;
+  birthday: string;
+  updatedAt: string;
+  createdAt: string;
 }
