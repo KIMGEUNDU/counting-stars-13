@@ -1,3 +1,5 @@
+import ContentsViewer from './ContentsViewer';
+
 function PageDetailTable({
   title,
   writer,
@@ -58,22 +60,18 @@ function PageDetailTable({
           </>
         )}
       </ul>
-      {attachFile && (
-        <p className="py-5">
-          <img
-            className={`h-auto m-auto ${collection ? 'w-[700px]' : 'w-48'}`}
-            src={attachFile}
-            alt="첨부파일"
-          />
-        </p>
-      )}
       {!collection && (
-        <p className="py-10 px-2 border-b border-b-gray-200">{content}</p>
+        <div className="py-10 px-2 border-b border-b-gray-200 flex justify-center">
+          <ContentsViewer contents={content} />
+        </div>
       )}
       {collection && (
-        <code className="py-10 px-2 border-b border-b-gray-200 text-4xl text-center">
-          {content}
-        </code>
+        <>
+          {attachFile && <img src={attachFile} alt={title} />}
+          <div className="py-10 px-2 border-b border-b-gray-200 text-4xl text-center">
+            <ContentsViewer contents={content} />
+          </div>
+        </>
       )}
     </div>
   );

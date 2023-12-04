@@ -1,5 +1,4 @@
 import PageMainTitle from '@/components/PageMainTitle';
-import FormAttachFile from '@/components/QnA,Review/FormAttachFile';
 import FormCkEditor from '@/components/QnA,Review/FormCkEditor';
 import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import ModalSelectOrder from '@/components/QnA,Review/ModalSelectOrder';
@@ -22,7 +21,7 @@ export default function WriteReview() {
   const { content, attachFile, setAttachFile } = useForm();
   const scoreRef = useRef<HTMLSelectElement | null>(null);
   const navigate = useNavigate();
-  // const [modal, setModal] = useState(false);
+
   const {
     modal,
     setModal,
@@ -116,7 +115,7 @@ export default function WriteReview() {
         date: writeDate(),
         content,
         attachFile,
-        grade: Number(scoreRef.current.value),
+        grade: scoreRef.current.value.length,
         productId: selectOrderId,
         productName: selectData.name,
         productPrice: selectData.price,
@@ -130,7 +129,7 @@ export default function WriteReview() {
         duration: 2000,
       });
 
-      navigate(`/review-detail${newReview._id}`);
+      navigate(`/review-detail/${newReview._id}`);
     }
   };
 
@@ -141,6 +140,10 @@ export default function WriteReview() {
         setModal(!modal);
       }
     });
+
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'unset';
   }
 
   // 새로 Review 페이지 들어올때는 리셋, 왜 안돼?
@@ -194,7 +197,9 @@ export default function WriteReview() {
                 </td>
                 <td className="flex flex-row p-3">
                   <select name="grade" id="inputGrade" ref={scoreRef} required>
-                    <option defaultValue="5">⭐⭐⭐⭐⭐</option>
+                    <option defaultValue="5" selected>
+                      ⭐⭐⭐⭐⭐
+                    </option>
                     <option defaultValue="4">⭐⭐⭐⭐</option>
                     <option defaultValue="3">⭐⭐⭐</option>
                     <option defaultValue="2">⭐⭐</option>
@@ -203,7 +208,6 @@ export default function WriteReview() {
                 </td>
               </tr>
               <FormCkEditor />
-              <FormAttachFile />
             </tbody>
           </table>
           <WriteButton link="/review" />
