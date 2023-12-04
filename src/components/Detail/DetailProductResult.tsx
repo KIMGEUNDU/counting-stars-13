@@ -1,8 +1,8 @@
+import { Helmet } from 'react-helmet-async';
 import ProductQuantity from './ProductQuantity';
 
 function DetailProductResult({
   name,
-  option,
   quantity,
   price,
   required,
@@ -11,10 +11,12 @@ function DetailProductResult({
 }: DetailProductResult) {
   return (
     <>
+      <Helmet>
+        <title>{name} - 별,해달</title>
+      </Helmet>
       <fieldset className="border-b border-t border-t-gray-500 border-b-gray-500 py-3 flex justify-between items-center">
         <div>
           <p className="text-sm">{name}</p>
-          <span className="text-xs">{option}</span>
         </div>
         <div className="flex items-center gap-2">
           <ProductQuantity

@@ -3,17 +3,17 @@ import ProductOption from '../Detail/ProductOption';
 
 function ProductItem({ link, src, title, price }: ProductItem) {
   return (
-    <div className="relative">
-      <Link to={`/detail/${link}`} className="flex flex-col gap-3">
-        <figure className="dimmedImg flex flex-col gap-3 justify-center items-center py-3">
-          <div className="w-60 h-60 overflow-hidden">
+    <div>
+      <Link to={`/detail/${link}`} className="flex flex-col">
+        <figure className=" flex flex-col justify-center items-center relative">
+          <div className="dimmedImg w-full overflow-hidden">
             <img src={src} alt={title} className="scaleImg" />
+            <ProductOption />
           </div>
-          <ProductOption />
-          <figcaption className="text-sm">{title}</figcaption>
         </figure>
+        <figcaption className="py-1 ellipsis">{title}</figcaption>
+        <p className="pb-1">{price.toLocaleString()}원</p>
       </Link>
-      <p className="font-semibold">{price.toLocaleString()}원</p>
     </div>
   );
 }

@@ -6,7 +6,7 @@ function ProductQnA() {
   return (
     <div className="pt-24" id="inquiryLink">
       <DetailProductInformationList select={5} />
-      <InformationTable title="상품문의" />
+      <InformationTable title="상품 문의" />
       <PaginationNumber length={1} />
     </div>
   );

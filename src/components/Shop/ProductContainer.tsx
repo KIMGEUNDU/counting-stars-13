@@ -1,18 +1,18 @@
 import MainTitle from '../MainTitle';
 import ProductItem from './ProductItem';
 
-function ProductContainer({ data }: { data: any }) {
+function ProductContainer({ data }: { data: ProductData[] }) {
   return (
     <div className="w-4/5 m-auto text-center">
       <MainTitle title="All Arrival" />
-      <div className="flex gap-1">
-        <ul className="flex gap-5 flex-wrap justify-center">
+      <div>
+        <ul className="flex flex-wrap justify-center w-full">
           {data &&
-            data.map((item: any) => {
+            data.map((item: ProductData) => {
               return (
-                <li key={item._id}>
+                <li key={item._id} className="w-1/4">
                   <ProductItem
-                    link={item._id}
+                    link={`${item._id}`}
                     src={item.mainImages[0]}
                     title={item.name}
                     price={item.price}

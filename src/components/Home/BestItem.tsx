@@ -72,14 +72,14 @@ function BestItem() {
         </button>
       </article>
 
-      <article className="flex gap-1">
-        <ul className="flex gap-5 flex-wrap min-w-[500px]">
+      <article className="flex gap-1 items-center">
+        <ul className="flex flex-wrap min-w-[500px] w-full">
           {data &&
-            data.slice(0, 8).map((item: any) => {
+            data.slice(0, 9).map((item: ProductData) => {
               return (
-                <li key={item._id}>
+                <li key={item._id} className="w-1/3">
                   <ProductItem
-                    link={item._id}
+                    link={`${item._id}`}
                     src={item.mainImages[0]}
                     title={item.name}
                     price={item.price}
