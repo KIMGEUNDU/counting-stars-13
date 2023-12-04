@@ -5,8 +5,8 @@ interface useData {
   data: Data[] | QnaReviewData[];
   setData: (data: Data[] | QnaReviewData[]) => void;
   // 페이지네이션 데이터
-  pageData: Data[] | QnaReviewData[];
-  setPageData: (pageData: Data[] | QnaReviewData[]) => void;
+  pageData: Data[] | QnaReviewData[] | OrderData[];
+  setPageData: (pageData: Data[] | QnaReviewData[] | OrderData[]) => void;
   // 전체 데이터 페이지 길이
   dataLengthPage: number;
   setDataLengthPage: (dataLengthPage: number | undefined) => void;
