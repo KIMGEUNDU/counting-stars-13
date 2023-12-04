@@ -7,7 +7,7 @@ function FormTitleInput({
 }) {
   return (
     <tr className="border-b border-gray-300">
-      <td className="bg-gray-50 w-20 p-3">
+      <td className="bg-gray-50 w-10 p-3">
         <label htmlFor="inputId">제목</label>
         <span className="text-starRed font-extrabold text-xl align-middle pl-1">
           *
