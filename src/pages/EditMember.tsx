@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
 import DaumPostcode from 'react-daum-postcode';
+import debounce from '@/utils/debounce';
 
 export default function EditMember() {
   //회원정보조회 정보
@@ -32,7 +33,7 @@ export default function EditMember() {
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
     phoneNumber(editMemberInfo.phone, setPhoneNumber);
-  }, []);
+  }, [editMemberInfo.phone]);
   // 번호 합쳐서 정보수정 인포에 넣어주기
   useEffect(() => {
     setEditMemberInfo({
@@ -55,7 +56,7 @@ export default function EditMember() {
       );
       const item = response.data.item;
       setEditMemberInfo(item);
-      console.log(item);
+      console.log(response);
 
       //가져온정보 넣기
     } catch (e) {
@@ -127,6 +128,7 @@ export default function EditMember() {
 
   const handleAdressDetailEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAdress({ ...isAddress, addressDetail: e.target.value });
+    console.log(e.target.value);
   };
 
   const handleBirthdayEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,7 +243,6 @@ export default function EditMember() {
                 <td className="flex flex-row p-3">
                   <input
                     name="password"
-                    onChange={handleEdit}
                     value={editMemberInfo.password}
                     type="password"
                     className="border border-gray-300 rounded w-32 mr-1"
@@ -379,7 +380,7 @@ export default function EditMember() {
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone1"
                     defaultValue={isPhoneNumber.phoneMiddle}
-                    onChange={handlePhoneNumber}
+                    onChange={debounce(handlePhoneNumber, 1000)}
                   />
                   -
                   <input
@@ -388,7 +389,7 @@ export default function EditMember() {
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
                     defaultValue={isPhoneNumber.phoneLast}
-                    onChange={handlePhoneNumber}
+                    onChange={debounce(handlePhoneNumber, 500)}
                   />
                 </td>
               </tr>
