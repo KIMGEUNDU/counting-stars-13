@@ -5,7 +5,7 @@ function ExchangeReturnInformation() {
     <div className="pt-24" id="exchangeLink">
       <DetailProductInformationList select={3} />
       <div className="py-10">
-        <p className="font-bold text-lg">교환 및 반품정보</p>
+        <p className="font-bold text-lg">교환 및 반품 정보</p>
         <ul className="py-5">
           <li className="font-bold py-5">교환 및 반품 주소</li>
           <li>
@@ -41,7 +41,7 @@ function ExchangeReturnInformation() {
             - 시간의 경과에 의하여 재판매가 곤란할 정도로 재화등의 가치가 현저히
             감소한 경우
           </li>
-          <li> - 복제가 가능한 재화등의 포장을 훼손한 경우</li>
+          <li> - 복제가 가능한 재화 등의 포장을 훼손한 경우</li>
           <li>
             - 개별 주문 생산되는 재화 등 청약철회시 판매자에게 회복할 수 없는
             피해가 예상되어 소비자의 사전 동의를 얻은 경우
@@ -57,7 +57,7 @@ function ExchangeReturnInformation() {
           </li>
         </ul>
         <ul className="py-5">
-          <li className="font-bold py-5">서비스문의</li>
+          <li className="font-bold py-5">서비스 문의</li>
           <li>
             주문, 배송 정보 등의 비광고성 정보를 카카오톡의 알림톡으로 알려
             드리며, 만약 알림톡 수신이 불가능하거나 수신 차단한 경우에는 일반

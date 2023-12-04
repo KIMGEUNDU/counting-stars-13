@@ -6,6 +6,7 @@ import Slogan from '@/components/Brand/Slogan';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 axios.defaults.baseURL = 'https://localhost/api';
 
@@ -16,7 +17,6 @@ export default function Home() {
     queryFn: () => axios.get(`/products`),
     select: (data) => data.data.item,
     staleTime: 1000 * 2,
-    // refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -25,6 +25,9 @@ export default function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>별,해달</title>
+      </Helmet>
       <SlideBanner />
       <BestItem />
       <ProductContainer data={productData} />

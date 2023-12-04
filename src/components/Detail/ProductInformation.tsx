@@ -9,7 +9,7 @@ function ProductInformation({ imgArray }: { imgArray: string[] }) {
           <img
             key={i}
             src={v}
-            alt="상품이름 정보"
+            alt="상품 정보"
             className={`mx-auto ${i === 0 ? 'pt-20' : ''}`}
           />
         ))}

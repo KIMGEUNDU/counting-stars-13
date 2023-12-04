@@ -13,13 +13,13 @@ function InformationTable({
         <h2 className="font-bold text-lg">{title}</h2>
         <div className="flex gap-4">
           <button type="button" className="detailProductListButton">
-            {title} 전체보기
+            {title} 전체 보기
           </button>
           <button
             type="button"
             className="detailProductListButton bg-starBlack text-white"
           >
-            {title} 전체쓰기
+            {title} 전체 쓰기
           </button>
         </div>
       </div>
