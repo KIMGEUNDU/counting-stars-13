@@ -14,7 +14,7 @@ type board = {
   collection?: string;
 };
 
-export default function EachPost({
+export default function NoticeEachPost({
   tag,
   title,
   writer,
@@ -43,24 +43,23 @@ export default function EachPost({
   return (
     <>
       <tr className="border-b border-gray-200">
-        <td className={`py-4 ${tag === '공지' ? 'font-bold' : ''}`}>{tag}</td>
-
+        <td className={`py-4 w-1/12 ${tag === '공지' ? 'font-bold' : ''}`}>
+          {tag}
+        </td>
         {item && (
-          <td className="whitespace-nowrap h-10 px-2">
+          <td className="max-w-fit whitespace-nowrap h-10 bg-starPink">
             <div className="flex justify-left items-center px-2">
               <img className="w-10 h-full pr-1" src={itemImg} alt={item} />
               <span className="">{item}</span>
             </div>
           </td>
         )}
-
-        {grade && <td className="truncate pl-6">{starGrade(grade)}</td>}
-
+        {grade && <td className="truncate w-1/12 pl-6">{starGrade(grade)}</td>}
         {link && (
           <td
-            className={`text-left px-5 ${
+            className={`text-left w-1/12 px-5 ${
               tag === '공지' && collection === 'qna'
-                ? 'col-span-2'
+                ? 'col-span-2 '
                 : tag === '공지' && collection === 'review'
                 ? 'col-span-3'
                 : ''
@@ -71,12 +70,10 @@ export default function EachPost({
               onMouseOver={() => setView(true)}
               onMouseLeave={() => setView(false)}
             >
-              <div className="flex relative">
+              <div className="flex relative max-w-fit">
                 <span
-                  className={`${
-                    tag === '공지'
-                      ? 'font-bold whitespace-nowrap'
-                      : 'line-clamp-1'
+                  className={`line-clamp-1 ${
+                    tag === '공지' ? 'font-bold' : ''
                   }`}
                 >
                   {title}
@@ -102,18 +99,14 @@ export default function EachPost({
             </Link>
           </td>
         )}
-
         {tag === '공지' && collection === 'qna' && <td></td>}
-
         {tag === '공지' && collection === 'review' && (
           <>
             <td></td>
             <td></td>
           </>
         )}
-
         {writer && <td className="w-[10%]">{writerPrivate(writer)}</td>}
-
         <td className="font-extralight w-[12%]">{date}</td>
       </tr>
     </>

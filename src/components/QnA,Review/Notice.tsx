@@ -12,7 +12,9 @@ export default function Notice({ collection }: { collection: string }) {
   return sortNotice.map((v, i) => (
     <EachPost
       key={i}
-      link={`/notice/${v._id}`}
+      link={
+        collection === 'qna' ? `/qnaNotice/${v._id}` : `/reviewNotice/${v._id}`
+      }
       tag={v.tag ? v.tag : ''}
       title={v.title}
       writer={v.writer}

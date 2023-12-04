@@ -11,9 +11,10 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 function NoticeDetail() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { notice, deleteNoticeData } = dummyData();
   const { id } = useParams();
@@ -40,6 +41,15 @@ function NoticeDetail() {
       });
 
       navigate('/qna');
+    }
+  };
+
+  // 목록페이지로 이동
+  const handleListPage = () => {
+    if (location.pathname.includes('qna')) {
+      return navigate('/qna');
+    } else {
+      return navigate('/review');
     }
   };
 
@@ -87,7 +97,7 @@ function NoticeDetail() {
         <DetailButton
           btn1="목록"
           btn3="삭제"
-          onClick1={() => navigate(-1)}
+          onClick1={handleListPage}
           onClick3={handleDelete}
           style="quaReviewDetailButton"
           center="center"
@@ -96,8 +106,24 @@ function NoticeDetail() {
         <PageListOrder
           prev={prev ? prev.title : ''}
           next={next ? next.title : ''}
-          prevLink={prev ? `/notice/${prev._id}` : ''}
-          nextLink={next ? `/notice/${next._id}` : ''}
+          prevLink={
+            prev
+              ? `${
+                  location.pathname.includes('qna')
+                    ? '/qnaNotice'
+                    : '/reviewNotice'
+                }/${prev._id}`
+              : ''
+          }
+          nextLink={
+            next
+              ? `${
+                  location.pathname.includes('qna')
+                    ? '/qnaNotice'
+                    : '/reviewNotice'
+                }/${next._id}`
+              : ''
+          }
           _id={Number(id)}
           length={length}
         />
