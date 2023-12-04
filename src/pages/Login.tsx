@@ -36,12 +36,12 @@ export default function Login() {
         duration: 2000,
       });
     }
-    if (!pwReg(isLoginInfo.password)) {
-      return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
-        icon: '✏️',
-        duration: 2000,
-      });
-    }
+    // if (!pwReg(isLoginInfo.password)) {
+    //   return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
+    //     icon: '✏️',
+    //     duration: 2000,
+    //   });
+    // }
     if (!isLoginInfo.password) {
       return toast('비밀번호를 입력해주세요.', {
         icon: '✏️',
