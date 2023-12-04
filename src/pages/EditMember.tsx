@@ -91,7 +91,7 @@ export default function EditMember() {
     addressDetail: '',
   });
 
-  const handleComplete = (data) => {
+  const handleComplete = (data: address) => {
     console.log(data);
     setAdress({ ...isAddress, zonecode: data.zonecode, address: data.address });
     setEditMemberInfo({
@@ -292,7 +292,7 @@ export default function EditMember() {
                 <td className="p-3">
                   <div className="mb-2">
                     <input
-                      value={editMemberInfo.address.zonecode}
+                      value={editMemberInfo.address?.zonecode}
                       type="text"
                       className="border border-gray-300 rounded w-16 mr-2"
                       id="inputZipCode"
@@ -325,7 +325,7 @@ export default function EditMember() {
                   )}
                   <div className="mb-2">
                     <input
-                      value={editMemberInfo.address.address}
+                      value={editMemberInfo.address?.address}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
                       id="inputAddress"
@@ -334,7 +334,7 @@ export default function EditMember() {
                   </div>
                   <div>
                     <input
-                      value={editMemberInfo.address.addressDetail}
+                      value={editMemberInfo.address?.addressDetail}
                       onChange={handleAdressDetailEdit}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
