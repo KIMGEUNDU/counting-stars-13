@@ -9,14 +9,14 @@ export const phoneNumber = (
 
   setPhoneNumber: (val: phoneNumber) => void
 ) => {
-  if (phone.length > 10 || phone.length < 10) {
+  if (phone?.length > 10 || phone?.length < 10) {
     setPhoneNumber({
       phoneFirst: `${phone.slice(0, 3)}`,
       phoneMiddle: `${phone.slice(3, 7)}`,
       phoneLast: `${phone.slice(7, 11)}`,
     });
   }
-  if (phone.length === 10) {
+  if (phone?.length === 10) {
     setPhoneNumber({
       phoneFirst: `${phone.slice(0, 3)}`,
       phoneMiddle: `${phone.slice(3, 6)}`,

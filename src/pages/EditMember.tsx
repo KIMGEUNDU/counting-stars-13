@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
-import DaumPostcode from 'react-daum-postcode';
+import DaumPostcode, { Address } from 'react-daum-postcode';
 import debounce from '@/utils/debounce';
 
 export default function EditMember() {
@@ -17,23 +17,21 @@ export default function EditMember() {
   const [editMemberInfo, setEditMemberInfo] = useState<editMemberInfo>({
     email: '',
     name: '',
-    password: '',
+
     phone: '',
 
     address: { zonecode: '', address: '', addressDetail: '' },
     type: '',
     emailAgree: false,
     birthday: '',
-    updatedAt: '',
-    createdAt: '',
   });
 
   console.log(editMemberInfo);
 
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
-    phoneNumber(editMemberInfo.phone, setPhoneNumber);
-  }, [editMemberInfo.phone]);
+    phoneNumber(editMemberInfo?.phone, setPhoneNumber);
+  }, [editMemberInfo?.phone]);
   // 번호 합쳐서 정보수정 인포에 넣어주기
   useEffect(() => {
     setEditMemberInfo({
@@ -44,6 +42,7 @@ export default function EditMember() {
         isPhoneNumber.phoneLast,
     });
   }, [isPhoneNumber]);
+
   const handleGetUserInfo = async () => {
     try {
       const response = await axios.get(
@@ -73,6 +72,7 @@ export default function EditMember() {
   const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.value });
   };
+
   const handleCheckboxEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, [e.target.name]: e.target.checked });
   };
@@ -82,17 +82,18 @@ export default function EditMember() {
   };
   console.log(isPhoneNumber);
 
-  const handlePhoneNumber = (e) => {
+  const handlePhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
   };
 
-  const [isAddress, setAdress] = useState({
+  const [isAddress, setAdress] = useState<address>({
     zonecode: '',
     address: '',
     addressDetail: '',
   });
+  console.log(isAddress);
 
-  const handleComplete = (data: address) => {
+  const handleComplete = (data: Address) => {
     console.log(data);
     setAdress({ ...isAddress, zonecode: data.zonecode, address: data.address });
     setEditMemberInfo({
@@ -109,17 +110,16 @@ export default function EditMember() {
     setIsOpen(false);
   }, [isAddress.zonecode]);
 
-  useEffect(() => {
-    setEditMemberInfo({
-      ...editMemberInfo,
-      address: {
-        zonecode: isAddress.zonecode,
-
-        address: isAddress.address,
-        addressDetail: isAddress.addressDetail,
-      },
-    });
-  }, [isAddress]);
+  // useEffect(() => {
+  //   setEditMemberInfo({
+  //     ...editMemberInfo,
+  //     address: {
+  //       zonecode: isAddress.zonecode,
+  //       address: isAddress.address,
+  //       addressDetail: isAddress.addressDetail,
+  //     },
+  //   });
+  // }, [isAddress.zonecode]);
 
   const [isOpen, setIsOpen] = useState(false);
   const onToggleModal = () => {
@@ -127,44 +127,71 @@ export default function EditMember() {
   };
 
   const handleAdressDetailEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAdress({ ...isAddress, addressDetail: e.target.value });
-    console.log(e.target.value);
+    setAdress({ ...isAddress, [e.target.name]: e.target.value });
+
+    if (e.target.name === 'addressDetail') {
+      setEditMemberInfo({
+        ...editMemberInfo,
+        address: {
+          zonecode: editMemberInfo.address?.zonecode,
+          address: editMemberInfo.address?.address,
+          addressDetail: e.target.value,
+        },
+      });
+    }
   };
+
+  useEffect(() => {
+    setEditMemberInfo({
+      ...editMemberInfo,
+      address: {
+        zonecode: isAddress.zonecode,
+        address: isAddress.address,
+        addressDetail: isAddress.addressDetail,
+      },
+    });
+  }, [isAddress.zonecode]);
 
   const handleBirthdayEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditMemberInfo({ ...editMemberInfo, birthday: e.target.value });
   };
 
   //비밀번호 확인 유효성감사
-  const [checkPassword, setCheckPassword] = useState('');
-  const [checkPasswordP, setCheckPasswordP] = useState('');
-  const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckPassword(e.target.value);
-  };
+  // const [checkPassword, setCheckPassword] = useState('');
+  // const [checkPasswordP, setCheckPasswordP] = useState('');
+  // const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setCheckPassword(e.target.value);
+  // };
 
   //비밀번호 확인 유효성감사
-  useEffect(() => {
-    if (editMemberInfo.password === '' || checkPassword === '') {
-      return setCheckPasswordP('');
-    }
+  // useEffect(() => {
+  //   if (editMemberInfo.password === '' || checkPassword === '') {
+  //     return setCheckPasswordP('');
+  //   }
 
-    if (checkPassword === editMemberInfo.password) {
-      setCheckPasswordP('😀확인 되었습니다.');
-    }
-    if (checkPassword !== editMemberInfo.password) {
-      setCheckPasswordP('🥲비밀번호가 일치하지 않습니다.');
-    }
-    console.log(checkPassword.length);
-  }, [checkPassword, editMemberInfo.password]);
+  //   if (checkPassword === editMemberInfo.password) {
+  //     setCheckPasswordP('😀확인 되었습니다.');
+  //   }
+  //   if (checkPassword !== editMemberInfo.password) {
+  //     setCheckPasswordP('🥲비밀번호가 일치하지 않습니다.');
+  //   }
+  //   console.log(checkPassword.length);
+  // }, [checkPassword, editMemberInfo.password]);
 
-  const handlePatchUserInfo = async () => {
-    if (checkPassword !== editMemberInfo.password) {
-      return toast('비밀번호를 확인해주세요.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
+  console.log('전전:', editMemberInfo);
+  const handlePatchUserInfo = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    // if (checkPassword !== editMemberInfo.password) {
+    //   return toast('비밀번호를 확인해주세요.', {
+    //     icon: '😢',
+    //     duration: 2000,
+    //   });
+    // }
+    e.preventDefault();
     try {
+      e.preventDefault();
+
       const response = await axios.patch(
         `https://localhost/api/users/${AUTH_ID()}`,
         editMemberInfo,
@@ -204,7 +231,7 @@ export default function EditMember() {
             <p className="pl-4 align-middle">
               ✨별,해달을 이용해주셔서 감사합니다.
               <span className="text-blue-700 font-bold m-1">
-                {editMemberInfo.name}
+                {editMemberInfo?.name}
               </span>
               님은
               <span className="font-bold"> [일반회원]</span>
@@ -226,10 +253,9 @@ export default function EditMember() {
                     type="text"
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputId"
-                    value={editMemberInfo.email}
-                    defaultValue={editMemberInfo.email}
-                    onChange={handleEdit}
+                    value={editMemberInfo?.email}
                   />
+
                   <p>(영문 소문자/숫자, 4~16자)</p>
                 </td>
               </tr>
@@ -243,7 +269,7 @@ export default function EditMember() {
                 <td className="flex flex-row p-3">
                   <input
                     name="password"
-                    value={editMemberInfo.password}
+                    // value={editMemberInfo.password}
                     type="password"
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputPw"
@@ -265,9 +291,9 @@ export default function EditMember() {
                     type="password"
                     className="border border-gray-300 rounded w-32"
                     id="inputPwConfirm"
-                    onChange={handleCheckPassword}
+                    // onChange={handleCheckPassword}
                   />
-                  <p>{checkPasswordP}</p>
+                  {/* <p>{checkPasswordP}</p> */}
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -282,7 +308,7 @@ export default function EditMember() {
                     type="text"
                     className="border border-gray-300 rounded w-32"
                     id="inputName"
-                    defaultValue={editMemberInfo.name}
+                    defaultValue={editMemberInfo?.name}
                     name="name"
                     onChange={handleEdit}
                   />
@@ -293,10 +319,12 @@ export default function EditMember() {
                 <td className="p-3">
                   <div className="mb-2">
                     <input
-                      value={editMemberInfo.address?.zonecode}
+                      value={editMemberInfo?.address?.zonecode}
                       type="text"
                       className="border border-gray-300 rounded w-16 mr-2"
                       id="inputZipCode"
+                      onChange={handleAdressDetailEdit}
+                      name="zonecode"
                     />
                     <label htmlFor="inputZipCode">
                       <button
@@ -326,20 +354,23 @@ export default function EditMember() {
                   )}
                   <div className="mb-2">
                     <input
-                      value={editMemberInfo.address?.address}
+                      value={editMemberInfo?.address?.address}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
                       id="inputAddress"
+                      onChange={handleAdressDetailEdit}
+                      name="address"
                     />
                     <label htmlFor="inputAddress">기본 주소</label>
                   </div>
                   <div>
                     <input
-                      value={editMemberInfo.address?.addressDetail}
+                      value={editMemberInfo?.address?.addressDetail}
                       onChange={handleAdressDetailEdit}
                       type="text"
                       className="border border-gray-300 rounded w-80 mr-2"
                       id="inputDetailAddress"
+                      name="addressDetail"
                     />
                     <label htmlFor="inputDetailAddress">상세 주소(선택)</label>
                   </div>
@@ -401,7 +432,7 @@ export default function EditMember() {
                     name="emailAgree"
                     id="smsOk"
                     className="mr-1"
-                    checked={editMemberInfo.emailAgree}
+                    checked={editMemberInfo?.emailAgree}
                     onChange={handleCheckboxEdit}
                   />
                   <label htmlFor="smsOk" className="mr-2">
@@ -470,7 +501,7 @@ export default function EditMember() {
                 </td>
                 <td className="flex flex-row p-3">
                   <input
-                    value={editMemberInfo.birthday}
+                    value={editMemberInfo?.birthday}
                     onChange={handleBirthdayEdit}
                     type="date"
                     name=""
