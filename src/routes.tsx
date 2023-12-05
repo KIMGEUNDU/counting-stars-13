@@ -25,6 +25,9 @@ const MyCart = lazy(() => import('pages/MyCart'));
 const MyShopping = lazy(() => import('pages/MyShopping'));
 const MyOrder = lazy(() => import('pages/MyOrder'));
 const Search = lazy(() => import('pages/Search'));
+const Wish = lazy(() => import('pages/Wish'));
+const Order = lazy(() => import('pages/Order'));
+const MyBoard = lazy(() => import('pages/MyBoard'));
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -52,6 +55,9 @@ const router = createHashRouter(
       <Route path="myCart" element={<MyCart />} />
       <Route path="myShopping" element={<MyShopping />} />
       <Route path="myOrder" element={<MyOrder />} />
+      <Route path="wish" element={<Wish />} />
+      <Route path="order" element={<Order />} />
+      <Route path="myBoard" element={<MyBoard />} />
     </Route>
   )
 );
