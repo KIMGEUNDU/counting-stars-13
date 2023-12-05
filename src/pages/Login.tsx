@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { emailReg, pwReg } from '@/utils/loginReg';
+import { emailReg } from '@/utils/loginReg';
 import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { Helmet } from 'react-helmet-async';
