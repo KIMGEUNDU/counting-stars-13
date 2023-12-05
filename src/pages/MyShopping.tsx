@@ -79,7 +79,7 @@ export default function MyShopping() {
                 회원이신 고객님의 개인정보를 관리하는 공간입니다.
               </p>
             </Link>
-            <Link to="/" className="block w-1/4 border h-72 px-5">
+            <Link to="/wish" className="block w-1/4 border h-72 px-5">
               <img
                 src="/myShoppingLike.png"
                 className="m-auto w-12 mt-11 mb-5"
@@ -91,7 +91,7 @@ export default function MyShopping() {
                 관심상품으로 등록하신 상품의 목록을 보여드립니다.
               </p>
             </Link>
-            <Link to="/community" className="block w-1/4 border h-72 px-5">
+            <Link to="/myBoard" className="block w-1/4 border h-72 px-5">
               <img
                 src="/myShoppingBoard.png"
                 className="m-auto w-10 mt-12 mb-5"
