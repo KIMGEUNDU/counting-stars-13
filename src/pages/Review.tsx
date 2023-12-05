@@ -11,11 +11,13 @@ import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Notice from '@/components/QnA,Review/Notice';
+import axios from 'axios';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 
 export default function Review() {
   const {
-    data,
-    setData,
+    allData,
+    setAllData,
     pageData,
     setPageData,
     setDataLength,
@@ -29,10 +31,10 @@ export default function Review() {
   const { setAttachFile } = useForm();
   // 현재 후기 조회안됨 -> 곧 API 구현 예정
   // 더미데이터 가지고오기
-  const { reviewData } = dummyData();
+  // const { reviewData } = dummyData();
 
   // id순으로 정렬하기
-  const sortReviewData = sortQnaReviewData(reviewData);
+  // const sortReviewData = sortQnaReviewData(reviewData);
 
   // 새로 Review 페이지 들어올때는 리셋
   useEffect(() => {
@@ -42,14 +44,25 @@ export default function Review() {
     setAttachFile('');
   }, []);
 
-  // 리뷰데이터로 페이지네이션
   useEffect(() => {
-    setData(sortReviewData);
-    setDataLength(sortReviewData.length);
-    setPageNumber(1);
-    setPageData(sortReviewData.slice(0, 10));
-    setDataLengthPage(Math.ceil(sortReviewData.length / 10));
-  }, [setData]);
+    const getReplies = async () => {
+      const res = await axios.get('https://localhost/api/replies', {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const sortReview = sortQnaReviewData(res.data.item);
+
+      setAllData(sortReview);
+      setDataLength(sortReview.length);
+      setPageNumber(1);
+      setPageData(sortReview.slice(0, 10));
+      setDataLengthPage(Math.ceil(sortReview.length / 10));
+    };
+
+    getReplies();
+  }, []);
 
   return (
     <>
@@ -65,29 +78,33 @@ export default function Review() {
             <Thead info="상품 정보" score="평점" />
             <tbody className="text-center">
               <Notice collection="review" />
-              {data &&
+              {allData &&
                 pageData &&
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
                     tag={v._id ? v._id : ''}
-                    title={(v as QnaReviewData).title}
-                    writer={(v as QnaReviewData).writer}
-                    date={(v as QnaReviewData).date}
-                    item={(v as QnaReviewData).productName}
-                    itemImg={(v as QnaReviewData).productImg}
-                    grade={(v as QnaReviewData).grade}
+                    title={(v as QnaReviewData2).title}
+                    writer={
+                      (v as QnaReviewData2).userName
+                        ? (v as QnaReviewData2).userName
+                        : '비회원'
+                    }
+                    date={(v as QnaReviewData2).createdAt}
+                    item={(v as QnaReviewData2).product.name}
+                    itemImg={(v as QnaReviewData2).product.image}
+                    grade={(v as QnaReviewData2).rating}
                     link={`/review-detail/${v._id}`}
                     attachFile={
-                      (v as QnaReviewData).attachFile
-                        ? (v as QnaReviewData).attachFile
+                      (v as QnaReviewData2).attachFile
+                        ? (v as QnaReviewData2).attachFile
                         : ''
                     }
                   />
                 ))}
             </tbody>
           </table>
-          <PaginationNumber length={data ? dataLengthPage : 1} />
+          <PaginationNumber length={allData ? dataLengthPage : 1} />
           <WriterButton link="/write-review" />
         </section>
       </main>
