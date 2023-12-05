@@ -10,25 +10,40 @@ import { useParams } from 'react-router-dom';
 
 axios.defaults.baseURL = 'https://localhost/api';
 
+const fetchData = (id: string) => {
+  if (id === 'all') {
+    const response = axios.get(`/products?`, {
+      params: {
+        extra: JSON.stringify({
+          'extra.category.0': `PC-shop`,
+        }),
+      },
+    });
+    return response;
+  } else {
+    const response = axios.get(`/products?`, {
+      params: {
+        extra: JSON.stringify({
+          'extra.category.1': `PC-${id}`,
+        }),
+      },
+    });
+    return response;
+  }
+};
+
 export default function Shop() {
   const { id } = useParams();
   const { isLoading, data, error } = useQuery({
     queryKey: ['products', id],
-    queryFn: () =>
-      axios.get(`/products?`, {
-        params: {
-          extra: JSON.stringify({
-            'extra.category.0': `PC-shop`,
-            'extra.category.1': `PC-${id}`,
-          }),
-        },
-      }),
+    queryFn: () => fetchData(String(id)),
     select: (data) => data.data.item,
     staleTime: 1000 * 2,
     refetchOnWindowFocus: false,
   });
   const [category, setCategory] = useState('');
   const [arrData, setData] = useState<ProductData[]>();
+  const [sort, setSort] = useState<string>('basic');
 
   useEffect(() => {
     switch (id) {
@@ -47,15 +62,20 @@ export default function Shop() {
       case 'party':
         setCategory('파티용품/굿즈');
         break;
+      default:
+        setCategory('전체 상품');
     }
+    setSort('basic');
     setData(data);
   }, [category, id, isLoading, error, data]);
 
   const handlePrice = (sort: string) => {
     if (sort === 'basic') {
+      setSort(sort);
       setData(data);
     }
     if (sort === 'new') {
+      setSort(sort);
       setData(
         data.toSorted((a: ProductData, b: ProductData) =>
           a.updatedAt > b.updatedAt ? 1 : -1
@@ -63,6 +83,7 @@ export default function Shop() {
       );
     }
     if (sort === 'name') {
+      setSort(sort);
       setData(
         data.toSorted((a: ProductData, b: ProductData) =>
           a.name > b.name ? 1 : -1
@@ -70,11 +91,13 @@ export default function Shop() {
       );
     }
     if (sort === 'high') {
+      setSort(sort);
       setData(
         data.toSorted((a: ProductData, b: ProductData) => b.price - a.price)
       );
     }
     if (sort === 'low') {
+      setSort(sort);
       setData(
         data.toSorted((a: ProductData, b: ProductData) => a.price - b.price)
       );
@@ -94,27 +117,47 @@ export default function Shop() {
         </p>
         <ul className="flex gap-7 border-t border-t-gray-400 border-b border-b-gray-300 py-3">
           <li className="text-gray-600 hover:font-bold">
-            <button type="button" onClick={() => handlePrice('basic')}>
+            <button
+              type="button"
+              onClick={() => handlePrice('basic')}
+              className={sort === 'basic' ? 'font-semibold' : ''}
+            >
               기본
             </button>
           </li>
           <li className="text-gray-600 hover:font-bold">
-            <button type="button" onClick={() => handlePrice('new')}>
+            <button
+              type="button"
+              onClick={() => handlePrice('new')}
+              className={sort === 'new' ? 'font-semibold' : ''}
+            >
               신상품
             </button>
           </li>
           <li className="text-gray-600 hover:font-bold">
-            <button type="button" onClick={() => handlePrice('name')}>
+            <button
+              type="button"
+              onClick={() => handlePrice('name')}
+              className={sort === 'name' ? 'font-semibold' : ''}
+            >
               상품명
             </button>
           </li>
           <li className="text-gray-600 hover:font-bold">
-            <button type="button" onClick={() => handlePrice('low')}>
+            <button
+              type="button"
+              onClick={() => handlePrice('low')}
+              className={sort === 'low' ? 'font-semibold' : ''}
+            >
               낮은 가격
             </button>
           </li>
           <li className="text-gray-600 hover:font-bold">
-            <button type="button" onClick={() => handlePrice('high')}>
+            <button
+              type="button"
+              onClick={() => handlePrice('high')}
+              className={sort === 'high' ? 'font-semibold' : ''}
+            >
               높은 가격
             </button>
           </li>
@@ -134,7 +177,7 @@ export default function Shop() {
               );
             })}
         </ul>
-        <PaginationNumber length={5} />
+        <PaginationNumber length={1} />
       </div>
     </>
   );
