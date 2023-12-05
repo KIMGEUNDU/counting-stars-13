@@ -3,15 +3,14 @@ import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import ProductItem from '@/components/Shop/ProductItem';
 import { useData } from '@/store/useData';
-import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { FormEvent, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useEffect, useRef, FormEvent } from 'react';
 
 export default function Search() {
   const {
-    data,
-    setData,
+    allData,
+    setAllData,
     dataLengthPage,
     setDataLengthPage,
     dataLength,
@@ -22,13 +21,6 @@ export default function Search() {
     pageNumber,
   } = useData();
   const searchRef = useRef<HTMLInputElement | null>(null);
-
-  const getProducts = async () =>
-    await axios
-      .get(`https://localhost/api/products`)
-      .then((res) => res.data.item);
-
-  const { data: fetchData, isLoading } = useQuery(['products'], getProducts);
 
   // 검색하기
   const handleSearchData = (e: FormEvent) => {
@@ -44,8 +36,8 @@ export default function Search() {
 
       if (searchRef.current && searchRef.current.value === '') {
         setPageNumber(1);
-        setPageData(data.slice(0, 10));
-        setDataLength(data.length);
+        setPageData(allData.slice(0, 10));
+        setDataLength(allData.length);
       } else if (result.length === 0) {
         setPageData(result);
         setPageNumber(0);
@@ -62,14 +54,17 @@ export default function Search() {
 
   // 데이터 가져오기
   useEffect(() => {
-    if (fetchData) {
-      setData(fetchData);
-      setDataLength(fetchData.length);
-      setPageData(fetchData.slice(0, 10));
-      setDataLengthPage(Math.ceil(fetchData.length / 10));
+    const getProducts = async () => {
+      const res = await axios.get(`https://localhost/api/products`);
+      setAllData(res.data.item);
+      setDataLength(res.data.item.length);
+      setPageData(res.data.item.slice(0, 10));
+      setDataLengthPage(Math.ceil(res.data.item.length / 10));
       setPageNumber(1);
-    }
-  }, [data, fetchData]);
+    };
+
+    getProducts();
+  }, [setAllData]);
 
   return (
     <>
@@ -104,14 +99,13 @@ export default function Search() {
           <p className="p-3 text-sm border mt-4 ">
             총
             <span className="font-bold  text-starRed">
-              {data ? dataLength : 0}
+              {allData ? dataLength : 0}
             </span>
             개의 상품이 검색되었습니다.
           </p>
 
           <ul className="flex gap-2 flex-wrap justify-cetner py-3 w-full">
-            {!isLoading &&
-              data &&
+            {allData &&
               pageData &&
               pageData.map((v, i) => (
                 <li key={i} className="text-center">
@@ -123,11 +117,9 @@ export default function Search() {
                   />
                 </li>
               ))}
-
-            {isLoading && <li>불러오는중</li>}
           </ul>
           {pageNumber > 0 && (
-            <PaginationNumber length={data ? dataLengthPage : 1} />
+            <PaginationNumber length={allData ? dataLengthPage : 1} />
           )}
         </section>
       </main>

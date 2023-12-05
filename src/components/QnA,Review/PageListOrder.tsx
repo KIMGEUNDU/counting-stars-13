@@ -17,6 +17,9 @@ function PageListOrder({
   _id,
   length,
 }: PageListOrder) {
+  console.log(_id);
+  console.log(length);
+
   return (
     <table className="pageListOrder center text-left text-sm mb-10">
       <tbody>

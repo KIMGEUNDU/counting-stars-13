@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 interface useData {
   // 전체 데이터
-  data: Data[] | QnaReviewData[];
-  setData: (data: Data[] | QnaReviewData[]) => void;
+  allData: Data[] | QnaReviewData[] | QnaReviewData2[];
+  setAllData: (data: Data[] | QnaReviewData[] | QnaReviewData2[]) => void;
   // 페이지네이션 데이터
-  pageData: Data[] | QnaReviewData[] | OrderData[];
-  setPageData: (pageData: Data[] | QnaReviewData[] | OrderData[]) => void;
+  pageData: Data[] | QnaReviewData[] | OrderData[] | QnaReviewData2[];
+  setPageData: (pageData: Data[] | QnaReviewData[] | OrderData[] | QnaReviewData2[]) => void;
   // 전체 데이터 페이지 길이
   dataLengthPage: number;
   setDataLengthPage: (dataLengthPage: number | undefined) => void;
@@ -34,8 +34,8 @@ interface useData {
 }
 
 export const useData = create<useData>((set) => ({
-  data: [],
-  setData: (data) => set({ data }),
+  allData: [],
+  setAllData: (allData) => set({ allData }),
   pageData: [],
   setPageData: (pageData) => set({ pageData }),
   dataLengthPage: 0,

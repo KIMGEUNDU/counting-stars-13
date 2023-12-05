@@ -1,21 +1,23 @@
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
+import Notice from '@/components/QnA,Review/Notice';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
-import { dummyData } from '@/store/dummyData';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { sortQnaReviewData } from '@/utils/getProductsData';
+import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Notice from '@/components/QnA,Review/Notice';
 
 export default function Qna() {
+  const { setAttachFile } = useForm();
   const {
-    data,
-    setData,
+    allData,
+    setAllData,
     pageData,
     setPageData,
     setDataLength,
@@ -26,13 +28,6 @@ export default function Qna() {
     setSelectData,
     setSelectOrderId,
   } = useData();
-  const { setAttachFile } = useForm();
-  // 현재 qna 컬렉션없음
-  // 임시데이터
-  const { qnaData } = dummyData();
-
-  // id순으로 정렬하기
-  const sortQnaData = sortQnaReviewData(qnaData);
 
   // 새로 Qna 페이지 들어올때는 리셋
   useEffect(() => {
@@ -42,14 +37,25 @@ export default function Qna() {
     setAttachFile('');
   }, []);
 
-  // Qna데이터로 페이지네이션
   useEffect(() => {
-    setData(sortQnaData);
-    setDataLength(sortQnaData.length);
-    setPageNumber(1);
-    setPageData(sortQnaData.slice(0, 10));
-    setDataLengthPage(Math.ceil(sortQnaData.length / 10));
-  }, [setData]);
+    const getReplies = async () => {
+      const res = await axios.get('https://localhost/api/replies/all', {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const sortQna = sortQnaReviewData(res.data.item);
+
+      setAllData(sortQna);
+      setDataLength(sortQna.length);
+      setPageNumber(1);
+      setPageData(sortQna.slice(0, 10));
+      setDataLengthPage(Math.ceil(sortQna.length / 10));
+    };
+
+    getReplies();
+  }, []);
 
   return (
     <>
@@ -65,28 +71,30 @@ export default function Qna() {
             <Thead info="상품 정보" />
             <tbody className="text-center">
               <Notice collection="qna" />
-              {data &&
+              {allData &&
                 pageData &&
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={v._id ? v._id : ''}
-                    title={(v as QnaReviewData).title}
-                    writer={(v as QnaReviewData).writer}
-                    date={(v as QnaReviewData).date}
-                    item={(v as QnaReviewData).productName}
-                    itemImg={(v as QnaReviewData).productImg}
+                    tag={pageData.length - i}
+                    title={
+                      (v as Replies).title
+                        ? (v as Replies).title
+                        : (v as Replies).content
+                    }
+                    writer={(v as Replies).user.name}
+                    date={(v as Replies).createdAt}
+                    item={(v as Replies).product.name}
+                    itemImg={(v as Replies).product.image}
                     link={`/qna-detail/${v._id}`}
                     attachFile={
-                      (v as QnaReviewData).attachFile
-                        ? (v as QnaReviewData).attachFile
-                        : ''
+                      (v as Replies).attachFile ? (v as Replies).attachFile : ''
                     }
                   />
                 ))}
             </tbody>
           </table>
-          <PaginationNumber length={data ? dataLengthPage : 1} />
+          <PaginationNumber length={allData ? dataLengthPage : 1} />
           <WriterButton link="/write-qna" />
         </section>
       </main>

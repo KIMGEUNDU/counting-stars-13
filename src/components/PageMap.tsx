@@ -17,7 +17,9 @@ function PageMap({
           {route.toUpperCase()} {category ? '＞' : ''}
         </span>
       </Link>
-      {category && <span className="font-bold text-black">{category}</span>}
+      {category && (
+        <span className="font-bold text-black">{category.toUpperCase()}</span>
+      )}
     </div>
   );
 }
