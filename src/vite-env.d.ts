@@ -46,6 +46,7 @@ interface QnaReviewData {
   writer: string;
   writerId?: string;
   date?: string | undefined;
+  createdAt?: string;
   attachFile?: string;
   content?: string;
   tag?: string;
@@ -56,6 +57,11 @@ interface QnaReviewData {
   productPrice?: number;
   productImg?: string;
   qnaId?: number;
+  product?: {
+    name?: string;
+    image?: string;
+    price?: number;
+  };
 }
 
 interface Data {
@@ -140,12 +146,47 @@ interface address {
 interface editMemberInfo {
   email: string;
   name: string;
-  password: string | undefined;
   phone: string;
   address: address;
   type: string;
   emailAgree: boolean;
   birthday: string;
-  updatedAt: string;
+}
+
+interface CartItem {
+  _id: number;
+  user_id: number;
+  product_id: number;
+  quantity: number;
+  createdAt: Date;
+  updatedAt: Date;
+  product: Product;
+}
+
+interface Product {
+  price: number;
+  name: string;
+  image: string;
+  quantity: number;
+  buyQuantity: number;
+}
+
+interface Replies {
+  _id: number;
+  tag?: string;
+  title?: string;
+  content: string;
+  rating?: number;
   createdAt: string;
+  attachFile?: string;
+  product: {
+    _id: number;
+    name: string;
+    image: string;
+  };
+  writer?: string;
+  user: {
+    _id: number;
+    name: string;
+  };
 }

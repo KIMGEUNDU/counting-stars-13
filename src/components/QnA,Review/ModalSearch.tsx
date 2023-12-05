@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRef } from 'react';
 
 function ModalSearch() {
-  const { data, setPageData, setPageNumber, setDataLength } = useData();
+  const { setPageData, setPageNumber, setDataLength } = useData();
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   const handleSearch = () => {
@@ -17,8 +17,8 @@ function ModalSearch() {
 
       if (searchRef.current && searchRef.current.value === '') {
         setPageNumber(1);
-        setPageData(data.slice(0, 10));
-        setDataLength(data.length);
+        setPageData(allData.slice(0, 10));
+        setDataLength(allData.length);
       } else if (result.length === 0) {
         setPageData(result);
         setPageNumber(0);

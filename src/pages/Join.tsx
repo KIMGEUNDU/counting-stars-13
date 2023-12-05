@@ -7,10 +7,11 @@ import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useRef, useState } from 'react';
-import { emailReg, pwReg, phoneReg } from '@/utils/loginReg';
+import { emailReg, phoneReg } from '@/utils/loginReg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
 
 export default function Join() {
   const emailInput = useRef<HTMLInputElement>(null);
@@ -140,33 +141,6 @@ export default function Join() {
     }
     console.log(phoneNumberList);
   }, [phoneNumberList]);
-
-  //이메일 중복체크
-  const handleCheckEmail = async () => {
-    if (!emailReg(email) || !email) {
-      return toast('이메일 형식을 확인해주세요.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
-    try {
-      const response = await axios.get(
-        `https://localhost/api/users/email?email=${joinInfo.email}`
-      );
-      setCheckEmail(true);
-      if (response.data.ok === 1) {
-        toast('이용 가능한 이메일입니다.', {
-          icon: '😃',
-          duration: 2000,
-        });
-      }
-    } catch (e) {
-      return toast('이미 사용중인 이메일입니다.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
-  };
 
   //회원가입 버튼 눌렀을 때
   const handleJoin = async (
@@ -336,12 +310,12 @@ export default function Join() {
                     id="inputId"
                     required
                   />
-                  <button
-                    onClick={handleCheckEmail}
-                    className="border-2 text-sm font-bold bg-gray-50 text-gray-500 py-0.5 px-1 mx-1.5 hover:bg-gray-200 rounded-lg"
-                  >
-                    중복확인
-                  </button>
+
+                  <EmailCheckButton
+                    email={email}
+                    setCheckEmail={setCheckEmail}
+                    itemEmail={joinInfo.email}
+                  />
                 </td>
               </tr>
               <tr className="border-b border-gray-300">

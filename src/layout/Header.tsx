@@ -32,18 +32,18 @@ export default function Header() {
   };
   return (
     <header className="relative z-50">
-      <div className="w-full border-b-2 flex justify-center fixed h-[96px] bg-white">
+      <div className="w-full border-b-2 flex justify-center fixed h-24 bg-white">
         <div className="center">
           <h1 className="sr-only">별해달</h1>
           <nav className="flex justify-between">
             <div className="w-[45%] flex items-center">
-              <ul className="w-[60%] flex items-center justify-between font-bold">
+              <ul className="w-3/5 flex items-center justify-between font-bold">
                 <li className="px-2 py-5">
                   <Link to="/brand">Brand</Link>
                 </li>
                 <li className="group/item px-2 py-5 relative">
-                  <Link to="/shop/shop">Shop</Link>
-                  <div className="group/edit group-hover/item:visible  invisible  absolute bg-white rounded-md py-1 border w-36 text-center text-sm font-medium left-[-40px] mt-2">
+                  <Link to="/shop/all">Shop</Link>
+                  <div className="group/edit group-hover/item:visible invisible absolute bg-white rounded-md py-1 border w-36 text-center text-sm font-medium left-[-40px] mt-2">
                     <Link to="/shop/dessert" className="block py-1">
                       디저트/케이크
                     </Link>
@@ -78,7 +78,11 @@ export default function Header() {
               <img src="/logoChar.png" className="max-w-[90px]" />
             </Link>
             <div className="w-[45%] flex gap-1 relative justify-end items-center">
-              <ul className="w-[70%] flex items-center justify-between gap-1 text-[0.9vw]">
+              <ul
+                className={`w-[70%] flex items-center text-sm ${
+                  isLoginState ? 'justify-between gap-1' : 'justify-end gap-5'
+                }`}
+              >
                 <li>
                   {isLoginState ? (
                     <Link
@@ -94,26 +98,26 @@ export default function Header() {
                     </Link>
                   )}
                 </li>
-                <li>
-                  {isLoginState ? (
-                    <Link to="/edit" className="whitespace-nowrap">
-                      회원정보조회
-                    </Link>
-                  ) : (
+                {!isLoginState && (
+                  <li>
                     <Link to="/join" className="whitespace-nowrap">
                       회원가입
                     </Link>
-                  )}
-                </li>
-                <li className="whitespace-nowrap">
-                  <Link to="/myCart">장바구니</Link>
-                </li>
-                <li className="whitespace-nowrap">
-                  <Link to="/myOrder">주문조회</Link>
-                </li>
-                <li className="whitespace-nowrap">
-                  <Link to="/myShopping">+마이쇼핑</Link>
-                </li>
+                  </li>
+                )}
+                {isLoginState && (
+                  <>
+                    <li className="whitespace-nowrap">
+                      <Link to="/myCart">장바구니</Link>
+                    </li>
+                    <li className="whitespace-nowrap">
+                      <Link to="/myOrder">주문 조회</Link>
+                    </li>
+                    <li className="whitespace-nowrap">
+                      <Link to="/myShopping">+ 마이 쇼핑</Link>
+                    </li>
+                  </>
+                )}
               </ul>
               <Link
                 to="/search"

@@ -124,17 +124,29 @@ function DetailProductSelect({
                   readOnly
                 />
                 <div className="flex flex-col gap-2 justify-center">
-                  <button type="button" onClick={() => handleClickUp(item)}>
+                  <button
+                    type="button"
+                    onClick={() => handleClickUp(item)}
+                    className="hover:scale-150 transition-transform"
+                  >
                     <img src="/cartArrowUp.png" className="w-3" />
                   </button>
-                  <button type="button" onClick={() => handleClickDown(item)}>
+                  <button
+                    type="button"
+                    onClick={() => handleClickDown(item)}
+                    className="hover:scale-150 transition-transform"
+                  >
                     <img src="/cartArrowDown.png" className="w-3" />
                   </button>
                 </div>
               </div>
               {option.length > 0 && (
                 <button type="button" onClick={() => optionDelete(item)}>
-                  <img src="/cancel.png" alt="옵션 닫기" className="w-4" />
+                  <img
+                    src="/cancel.png"
+                    alt="옵션 닫기"
+                    className="w-4 hover:scale-125 transition-transform"
+                  />
                 </button>
               )}
             </div>
