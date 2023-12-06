@@ -1,11 +1,17 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import toast from 'react-hot-toast';
+import { putWish } from '@/utils/HandleWish';
 
 function DetailProductSelect({
+  id,
   name,
   price,
   option,
 }: {
+  id: number;
   name: string;
   price: number;
   option: { [key: string]: string }[] | string[];
@@ -13,6 +19,7 @@ function DetailProductSelect({
   const [info] = useState<{ [key: string]: number }>({});
   const [count, setCount] = useState<{ [key: string]: number }>({});
   const [selectOption, setSelectOption] = useState<string[]>([]);
+
   useEffect(() => {
     option.map((item: string | optionObject) => {
       if (typeof item === 'string') {
@@ -64,6 +71,31 @@ function DetailProductSelect({
   const optionDelete = (item: string) => {
     setSelectOption(selectOption.filter((opt) => opt !== item));
     setCount((prevCount) => ({ ...prevCount, [item]: 0 }));
+  };
+
+  const putCart = () => {
+    if (selectOption.length === 0) {
+      toast('옵션을 선택해주세요.');
+      return;
+    }
+
+    selectOption.map(async (item) => {
+      const cart = {
+        product_id: id,
+        quantity: count[item],
+        option: item,
+        optionPrice: info[item],
+      };
+
+      await axios.post('https://localhost/api/carts/', cart, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+    });
+    setSelectOption([]);
+
+    toast('장바구니에 추가되었습니다.');
   };
 
   return (
@@ -176,6 +208,27 @@ function DetailProductSelect({
           .toLocaleString()}
         개&#41;
       </p>
+
+      <section className={`flex gap-4 justify-between py-5 mb-10`}>
+        <button type="button" className="detailButton" onClick={putCart}>
+          장바구니 담기
+        </button>
+
+        <button
+          type="button"
+          className="detailButton"
+          onClick={() => putWish(id)}
+        >
+          찜하기
+        </button>
+
+        <button
+          type="button"
+          className={`detailButton bg-starBlack text-white`}
+        >
+          바로 구매하기
+        </button>
+      </section>
     </>
   );
 }
