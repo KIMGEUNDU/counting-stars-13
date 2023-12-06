@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
 import DaumPostcode, { Address } from 'react-daum-postcode';
+
 import debounce from '@/utils/debounce';
 
 export default function EditMember() {
@@ -17,9 +18,7 @@ export default function EditMember() {
   const [editMemberInfo, setEditMemberInfo] = useState<editMemberInfo>({
     email: '',
     name: '',
-
     phone: '',
-
     address: { zonecode: '', address: '', addressDetail: '' },
     type: '',
     emailAgree: false,
@@ -86,7 +85,7 @@ export default function EditMember() {
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
   };
 
-  const [isAddress, setAdress] = useState<address>({
+  const [isAddress, setAddress] = useState<address>({
     zonecode: '',
     address: '',
     addressDetail: '',
@@ -95,7 +94,11 @@ export default function EditMember() {
 
   const handleComplete = (data: Address) => {
     console.log(data);
-    setAdress({ ...isAddress, zonecode: data.zonecode, address: data.address });
+    setAddress({
+      ...isAddress,
+      zonecode: data.zonecode,
+      address: data.address,
+    });
     setEditMemberInfo({
       ...editMemberInfo,
       address: {
@@ -110,16 +113,16 @@ export default function EditMember() {
     setIsOpen(false);
   }, [isAddress.zonecode]);
 
-  // useEffect(() => {
-  //   setEditMemberInfo({
-  //     ...editMemberInfo,
-  //     address: {
-  //       zonecode: isAddress.zonecode,
-  //       address: isAddress.address,
-  //       addressDetail: isAddress.addressDetail,
-  //     },
-  //   });
-  // }, [isAddress.zonecode]);
+  useEffect(() => {
+    setEditMemberInfo({
+      ...editMemberInfo,
+      address: {
+        zonecode: isAddress.zonecode,
+        address: isAddress.address,
+        addressDetail: isAddress.addressDetail,
+      },
+    });
+  }, [isAddress.zonecode]);
 
   const [isOpen, setIsOpen] = useState(false);
   const onToggleModal = () => {
@@ -127,7 +130,7 @@ export default function EditMember() {
   };
 
   const handleAdressDetailEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAdress({ ...isAddress, [e.target.name]: e.target.value });
+    setAddress({ ...isAddress, [e.target.name]: e.target.value });
 
     if (e.target.name === 'addressDetail') {
       setEditMemberInfo({
@@ -248,15 +251,7 @@ export default function EditMember() {
                   </span>
                 </td>
                 <td className="flex flex-row p-3">
-                  <input
-                    name="email"
-                    type="text"
-                    className="border border-gray-300 rounded w-32 mr-1"
-                    id="inputId"
-                    value={editMemberInfo?.email}
-                  />
-
-                  <p>(영문 소문자/숫자, 4~16자)</p>
+                  <p className="font-medium">{editMemberInfo?.email}</p>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -274,9 +269,6 @@ export default function EditMember() {
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputPw"
                   />
-                  <p>
-                    (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
-                  </p>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -314,6 +306,7 @@ export default function EditMember() {
                   />
                 </td>
               </tr>
+
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">주소</td>
                 <td className="p-3">
