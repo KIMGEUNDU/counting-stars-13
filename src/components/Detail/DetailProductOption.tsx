@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import DetailButton from './DetailButton';
 import DetailProductResult from './DetailProductResult';
 import DetailProductSelect from './DetailProductSelect';
 
@@ -15,6 +14,7 @@ function DetailProductOption({ data }: { data: ProductData }) {
     if (quantity < 2) return;
     setQuantity((prevCount) => prevCount - 1);
   };
+
   if (data) {
     return (
       <section className="w-full text-left max-w-[500px] ml-auto">
@@ -43,6 +43,7 @@ function DetailProductOption({ data }: { data: ProductData }) {
         <form>
           {data?.options.length > 0 && (
             <DetailProductSelect
+              id={data._id}
               name={data.name}
               price={data.price}
               option={data.options}
@@ -50,6 +51,7 @@ function DetailProductOption({ data }: { data: ProductData }) {
           )}
           {data?.options.length === 0 && (
             <DetailProductResult
+              id={data._id}
               name={data?.name}
               price={`${data?.price}`}
               quantity={quantity}
@@ -58,16 +60,6 @@ function DetailProductOption({ data }: { data: ProductData }) {
               handleClickDown={handleClickDown}
             />
           )}
-
-          <DetailButton
-            btn1="장바구니 담기"
-            btn2="찜하기"
-            btn3="바로 구매하기"
-            onClick1={() => console.log('확인')}
-            onClick2={() => console.log('확인')}
-            onClick3={() => console.log('확인')}
-            style="detailButton"
-          />
         </form>
       </section>
     );
