@@ -1,7 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import ProductQuantity from './ProductQuantity';
+import { putCart } from '@/utils/HandleCart';
+import { putWish } from '@/utils/HandleWish';
 
 function DetailProductResult({
+  id,
   name,
   quantity,
   price,
@@ -39,6 +42,31 @@ function DetailProductResult({
         </span>
         &#40;{quantity}개&#41;
       </p>
+
+      <section className={`flex gap-4 justify-between py-5 mb-10`}>
+        <button
+          type="button"
+          className="detailButton"
+          onClick={() => putCart(id, quantity)}
+        >
+          장바구니 담기
+        </button>
+
+        <button
+          type="button"
+          className="detailButton"
+          onClick={() => putWish(id)}
+        >
+          찜하기
+        </button>
+
+        <button
+          type="button"
+          className={`detailButton bg-starBlack text-white`}
+        >
+          바로 구매하기
+        </button>
+      </section>
     </>
   );
 }
