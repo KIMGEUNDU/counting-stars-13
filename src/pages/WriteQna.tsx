@@ -6,8 +6,7 @@ import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -20,7 +19,6 @@ export default function WriteQna() {
   const { content, attachFile } = useForm();
   const { modal, setModal, selectId, selectData, setAllData, setPageData } =
     useData();
-  const { userInfo, setUserInfo } = useUserInfo();
 
   // Qna 등록하기 (Axios)
   const handleRegistQna = async (e: React.FormEvent) => {
@@ -36,16 +34,14 @@ export default function WriteQna() {
         icon: '⭐',
         duration: 2000,
       });
-    }
-
-    if (userInfo && selectData && selectId && titleRef.current) {
+    } else if (selectData && selectId && titleRef.current) {
       const newQna = {
-        title: titleRef.current.value,
         content,
-        attachFile,
         product_id: selectId,
         extra: {
-          isQna: true,
+          type: 'qna',
+          title: titleRef.current.value,
+          attachFile: attachFile,
         },
       };
 
@@ -65,8 +61,7 @@ export default function WriteQna() {
           duration: 2000,
         });
 
-        console.log(response);
-        // navigate(`/qna-detail/${newQna._id}`);
+        navigate(`/qna-detail/${response.data.item._id}`);
       }
     }
   };
@@ -83,21 +78,6 @@ export default function WriteQna() {
   } else {
     document.body.style.overflow = 'unset';
   }
-
-  // 로그인유저정보 받아오기
-  // useEffect(() => {
-  //   async function getUsers() {
-  //     const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${AUTH_TOKEN()}`,
-  //       },
-  //     });
-
-  //     setUserInfo(res.data.item);
-  //   }
-
-  //   getUsers();
-  // }, [setUserInfo]);
 
   // data, pageData 리셋
   useEffect(() => {

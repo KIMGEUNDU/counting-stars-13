@@ -1,20 +1,20 @@
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
+import Notice from '@/components/QnA,Review/Notice';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
-import { dummyData } from '@/store/dummyData';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { sortQnaReviewData } from '@/utils/getProductsData';
+import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Notice from '@/components/QnA,Review/Notice';
-import axios from 'axios';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 
 export default function Review() {
+  const { setAttachFile } = useForm();
   const {
     allData,
     setAllData,
@@ -28,13 +28,6 @@ export default function Review() {
     setSelectData,
     setSelectOrderId,
   } = useData();
-  const { setAttachFile } = useForm();
-  // 현재 후기 조회안됨 -> 곧 API 구현 예정
-  // 더미데이터 가지고오기
-  // const { reviewData } = dummyData();
-
-  // id순으로 정렬하기
-  // const sortReviewData = sortQnaReviewData(reviewData);
 
   // 새로 Review 페이지 들어올때는 리셋
   useEffect(() => {
@@ -44,21 +37,23 @@ export default function Review() {
     setAttachFile('');
   }, []);
 
+  // 데이터 집어넣기
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/replies', {
+      const res = await axios.get('https://localhost/api/replies/all', {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
       const sortReview = sortQnaReviewData(res.data.item);
+      const filterReview = sortReview.filter((v) => v.extra?.type === 'review');
 
-      setAllData(sortReview);
-      setDataLength(sortReview.length);
+      setAllData(filterReview);
+      setDataLength(filterReview.length);
+      setPageData(filterReview.slice(0, 10));
+      setDataLengthPage(Math.ceil(filterReview.length / 10));
       setPageNumber(1);
-      setPageData(sortReview.slice(0, 10));
-      setDataLengthPage(Math.ceil(sortReview.length / 10));
     };
 
     getReplies();
@@ -83,21 +78,17 @@ export default function Review() {
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={v._id ? v._id : ''}
-                    title={(v as QnaReviewData2).title}
-                    writer={
-                      (v as QnaReviewData2).userName
-                        ? (v as QnaReviewData2).userName
-                        : '비회원'
-                    }
-                    date={(v as QnaReviewData2).createdAt}
-                    item={(v as QnaReviewData2).product.name}
-                    itemImg={(v as QnaReviewData2).product.image}
-                    grade={(v as QnaReviewData2).rating}
+                    tag={pageData.length - i}
+                    title={(v as Replies).extra?.title}
+                    grade={(v as Replies).rating}
+                    writer={(v as Replies).user?.name}
+                    date={(v as Replies).createdAt}
+                    item={(v as Replies).product?.name}
+                    itemImg={(v as Replies).product?.image}
                     link={`/review-detail/${v._id}`}
                     attachFile={
-                      (v as QnaReviewData2).attachFile
-                        ? (v as QnaReviewData2).attachFile
+                      (v as Replies).extra?.attachFile
+                        ? (v as Replies).extra?.attachFile
                         : ''
                     }
                   />

@@ -1,7 +1,7 @@
-import { useComment } from '@/store/useComment';
-import { AUTH_ID } from '@/utils/AUTH_TOKEN';
-import { writeDate } from '@/utils/writeDate';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
 import { FormEvent, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 function CommentInput({
@@ -11,30 +11,43 @@ function CommentInput({
   writer: string;
   collection: string;
 }) {
-  const { qna, setQna, review, setReview } = useComment();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { id } = useParams();
 
   // 임시 댓글 달기
-  const uploadComment = (e: FormEvent) => {
+  const uploadComment = async (e: FormEvent) => {
     e.preventDefault();
 
     if (commentRef.current && commentRef.current.value) {
-      const comment = {
-        _id: collection === 'qna' ? qna.length + 1 : review.length + 1,
-        writer,
+      const commentData = {
+        // product_id: 1,
         content: commentRef.current.value,
-        date: writeDate(),
-        writerId: String(AUTH_ID()),
-        qnaId: Number(id),
+        extra: {
+          type: collection === 'qna' ? 'qnaComment' : 'reviewComment',
+          boardId: Number(id),
+        },
       };
 
-      if (collection === 'qna') {
-        setQna(comment);
-      } else {
-        setReview(comment);
-      }
+      const response = await axios.post(
+        'https://localhost/api/replies/',
+        commentData,
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        }
+      );
+
+      console.log(response);
+
       commentRef.current.value = '';
+
+      if (response.data.ok === 1) {
+        toast('업로드하였습니다 :)', {
+          icon: '⭐',
+          duration: 2000,
+        });
+      }
     }
   };
 
