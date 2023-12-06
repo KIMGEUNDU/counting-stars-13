@@ -1,7 +1,37 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-
+import { useMyOrderInfo } from '@/store/useMyOrderInfo';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
+//TODO: 주문 리스트 map 돌리기
 export default function MyOrder() {
+  const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
+  console.log(myOrderInfo);
+
+  const handleGetUserInfo = async () => {
+    try {
+      const response = await axios.get(`https://localhost/api/orders`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+      const item = response.data.item;
+      console.log(item);
+      setMyOrderInfo(item);
+
+      //가져온정보 넣기
+    } catch (e) {
+      return toast('정보가 불러와지지 않음', {
+        icon: '😢',
+        duration: 2000,
+      });
+    }
+  };
+  useEffect(() => {
+    handleGetUserInfo();
+  }, []);
   const orderNum = 0;
   const deletOrderNum = 0;
   const allProductNum = 0;
