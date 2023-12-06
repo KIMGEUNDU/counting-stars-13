@@ -6,34 +6,29 @@ import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
-import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function QnaDetail() {
   const navigate = useNavigate();
-  const [data, setData] = useState<Replies[]>([]);
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
+  const [comment, setComment] = useState<Replies[] | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { id } = useParams();
-  const dataId = Number(id) - 1;
 
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
 
-  // 임시 qna댓글값
-  const { qna } = useComment();
-  const idFilterComment = qna.filter((v) => v.qnaId === Number(id));
-
   // 삭제이벤트
   const handleDelete = () => {
-    toast('기능 수정중.', {
+    toast('지원되지 않는 기능입니다.', {
       icon: '⭐',
       duration: 2000,
     });
@@ -74,22 +69,34 @@ function QnaDetail() {
         },
       });
 
-      setData(res.data.item);
-      setPrevData(res.data.item[dataId - 1]);
-      setNextData(res.data.item[dataId + 1]);
+      const qna = res.data.item;
+      const filterQna = qna.filter((v: Replies) => v.extra!.type === 'qna');
+      const filterComment = qna.filter(
+        (v: Replies) =>
+          v.extra?.type === 'qnaComment' && v.extra?.boardId === id
+      );
+      const currentQna = filterQna.filter((v: Replies) => v._id === Number(id));
+      filterQna.forEach((v: Replies, i: number) => {
+        if (v._id === Number(id)) {
+          setCurrentIndex(i);
+        }
+      });
+
+      setCurrentData(currentQna[0]);
+      setPrevData(filterQna[currentIndex + 1]);
+      setNextData(filterQna[currentIndex - 1]);
+      setComment(filterComment);
     };
 
     repliesCurrentData();
     repliesData();
-  }, [dataId, id, setCurrentData]);
+  }, [currentIndex, id, setCurrentData]);
 
   return (
     <>
       <Helmet>
-        {currentData && (
-          <title>
-            {currentData.title ? currentData.title : currentData.content}
-          </title>
+        {currentData && currentData.extra && (
+          <title>{currentData.extra.title}</title>
         )}
       </Helmet>
 
@@ -103,16 +110,22 @@ function QnaDetail() {
             name={currentData.product.name}
           />
         )}
-        {currentData && (
+        {currentData && currentData.extra && currentData.user && (
           <PageDetailTable
-            title={currentData.title ? currentData.title : currentData.content}
+            title={
+              currentData.extra.title
+                ? currentData.extra.title
+                : currentData.content
+            }
             writer={currentData.user.name}
             createdAt={currentData.createdAt}
-            attachFile={currentData.attachFile ? currentData.attachFile : ''}
+            attachFile={
+              currentData.extra.attachFile ? currentData.extra.attachFile : ''
+            }
             content={currentData.content}
           />
         )}
-        {currentData && (
+        {currentData && currentData.user && (
           <DetailButton
             btn1="목록"
             btn3="삭제"
@@ -120,32 +133,34 @@ function QnaDetail() {
             onClick3={handleDelete}
             style="quaReviewDetailButton"
             center="center"
-            writer={currentData.user.name}
+            writer={String(currentData.user!._id)}
           />
         )}
 
-        {idFilterComment &&
-          idFilterComment.map((v, i) => (
+        {comment &&
+          comment.map((v, i) => (
             <CommentItem
               key={i}
-              _id={v._id}
-              writer={v.writer}
-              date={v.date}
+              writer={v.user?.name}
+              createdAt={v.createdAt}
               content={v.content}
-              writerId={v.writerId}
-              collection="qna"
             />
           ))}
 
         {userInfo && <CommentInput writer={userInfo.name} collection="qna" />}
+        {!userInfo && (
+          <Link to="/login">
+            <p className="center p-2 border bg-gray-100 my-5">
+              회원에게만 댓글 작성 권한이 있습니다.
+            </p>
+          </Link>
+        )}
 
         <PageListOrder
-          prev={prevData?.title ? prevData.title : prevData?.content}
-          next={nextData?.title ? nextData.title : nextData?.content}
-          prevLink={prevData ? `/qna-detail/${prevData._id}` : ''}
-          nextLink={nextData ? `/qna-detail/${nextData._id}` : ''}
-          _id={Number(id)}
-          length={data.length}
+          prev={prevData}
+          next={nextData}
+          prevLink={prevData ? `/qna-detail/${prevData!._id}` : ''}
+          nextLink={nextData ? `/qna-detail/${nextData!._id}` : ''}
         />
       </div>
     </>

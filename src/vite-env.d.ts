@@ -32,6 +32,7 @@ interface DetailProductSelect {
 }
 
 interface DetailProductResult {
+  id: number;
   name: string;
   quantity: number;
   price: string;
@@ -100,8 +101,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string };
-  cost: { products: number; shippingFees: number; total: number };
+  address: { name: string; value: string; };
+  cost: { products: number; shippingFees: number; total: number; };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -116,7 +117,7 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string }[];
+  options: { [key: string]: string; }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -172,21 +173,25 @@ interface Product {
 }
 
 interface Replies {
-  _id: number;
-  tag?: string;
-  title?: string;
+  _id?: number;
   content: string;
   rating?: number;
   createdAt: string;
-  attachFile?: string;
-  product: {
+  product?: {
     _id: number;
     name: string;
     image: string;
   };
   writer?: string;
-  user: {
+  user?: {
     _id: number;
     name: string;
+  };
+  extra?: {
+    type: string;
+    attachFile?: string;
+    title?: string;
+    tag?: string;
+    boardId?: number;
   };
 }

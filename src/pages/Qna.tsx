@@ -47,11 +47,13 @@ export default function Qna() {
 
       const sortQna = sortQnaReviewData(res.data.item);
 
-      setAllData(sortQna);
-      setDataLength(sortQna.length);
+      const filterQna = sortQna.filter((v) => v.extra?.type === 'qna');
+
+      setAllData(filterQna);
+      setDataLength(filterQna.length);
       setPageNumber(1);
-      setPageData(sortQna.slice(0, 10));
-      setDataLengthPage(Math.ceil(sortQna.length / 10));
+      setPageData(filterQna.slice(0, 10));
+      setDataLengthPage(Math.ceil(filterQna.length / 10));
     };
 
     getReplies();
@@ -78,17 +80,19 @@ export default function Qna() {
                     key={i}
                     tag={pageData.length - i}
                     title={
-                      (v as Replies).title
-                        ? (v as Replies).title
+                      (v as Replies).extra?.title
+                        ? (v as Replies).extra?.title
                         : (v as Replies).content
                     }
-                    writer={(v as Replies).user.name}
+                    writer={(v as Replies).user?.name}
                     date={(v as Replies).createdAt}
-                    item={(v as Replies).product.name}
-                    itemImg={(v as Replies).product.image}
+                    item={(v as Replies).product?.name}
+                    itemImg={(v as Replies).product?.image}
                     link={`/qna-detail/${v._id}`}
                     attachFile={
-                      (v as Replies).attachFile ? (v as Replies).attachFile : ''
+                      (v as Replies).extra?.attachFile
+                        ? (v as Replies).extra?.attachFile
+                        : ''
                     }
                   />
                 ))}

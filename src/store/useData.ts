@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 interface useData {
   // 전체 데이터
-  allData: Data[] | QnaReviewData[] | QnaReviewData2[];
-  setAllData: (data: Data[] | QnaReviewData[] | QnaReviewData2[]) => void;
+  allData: Data[] | QnaReviewData[] | Replies[];
+  setAllData: (data: Data[] | QnaReviewData[] | Replies[]) => void;
   // 페이지네이션 데이터
-  pageData: Data[] | QnaReviewData[] | OrderData[] | QnaReviewData2[];
-  setPageData: (pageData: Data[] | QnaReviewData[] | OrderData[] | QnaReviewData2[]) => void;
+  pageData: Data[] | QnaReviewData[] | OrderData[] | Replies[];
+  setPageData: (pageData: Data[] | QnaReviewData[] | OrderData[] | Replies[]) => void;
   // 전체 데이터 페이지 길이
   dataLengthPage: number;
   setDataLengthPage: (dataLengthPage: number | undefined) => void;

@@ -6,46 +6,32 @@ import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
-import { dummyData } from '@/store/dummyData';
-import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function ReviewDetail() {
   const navigate = useNavigate();
-  const { reviewData, deleteReviewData } = dummyData();
+  const [prevData, setPrevData] = useState<Replies | null>(null);
+  const [currentData, setCurrentData] = useState<Replies | null>(null);
+  const [nextData, setNextData] = useState<Replies | null>(null);
+  const [comment, setComment] = useState<Replies[] | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { id } = useParams();
-  const dataId = Number(id) - 1;
-  const length = reviewData.length;
-  const current = reviewData[dataId];
-  const prev = reviewData[dataId - 1];
-  const next = reviewData[dataId + 1];
+
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
-  // 임시 qna댓글값
-  const { review } = useComment();
-  const idFilterComment = review.filter((v) => v.qnaId === Number(id));
 
   // 삭제이벤트
   const handleDelete = () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    const deleteReview = reviewData.filter((v) => v._id !== Number(id));
-
-    if (answer) {
-      deleteReviewData(deleteReview);
-
-      toast('삭제되었습니다.', {
-        icon: '⭐',
-        duration: 2000,
-      });
-
-      navigate('/review');
-    }
+    toast('지원되지 않는 기능입니다.', {
+      icon: '⭐',
+      duration: 2000,
+    });
   };
 
   // 로그인유저정보 받아오기
@@ -63,64 +49,128 @@ function ReviewDetail() {
     getUsers();
   }, [setUserInfo]);
 
+  useEffect(() => {
+    // 현재 데이터
+    const repliesCurrentData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/${id}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      setCurrentData(res.data.item[0]);
+    };
+
+    // 전체 데이터
+    const repliesData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/all`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const review = res.data.item;
+      const filterReview = review.filter(
+        (v: Replies) => v.extra?.type === 'review'
+      );
+      const filterComment = review.filter(
+        (v: Replies) =>
+          v.extra?.type === 'reviewComment' && String(v.extra?.boardId) === id
+      );
+      const currentQna = filterReview.filter(
+        (v: Replies) => v._id === Number(id)
+      );
+      filterReview.forEach((v: Replies, i: number) => {
+        if (v._id === Number(id)) {
+          setCurrentIndex(i);
+        }
+      });
+      console.log(review);
+
+      setCurrentData(currentQna[0]);
+      setPrevData(filterReview[currentIndex + 1]);
+      setNextData(filterReview[currentIndex - 1]);
+      setComment(filterComment);
+    };
+
+    repliesCurrentData();
+    repliesData();
+  }, [currentIndex, id, setCurrentData]);
+
   return (
     <>
       <Helmet>
-        <title>{current.title}</title>
+        {currentData && (
+          <title>
+            {currentData.extra!.title
+              ? currentData.extra!.title
+              : currentData.content}
+          </title>
+        )}
       </Helmet>
 
       <div>
         <PageMap route="review" category="상품 사용후기" />
         <PageDetailTitle title="상품 사용후기" explan="상품 사용후기입니다." />
-        {current.productId && (
+        {currentData && currentData.product && (
           <ReviewProductItem
-            link={`/detail/${current.productId}`}
-            thumbnail={current.productImg}
-            name={current.productName}
-            price={current.productPrice}
+            link={`/detail/${currentData.product._id}`}
+            thumbnail={currentData.product.image}
+            name={currentData.product.name}
           />
         )}
-        <PageDetailTable
-          title={current.title}
-          writer={current.writer}
-          grade={current.grade}
-          date={current.date}
-          attachFile={current.attachFile}
-          content={current.content}
-        />
-        <DetailButton
-          btn1="목록"
-          btn3="삭제"
-          onClick1={() => navigate('/review')}
-          onClick3={handleDelete}
-          style="quaReviewDetailButton"
-          center="center"
-          writer={current.writer}
-        />
-        {idFilterComment &&
-          idFilterComment.map((v, i) => (
+        {currentData && (
+          <PageDetailTable
+            title={
+              currentData.extra!.title
+                ? currentData.extra!.title
+                : currentData.content
+            }
+            writer={currentData.user!.name}
+            rating={Number(currentData.rating)}
+            createdAt={currentData.createdAt}
+            attachFile={
+              currentData.extra!.attachFile ? currentData.extra!.attachFile : ''
+            }
+            content={currentData.content}
+          />
+        )}
+        {currentData && (
+          <DetailButton
+            btn1="목록"
+            btn3="삭제"
+            onClick1={() => navigate('/review')}
+            onClick3={handleDelete}
+            style="quaReviewDetailButton"
+            center="center"
+            writer={String(currentData.user!._id)}
+          />
+        )}
+        {comment &&
+          comment.map((v, i) => (
             <CommentItem
               key={i}
-              writer={v.writer}
-              date={v.date}
+              writer={v.user?.name}
+              createdAt={v.createdAt}
               content={v.content}
-              writerId={v.writerId}
-              collection="review"
             />
           ))}
         {userInfo && (
           <CommentInput writer={userInfo.name} collection="review" />
         )}
-        {
-          <PageListOrder
-            prev={prev ? prev.title : ''}
-            next={next ? next.title : ''}
-            prevLink={prev ? `/review-detail/${prev._id}` : ''}
-            nextLink={next ? `/review-detail/${next._id}` : ''}
-            _id={Number(id)}
-            length={length}
-          />
-        }
+        {!userInfo && (
+          <Link to="/login">
+            <p className="center p-2 border bg-gray-100 my-5">
+              회원에게만 댓글 작성 권한이 있습니다.
+            </p>
+          </Link>
+        )}
+        <PageListOrder
+          prev={prevData}
+          next={nextData}
+          prevLink={prevData ? `/review-detail/${prevData!._id}` : ''}
+          nextLink={nextData ? `/review-detail/${nextData!._id}` : ''}
+        />
       </div>
     </>
   );

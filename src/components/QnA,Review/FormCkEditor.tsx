@@ -8,14 +8,13 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 import { useRef } from 'react';
 
 function FormCkEditor() {
-  const { content, setContent, setAttachFile } = useForm();
+  const { setContent, setAttachFile } = useForm();
   const editorRef = useRef<Editor | null>(null);
 
   const onChange = () => {
-    const src = content.match(/src="([^"]+)"/);
-
     if (editorRef && editorRef.current) {
       const content = editorRef.current.getInstance().getHTML();
+      const src = content.match(/src="([^"]+)"/);
       const addClass = '300px';
 
       if (src) {

@@ -3,12 +3,10 @@ import PageMap from '@/components/PageMap';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
-import { dummyData } from '@/store/dummyData';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -16,32 +14,21 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 function NoticeDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { notice, deleteNoticeData } = dummyData();
+  const [prevData, setPrevData] = useState<Replies | null>(null);
+  const [currentData, setCurrentData] = useState<Replies | null>(null);
+  const [nextData, setNextData] = useState<Replies | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { id } = useParams();
-  const dataId = Number(id) - 1;
-  const length = notice.length;
-  const current = notice[dataId];
-  const prev = notice[dataId - 1];
-  const next = notice[dataId + 1];
 
   // 로그인유저정보
   const { setUserInfo } = useUserInfo();
 
   // 삭제이벤트
   const handleDelete = () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    const deleteNotice = notice.filter((v) => v._id !== Number(id));
-
-    if (answer) {
-      deleteNoticeData(deleteNotice);
-
-      toast('삭제되었습니다.', {
-        icon: '⭐',
-        duration: 2000,
-      });
-
-      navigate('/qna');
-    }
+    toast('기능 수정중.', {
+      icon: '⭐',
+      duration: 2000,
+    });
   };
 
   // 목록페이지로 이동
@@ -68,64 +55,106 @@ function NoticeDetail() {
     getUsers();
   }, [setUserInfo]);
 
+  useEffect(() => {
+    // 현재 데이터
+    const repliesCurrentData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/${id}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      setCurrentData(res.data.item[0]);
+    };
+
+    // 전체 데이터
+    const repliesData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/all`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const notice = res.data.item;
+      const filterNotice = notice.filter(
+        (v: Replies) => v.extra?.type === 'notice'
+      );
+      const currentNotice = filterNotice.filter(
+        (v: Replies) => v._id === Number(id)
+      );
+
+      filterNotice.forEach((v: Replies, i: number) => {
+        if (v._id === Number(id)) {
+          setCurrentIndex(i);
+        }
+      });
+
+      setCurrentData(currentNotice[0]);
+      setPrevData(filterNotice[currentIndex + 1]);
+      setNextData(filterNotice[currentIndex - 1]);
+    };
+
+    repliesCurrentData();
+    repliesData();
+  }, [currentIndex, id, setCurrentData]);
+
   return (
     <>
       <Helmet>
-        <title>{current.title}</title>
+        {currentData && <title>{currentData.extra?.title}</title>}
       </Helmet>
 
       <div>
         <PageMap route="notice" />
         <PageDetailTitle title="공지사항" explan="공지사항입니다." />
-        {current.productId && (
-          <ReviewProductItem
-            link={`/detail/${current.productId}`}
-            thumbnail={current.productImg}
-            name={current.productName}
-            price={current.productPrice}
+        {currentData && (
+          <PageDetailTable
+            title={
+              currentData.extra?.title
+                ? currentData.extra?.title
+                : currentData.content
+            }
+            writer={currentData.user?.name}
+            createdAt={currentData.createdAt}
+            attachFile={
+              currentData.extra?.attachFile ? currentData.extra?.attachFile : ''
+            }
+            content={currentData.content}
+            collection={true}
           />
         )}
-        <PageDetailTable
-          title={current.title}
-          writer={current.writer}
-          grade={current.grade}
-          date={current.date}
-          attachFile={current.attachFile}
-          content={current.content}
-          collection={true}
-        />
-        <DetailButton
-          btn1="목록"
-          btn3="삭제"
-          onClick1={handleListPage}
-          onClick3={handleDelete}
-          style="quaReviewDetailButton"
-          center="center"
-          writer={current.writer}
-        />
+        {currentData && (
+          <DetailButton
+            btn1="목록"
+            btn3="삭제"
+            onClick1={handleListPage}
+            onClick3={handleDelete}
+            style="quaReviewDetailButton"
+            center="center"
+            writer={currentData.user?.name}
+          />
+        )}
         <PageListOrder
-          prev={prev ? prev.title : ''}
-          next={next ? next.title : ''}
+          prev={prevData}
+          next={nextData}
           prevLink={
-            prev
+            prevData
               ? `${
                   location.pathname.includes('qna')
                     ? '/qnaNotice'
                     : '/reviewNotice'
-                }/${prev._id}`
+                }/${prevData._id}`
               : ''
           }
           nextLink={
-            next
+            nextData
               ? `${
                   location.pathname.includes('qna')
                     ? '/qnaNotice'
                     : '/reviewNotice'
-                }/${next._id}`
+                }/${nextData._id}`
               : ''
           }
-          _id={Number(id)}
-          length={length}
         />
       </div>
     </>

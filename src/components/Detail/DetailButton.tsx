@@ -1,4 +1,7 @@
 import { useUserInfo } from '@/store/useUserInfo';
+import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 interface DetailButton {
   btn1: string;
@@ -24,7 +27,22 @@ function DetailButton({
   writer,
 }: DetailButton) {
   // 로그인유저정보
-  const { userInfo } = useUserInfo();
+  const { userInfo, setUserInfo } = useUserInfo();
+
+  // 로그인유저정보 받아오기
+  useEffect(() => {
+    async function getUsers() {
+      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      setUserInfo(res.data.item);
+    }
+
+    getUsers();
+  }, [setUserInfo]);
 
   return (
     <div className={`${center} flex gap-4 justify-between py-5 mb-10`}>
@@ -36,7 +54,7 @@ function DetailButton({
           {btn2}
         </button>
       )}
-      {userInfo && userInfo.name === writer && (
+      {userInfo && userInfo._id === Number(writer) && (
         <button
           type="button"
           className={`${style} bg-starBlack text-white`}

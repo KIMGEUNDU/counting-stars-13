@@ -4,12 +4,9 @@ import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import ModalSelectOrder from '@/components/QnA,Review/ModalSelectOrder';
 import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
-import { dummyData } from '@/store/dummyData';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import { writeDate } from '@/utils/writeDate';
+import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -21,13 +18,11 @@ export default function WriteReview() {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const scoreRef = useRef<HTMLSelectElement | null>(null);
   const { content, attachFile, setAttachFile } = useForm();
-  const { userInfo, setUserInfo } = useUserInfo();
 
   const {
     modal,
     setModal,
     setSelectId,
-    selectId,
     selectData,
     setSelectData,
     selectOrderId,
@@ -49,16 +44,15 @@ export default function WriteReview() {
         icon: '⭐',
         duration: 2000,
       });
-    }
-    if (userInfo && selectData && selectId && titleRef.current) {
+    } else if (selectData && selectOrderId && titleRef.current) {
       const newReview = {
-        title: titleRef.current.value,
         content,
-        attachFile,
         rating: scoreRef.current?.value,
         product_id: selectOrderId,
         extra: {
-          isReview: true,
+          type: 'review',
+          title: titleRef.current.value,
+          attachFile: attachFile,
         },
       };
 
@@ -78,7 +72,7 @@ export default function WriteReview() {
           duration: 2000,
         });
 
-        navigate(`/review-detail${newReview._id}`);
+        navigate(`/review-detail/${response.data.item._id}`);
       }
     }
   };
@@ -103,21 +97,6 @@ export default function WriteReview() {
     setSelectOrderId(null);
     setAttachFile('');
   }, []);
-
-  // 로그인유저정보 받아오기
-  useEffect(() => {
-    async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-
-      setUserInfo(res.data.item);
-    }
-
-    getUsers();
-  }, [setUserInfo]);
 
   return (
     <>

@@ -1,29 +1,17 @@
 import { Link } from 'react-router-dom';
 
 interface PageListOrder {
-  prev: string | undefined;
-  next: string | undefined;
+  prev: Replies | null;
+  next: Replies | null;
   prevLink: string;
   nextLink: string;
-  _id: number;
-  length: number;
 }
 
-function PageListOrder({
-  prev,
-  next,
-  prevLink,
-  nextLink,
-  _id,
-  length,
-}: PageListOrder) {
-  console.log(_id);
-  console.log(length);
-
+function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
   return (
     <table className="pageListOrder center text-left text-sm mb-10">
       <tbody>
-        {_id !== length && (
+        {next && (
           <tr>
             <th className="whitespace-nowrap">
               <img
@@ -35,13 +23,13 @@ function PageListOrder({
               다음글
             </th>
             <td>
-              <p className="w-1/3 truncate">
-                <Link to={nextLink}>{next}</Link>
+              <p className="w-1/4 truncate">
+                <Link to={nextLink}>{next.extra?.title}</Link>
               </p>
             </td>
           </tr>
         )}
-        {_id !== 1 && (
+        {prev && (
           <tr>
             <th className="whitespace-nowrap">
               <img
@@ -53,8 +41,8 @@ function PageListOrder({
               이전글
             </th>
             <td>
-              <p className="w-1/3 truncate">
-                <Link to={prevLink}>{prev}</Link>
+              <p className="w-1/4 truncate">
+                <Link to={prevLink}>{prev.extra?.title}</Link>
               </p>
             </td>
           </tr>

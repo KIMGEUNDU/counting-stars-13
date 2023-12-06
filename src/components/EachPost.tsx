@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type board = {
-  tag: string | number;
+  tag: string | number | undefined;
   title: string | undefined;
-  writer: string;
+  writer: string | undefined;
   link?: string;
   date: string | undefined;
   item?: string;
@@ -28,14 +28,6 @@ export default function EachPost({
 }: board) {
   const [view, setView] = useState(false);
 
-  const writerPrivate = (writer: string) => {
-    if (writer !== '별해달') {
-      return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
-    } else {
-      return '별해달';
-    }
-  };
-
   const starGrade = (grade: number) => {
     return '⭐'.repeat(grade);
   };
@@ -54,7 +46,9 @@ export default function EachPost({
           </td>
         )}
 
-        {grade && <td className="truncate pl-6">{starGrade(grade)}</td>}
+        {grade && (
+          <td className="truncate pl-6 text-left">{starGrade(grade)}</td>
+        )}
 
         {link && (
           <td
@@ -89,7 +83,7 @@ export default function EachPost({
                       alt="첨부파일 있음"
                     />
                     <img
-                      className={`absolute top-0 -right-16 ${
+                      className={`absolute top-0 right-0 ${
                         view ? 'w-14' : 'w-0'
                       }`}
                       src={attachFile}
@@ -112,7 +106,7 @@ export default function EachPost({
           </>
         )}
 
-        {writer && <td className="w-[10%]">{writerPrivate(writer)}</td>}
+        {writer && <td className="w-[10%]">{writer}</td>}
 
         <td className="font-extralight w-[12%]">{date}</td>
       </tr>

@@ -8,10 +8,7 @@ function PageDetailTable({
   createdAt,
   attachFile,
   collection,
-}: Pick<
-  Replies,
-  'title' | 'writer' | 'content' | 'rating' | 'createdAt' | 'attachFile'
-> & { collection?: boolean }) {
+}: Replies & { collection?: boolean; title: string; attachFile: string }) {
   return (
     <div className="center">
       <table className="QnaReviewTable w-full border-t-2 border-t-gray-500 border-b border-b-gray-300 text-left">
