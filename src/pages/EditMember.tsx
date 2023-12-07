@@ -13,8 +13,6 @@ export default function EditMember() {
   //회원정보조회 정보
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
 
-  console.log(isPhoneNumber);
-
   const [editMemberInfo, setEditMemberInfo] = useState<editMemberInfo>({
     email: '',
     name: '',
@@ -24,8 +22,6 @@ export default function EditMember() {
     emailAgree: false,
     birthday: '',
   });
-
-  console.log(editMemberInfo);
 
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
@@ -54,7 +50,6 @@ export default function EditMember() {
       );
       const item = response.data.item;
       setEditMemberInfo(item);
-      console.log(response);
 
       //가져온정보 넣기
     } catch (e) {
@@ -79,7 +74,6 @@ export default function EditMember() {
   const handleChangePhoneFirst = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPhoneNumber({ ...isPhoneNumber, phoneFirst: e.target.value });
   };
-  console.log(isPhoneNumber);
 
   const handlePhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
@@ -90,10 +84,8 @@ export default function EditMember() {
     address: '',
     addressDetail: '',
   });
-  console.log(isAddress);
 
   const handleComplete = (data: Address) => {
-    console.log(data);
     setAddress({
       ...isAddress,
       zonecode: data.zonecode,
@@ -178,10 +170,9 @@ export default function EditMember() {
   //   if (checkPassword !== editMemberInfo.password) {
   //     setCheckPasswordP('🥲비밀번호가 일치하지 않습니다.');
   //   }
-  //   console.log(checkPassword.length);
+
   // }, [checkPassword, editMemberInfo.password]);
 
-  console.log('전전:', editMemberInfo);
   const handlePatchUserInfo = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -206,7 +197,6 @@ export default function EditMember() {
       );
       const item = response.data.item;
       setEditMemberInfo(item);
-      console.log(item);
       toast('회원님의 정보가 수정 되었습니다.', {
         icon: '😀',
         duration: 2000,
