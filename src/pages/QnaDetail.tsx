@@ -46,7 +46,9 @@ function QnaDetail() {
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
 
   useEffect(() => {
@@ -71,10 +73,6 @@ function QnaDetail() {
 
       const qna = res.data.item;
       const filterQna = qna.filter((v: Replies) => v.extra!.type === 'qna');
-      const filterComment = qna.filter(
-        (v: Replies) =>
-          v.extra?.type === 'qnaComment' && v.extra?.boardId === id
-      );
       const currentQna = filterQna.filter((v: Replies) => v._id === Number(id));
       filterQna.forEach((v: Replies, i: number) => {
         if (v._id === Number(id)) {
@@ -85,12 +83,31 @@ function QnaDetail() {
       setCurrentData(currentQna[0]);
       setPrevData(filterQna[currentIndex + 1]);
       setNextData(filterQna[currentIndex - 1]);
-      setComment(filterComment);
     };
 
     repliesCurrentData();
     repliesData();
   }, [currentIndex, id, setCurrentData]);
+
+  // 실시간 댓글
+  useEffect(() => {
+    const repliesData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/all`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const qna = res.data.item;
+      const filterComment = qna.filter(
+        (v: Replies) =>
+          v.extra?.type === 'qnaComment' && v.extra?.boardId === id
+      );
+      setComment(filterComment);
+    };
+
+    repliesData();
+  }, [id, comment, setComment]);
 
   return (
     <>

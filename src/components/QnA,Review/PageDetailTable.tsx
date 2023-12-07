@@ -7,8 +7,7 @@ function PageDetailTable({
   rating,
   createdAt,
   attachFile,
-  collection,
-}: Replies & { collection?: boolean; title: string; attachFile: string }) {
+}: Replies & { title: string; attachFile: string }) {
   return (
     <div className="center">
       <table className="QnaReviewTable w-full border-t-2 border-t-gray-500 border-b border-b-gray-300 text-left">
@@ -19,7 +18,7 @@ function PageDetailTable({
           </tr>
           <tr>
             <td className="w-1/12 whitespace-nowrap">작성자</td>
-            <td>{writer}</td>
+            <td>{writer === '무*' ? '별해달' : writer}</td>
           </tr>
         </tbody>
       </table>
@@ -52,21 +51,12 @@ function PageDetailTable({
           </>
         )}
       </ul>
-      {!collection && (
-        <div className="py-10 px-2 border-b border-b-gray-200 flex justify-center">
-          <ContentsViewer contents={content} />
-        </div>
+      {attachFile && (
+        <img className="m-auto py-20 w-1/3" src={attachFile} alt={title} />
       )}
-      {collection && (
-        <>
-          {attachFile && (
-            <img className="m-auto py-20" src={attachFile} alt={title} />
-          )}
-          <div className="py-10 px-2 border-b border-b-gray-200 text-4xl text-center">
-            <ContentsViewer contents={content} />
-          </div>
-        </>
-      )}
+      <div className="py-10 px-2 border-b border-b-gray-200 text-4xl">
+        <ContentsViewer contents={content} />
+      </div>
     </div>
   );
 }

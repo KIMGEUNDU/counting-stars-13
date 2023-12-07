@@ -20,7 +20,8 @@ function CommentInput({
 
     if (commentRef.current && commentRef.current.value) {
       const commentData = {
-        // product_id: 1,
+        rating: 1,
+        product_id: 1,
         content: commentRef.current.value,
         extra: {
           type: collection === 'qna' ? 'qnaComment' : 'reviewComment',
@@ -37,8 +38,6 @@ function CommentInput({
           },
         }
       );
-
-      console.log(response);
 
       commentRef.current.value = '';
 

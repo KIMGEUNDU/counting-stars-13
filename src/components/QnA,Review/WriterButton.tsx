@@ -20,16 +20,26 @@ function WriterButton({ link }: { link: string }) {
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
 
   return (
-    <Link to={userInfo ? link : '/login'}>
+    <Link
+      to={
+        userInfo?.type === 'admin'
+          ? '/write-notice'
+          : userInfo
+          ? link
+          : '/login'
+      }
+    >
       <button
         type="button"
         className="quaReviewDetailButton my-3 bg-starBlack text-white absolute bottom-0 right-0"
       >
-        글쓰기
+        {userInfo?.type === 'admin' ? '공지등록' : '글쓰기'}
       </button>
     </Link>
   );

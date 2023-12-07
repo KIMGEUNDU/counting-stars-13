@@ -64,7 +64,7 @@ export default function Login() {
       //TODO: 로그인시 가져오는 유저 인포 변경(타입오류)
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
-        navigate('/');
+        navigate(-1);
         toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,

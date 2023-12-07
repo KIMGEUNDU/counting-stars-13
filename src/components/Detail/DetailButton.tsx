@@ -41,7 +41,9 @@ function DetailButton({
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
 
   return (

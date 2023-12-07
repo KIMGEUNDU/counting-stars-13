@@ -78,7 +78,7 @@ export default function Review() {
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={pageData.length - i}
+                    tag={allData.length - i}
                     title={(v as Replies).extra?.title}
                     grade={(v as Replies).rating}
                     writer={(v as Replies).user?.name}
