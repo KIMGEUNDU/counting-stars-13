@@ -46,7 +46,9 @@ function ReviewDetail() {
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
 
   useEffect(() => {
@@ -73,10 +75,6 @@ function ReviewDetail() {
       const filterReview = review.filter(
         (v: Replies) => v.extra?.type === 'review'
       );
-      const filterComment = review.filter(
-        (v: Replies) =>
-          v.extra?.type === 'reviewComment' && String(v.extra?.boardId) === id
-      );
       const currentQna = filterReview.filter(
         (v: Replies) => v._id === Number(id)
       );
@@ -85,17 +83,35 @@ function ReviewDetail() {
           setCurrentIndex(i);
         }
       });
-      console.log(review);
 
       setCurrentData(currentQna[0]);
       setPrevData(filterReview[currentIndex + 1]);
       setNextData(filterReview[currentIndex - 1]);
-      setComment(filterComment);
     };
 
     repliesCurrentData();
     repliesData();
-  }, [currentIndex, id, setCurrentData]);
+  }, [currentIndex, id]);
+
+  // 실시간 댓글
+  useEffect(() => {
+    const repliesData = async () => {
+      const res = await axios.get(`https://localhost/api/replies/all`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const review = res.data.item;
+      const filterComment = review.filter(
+        (v: Replies) =>
+          v.extra?.type === 'reviewComment' && String(v.extra?.boardId) === id
+      );
+      setComment(filterComment);
+    };
+
+    repliesData();
+  }, [id, comment, setComment]);
 
   return (
     <>

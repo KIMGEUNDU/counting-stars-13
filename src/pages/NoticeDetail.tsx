@@ -52,7 +52,9 @@ function NoticeDetail() {
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
 
   useEffect(() => {
@@ -120,7 +122,6 @@ function NoticeDetail() {
               currentData.extra?.attachFile ? currentData.extra?.attachFile : ''
             }
             content={currentData.content}
-            collection={true}
           />
         )}
         {currentData && (
