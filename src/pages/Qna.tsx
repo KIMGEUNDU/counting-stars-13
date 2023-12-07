@@ -78,7 +78,7 @@ export default function Qna() {
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={pageData.length - i}
+                    tag={allData.length - i}
                     title={
                       (v as Replies).extra?.title
                         ? (v as Replies).extra?.title
