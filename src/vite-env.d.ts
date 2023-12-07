@@ -101,8 +101,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string; };
-  cost: { products: number; shippingFees: number; total: number; };
+  address: { name: string; value: string };
+  cost: { products: number; shippingFees: number; total: number };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -117,7 +117,7 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string; }[];
+  options: { [key: string]: string }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -194,4 +194,13 @@ interface Replies {
     tag?: string;
     boardId?: number;
   };
+}
+
+interface OrderItemDetail {
+  link: string;
+  img: string;
+  name: string;
+  number: number;
+  price: number;
+  deliveryStateNum: string;
 }
