@@ -1,15 +1,17 @@
+import OrderItem from '@/components/MyOrder/OrderItem';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+
 //TODO: 주문 리스트 map 돌리기
 export default function MyOrder() {
-  const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
-  console.log(myOrderInfo);
+  const [isOrder, setOrder] = useState(false);
 
+  const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
   const handleGetUserInfo = async () => {
     try {
       const response = await axios.get(`https://localhost/api/orders`, {
@@ -18,11 +20,14 @@ export default function MyOrder() {
         },
       });
       const item = response.data.item;
-      console.log(item);
+      console.log(response);
       setMyOrderInfo(item);
+      setOrder(true);
 
       //가져온정보 넣기
     } catch (e) {
+      setOrder(false);
+
       return toast('정보가 불러와지지 않음', {
         icon: '😢',
         duration: 2000,
@@ -32,9 +37,8 @@ export default function MyOrder() {
   useEffect(() => {
     handleGetUserInfo();
   }, []);
-  const orderNum = 0;
-  const deletOrderNum = 0;
-  const allProductNum = 0;
+  const orderNum = myOrderInfo.length;
+
   return (
     <>
       <main>
@@ -46,12 +50,12 @@ export default function MyOrder() {
             <button className="text-[19px] font-bold border-b-[2px] border-gray-900 inline py-3 px-4 ">
               주문내역조회 ({orderNum})
             </button>
-            <button className="text-[19px] font-bold border-b-[2px] border-gray-300 text-gray-300 inline py-3 px-4 ">
+            {/* <button className="text-[19px] font-bold border-b-[2px] border-gray-300 text-gray-300 inline py-3 px-4 ">
               취소/반품/교환내역 ({deletOrderNum})
-            </button>
+            </button> */}
           </nav>
           <section className="flex items-center gap-5 border-4 p-6 mb-2">
-            <select className="border-[1px]">
+            <select className="border">
               <option>전체 주문처리 상태</option>
               <option>배송준비중</option>
               <option>배송중</option>
@@ -59,18 +63,12 @@ export default function MyOrder() {
               <option>취소/반품</option>
             </select>
             <div className="border-[1.5px] inline-block">
-              <button className="border-[1px] bg-gray-100 px-1 py-0.5">
-                오늘
-              </button>
-              <button className="border-[1px] bg-gray-100 px-1 py-0.5">
-                1주일
-              </button>
-              <button className="border-[1px] bg-gray-100 px-1 py-0.5">
-                1개월
-              </button>
+              <button className="border bg-gray-100 px-1 py-0.5">오늘</button>
+              <button className="border bg-gray-100 px-1 py-0.5">1주일</button>
+              <button className="border bg-gray-100 px-1 py-0.5">1개월</button>
             </div>
             <div>
-              <input type="date" className="mx-2 border-[1px]"></input>
+              <input type="date" className="mx-2 border"></input>
               <span>~</span>
               <input type="date" className="mx-2 border-[1px]"></input>
             </div>
@@ -98,14 +96,28 @@ export default function MyOrder() {
                       (주문번호)
                     </td>
                     <td className="w-[10%]">이미지</td>
-                    <td className="w-[30%]">상품정보</td>
+                    <td className="w-[33%]">상품정보</td>
                     <td className="w-[10%]">수량</td>
-                    <td className="w-[7%]">상품구매금액</td>
+                    <td className="w-[10%]">상품구매금액</td>
                     <td className="w-[10%]">주문처리상태</td>
                     <td className="w-[10%]">취소/교환/반품</td>
                   </tr>
                 </thead>
-                <thead>
+                {isOrder ? (
+                  Object.values(myOrderInfo).map(
+                    (i: typeof myOrderInfo, index) => (
+                      <OrderItem orderDate={i.createdAt} index={index} />
+                    )
+                  )
+                ) : (
+                  <tr>
+                    <td className="h-[110px]" colSpan={7}>
+                      {' '}
+                      주문 내역이 없습니다.
+                    </td>
+                  </tr>
+                )}
+                {/* <thead>
                   <tr className="h-[110px] border-b-[1px]">
                     <td>
                       <span>
@@ -123,7 +135,7 @@ export default function MyOrder() {
                     <td className="">배송준비중</td>
                     <td className="h-[110px]"></td>
                   </tr>
-                </thead>
+                </thead> */}
               </table>
             </div>
             <div className="flex gap-3 justify-center items-center py-4 mb-[130px]">

@@ -356,7 +356,7 @@ export default function Order() {
                           <td className="p-3">
                             <select className="border p-1">
                               <option>🍀선택해 주세요.</option>
-                              <option>별달해 은행 333-3333-33 김건주</option>
+                              <option>별해달 은행 333-3333-33 김건주</option>
                               <option>윤동주 은행 555-5555-55 이동호</option>
                               <option>다람쥐 은행 777-7777-77 장효윤</option>
                             </select>

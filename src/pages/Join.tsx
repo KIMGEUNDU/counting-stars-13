@@ -139,7 +139,6 @@ export default function Join() {
     if (phoneNumberList.phoneMiddle.length > 3) {
       (LastPhoneInput.current as HTMLInputElement).focus();
     }
-    console.log(phoneNumberList);
   }, [phoneNumberList]);
 
   //회원가입 버튼 눌렀을 때
@@ -227,7 +226,6 @@ export default function Join() {
     e.target.checked
       ? setAgree({ ...isAgree, allAgree: true })
       : setAgree({ ...isAgree, allAgree: false });
-    console.log(isAllAgree);
   };
   //각자 동의 체크박스 기능
   useEffect(() => {
@@ -280,9 +278,7 @@ export default function Join() {
       return setAllAgree(true);
     }
   }, [isAgree.allAgree]);
-  console.log(isAgree);
-  console.log(isAllAgree);
-  console.log(joinInfo.emailAgree);
+
   return (
     <>
       <Helmet>
