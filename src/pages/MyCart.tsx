@@ -1,26 +1,23 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { Link } from 'react-router-dom';
 import { putWish } from '@/utils/HandleWish';
 import CartGuide from 'components/Cart/CartGuide';
+import axiosInstance from '@/utils/axiosInstance';
+import { clearCart } from '@/utils/HandleCart';
+import toast from 'react-hot-toast';
 
 export default function MyCart() {
   const deliveryPrice = 0;
 
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
+  const [checkControl, setCheckControl] = useState<boolean>(false);
 
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/carts`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-
+      const res = await axiosInstance.get(`/carts`);
       setCartData(res.data.item);
     }
     getUsers();
@@ -32,46 +29,44 @@ export default function MyCart() {
   ) => {
     if (e.target.checked) {
       setCheckProduct([...checkProduct, id]);
+      if (checkProduct.length + 1 === cartData.length) {
+        setCheckControl(true);
+      }
     } else {
       setCheckProduct(checkProduct.filter((item) => item !== id));
+      setCheckControl(false);
     }
   };
 
   const deleteEachProduct = async (id: number) => {
-    const response = await axios.delete(`https://localhost/api/carts/${id}`, {
-      headers: {
-        Authorization: `Bearer ${AUTH_TOKEN()}`,
-      },
-    });
+    const response = await axiosInstance.delete(`/carts/${id}`);
     if (response.status === 200)
       setCartData(cartData.filter((item) => item._id !== id));
+    toast.success('삭제되었습니다.');
   };
 
-  const deleteCheckProduct = () => {
-    if (checkProduct.length === 0) return;
-    checkProduct.map(async (id) => {
-      await axios.delete(`https://localhost/api/carts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-      // setCartData(cartData.filter((item) => item._id !== id));
-    });
-    // setCheckProduct([]);
+  const deleteCheckProduct = async () => {
+    if (checkProduct.length === 0) {
+      toast.error('선택 상품이 없습니다.');
+      return;
+    }
+
+    await Promise.all(
+      checkProduct.map((id) => axiosInstance.delete(`/carts/${id}`))
+    );
+
+    setCartData(cartData.filter((item) => !checkProduct.includes(item._id)));
+    setCheckProduct([]);
+    toast.success('삭제되었습니다.');
   };
 
-  const clearCart = async () => {
-    const check = confirm('장바구니를 정말 비우시겠습니까?');
-    if (check) {
-      const response = await axios.delete(
-        `https://localhost/api/carts/cleanup`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
-      if (response.status === 200) setCartData([]);
+  const controlCheck = () => {
+    setCheckControl(!checkControl);
+
+    if (checkControl) {
+      setCheckProduct([]);
+    } else {
+      setCheckProduct(cartData.map((item) => item._id));
     }
   };
 
@@ -91,7 +86,7 @@ export default function MyCart() {
                 <thead>
                   <tr className="bg-gray-50 h-10 border-b text-sm">
                     <th className="w-[5%]">
-                      <input type="checkbox" />
+                      <input type="checkbox" onClick={controlCheck} />
                     </th>
                     <th className="w-[10%]">이미지</th>
                     <th className="w-[30%]">상품 정보</th>
@@ -103,14 +98,24 @@ export default function MyCart() {
                 </thead>
                 <tbody>
                   {cartData &&
-                    cartData.map((item: CartItem, index) => {
+                    cartData.map((item: CartItem) => {
                       return (
-                        <tr className="h-28 border-b" key={index}>
+                        <tr className="h-28 border-b" key={item._id}>
                           <td>
-                            <input
-                              type="checkbox"
-                              onChange={(e) => handleCheckProduct(e, item._id)}
-                            />
+                            <label htmlFor="cartCheck">
+                              <input
+                                id="cartCheck"
+                                type="checkbox"
+                                checked={
+                                  checkControl ||
+                                  checkProduct.includes(item._id)
+                                }
+                                className="w-5 h-5 cursor-pointer"
+                                onChange={(e) =>
+                                  handleCheckProduct(e, item._id)
+                                }
+                              />
+                            </label>
                           </td>
                           <td className="p-2">
                             <Link to={`/detail/${item.product_id}`}>
@@ -129,7 +134,7 @@ export default function MyCart() {
                             <div className="flex border-2 h-9 rounded-lg justify-around mb-2">
                               <input
                                 type="text"
-                                className="w-9"
+                                className="w-3/4 pl-2"
                                 defaultValue={item.quantity}
                               />
                               <div className="flex flex-col gap-2 justify-center">
@@ -198,7 +203,7 @@ export default function MyCart() {
                   <div>
                     <button
                       className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm"
-                      onClick={clearCart}
+                      onClick={() => clearCart(setCartData)}
                     >
                       장바구니 비우기
                     </button>

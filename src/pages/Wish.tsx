@@ -1,57 +1,72 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import MiniButton from '@/components/Wish/MiniButton';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { putCart } from '@/utils/HandleCart';
+import { deleteAllWishes, deleteEachWish } from '@/utils/HandleWish';
+import axiosInstance from '@/utils/axiosInstance';
+import toast from 'react-hot-toast';
 
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
+  const [checkWish, setCheckWish] = useState<number[]>([]);
 
   useEffect(() => {
-    async function getUsers() {
-      const res = await axios.get(`https://localhost/api/bookmarks`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-
-      setWishData(res.data.item);
+    async function getWishes() {
+      const response = await axiosInstance.get(`/bookmarks`);
+      setWishData(response.data.item);
     }
-    getUsers();
+    getWishes();
   }, []);
 
-  const deleteEachProduct = async (id: number) => {
-    const response = await axios.delete(
-      `https://localhost/api/bookmarks/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      }
-    );
-    if (response.status === 200)
-      setWishData(wishData.filter((item) => item._id !== id));
+  const handleCheckWish = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    if (e.target.checked) {
+      setCheckWish([...checkWish, id]);
+    } else {
+      setCheckWish(checkWish.filter((item) => item !== id));
+    }
   };
 
-  const putCart = async (id: number) => {
-    const cart = {
-      product_id: id,
-      quantity: 1,
-    };
+  const handleCheckPutCart = () => {
+    Promise.all(
+      wishData.map((item) => {
+        if (checkWish.includes(item._id)) {
+          putCart(item.product_id, 1);
+        }
+      })
+    );
+  };
 
-    const response = await axios.post('https://localhost/api/carts/', cart, {
-      headers: {
-        Authorization: `Bearer ${AUTH_TOKEN()}`,
-      },
-    });
+  const clearWishes = async () => {
+    try {
+      const check = confirm('찜 목록을 정말 비우시겠습니까?');
 
-    if (response.status === 201) {
-      toast('장바구니에 추가되었습니다.');
+      if (check) {
+        await deleteAllWishes(wishData, setWishData);
+      }
+    } catch (error) {
+      toast.error('잠시 후 다시 시도해주세요.');
     }
+  };
+
+  const deleteCheckWish = async () => {
+    if (checkWish.length === 0) {
+      toast.error('선택 상품이 없습니다.');
+      return;
+    }
+
+    await Promise.all(
+      checkWish.map((id) => axiosInstance.delete(`/bookmarks/${id}`))
+    );
+
+    setWishData(wishData.filter((item) => !checkWish.includes(item._id)));
+    setCheckWish([]);
+    toast.success('삭제되었습니다.');
   };
 
   return (
@@ -81,11 +96,18 @@ export default function Wish() {
             </thead>
             <tbody>
               {wishData &&
-                wishData.map((item, index) => {
+                wishData.map((item) => {
                   return (
-                    <tr className="h-28 border-b" key={index}>
+                    <tr className="h-28 border-b" key={item._id}>
                       <td>
-                        <input type="checkbox" />
+                        <label htmlFor="wishCheck">
+                          <input
+                            id="wishCheck"
+                            type="checkbox"
+                            className="w-5 h-5 cursor-pointer"
+                            onChange={(e) => handleCheckWish(e, item._id)}
+                          />
+                        </label>
                       </td>
                       <td className="p-2">
                         <Link to={`/detail/${item.product_id}`}>
@@ -114,13 +136,15 @@ export default function Wish() {
                         </button>
                         <button
                           className={`text-sm border-gray-300 rounded-sm my-1 w-[90%] h-1/5 border`}
-                          onClick={() => putCart(item.product_id)}
+                          onClick={() => putCart(item.product_id, 1)}
                         >
                           장바구니 담기
                         </button>
                         <button
                           className={`text-sm border-gray-300 rounded-sm my-1 w-[90%] h-1/5 border`}
-                          onClick={() => deleteEachProduct(item._id)}
+                          onClick={() =>
+                            deleteEachWish(item._id, wishData, setWishData)
+                          }
                         >
                           삭제
                         </button>
@@ -142,14 +166,18 @@ export default function Wish() {
             <article className="flex justify-between h-15 mt-3 mb-20">
               <div>
                 <span className="font-bold text-sm">선택 상품</span>
-                <MiniButton
-                  text={'삭제하기'}
-                  className={'m-1 py-1 px-3 border-2 bg-gray-700 text-white'}
-                />
-                <MiniButton
-                  text={'장바구니 담기'}
-                  className={'m-1 py-1 px-3 border-2 '}
-                />
+                <button
+                  className={`text-sm border-gray-300 rounded-sm m-1 py-1 px-3 border-2 bg-gray-700 text-white`}
+                  onClick={deleteCheckWish}
+                >
+                  삭제
+                </button>
+                <button
+                  className={`text-sm border-gray-300 rounded-sm m-1 py-1 px-3 border-2`}
+                  onClick={handleCheckPutCart}
+                >
+                  장바구니 담기
+                </button>
               </div>
               <div>
                 <MiniButton
@@ -158,12 +186,12 @@ export default function Wish() {
                     'm-1 py-4 px-6 border rounded-lg bg-gray-500 hover:bg-gray-700 text-white'
                   }
                 />
-                <MiniButton
-                  text={'찜 목록 비우기'}
-                  className={
-                    'm-1 py-4 px-6 border rounded-lg bg-gray-700 text-white'
-                  }
-                />
+                <button
+                  className={`text-sm border-gray-300 rounded-sm m-1 py-4 px-6 border bg-gray-700 text-white`}
+                  onClick={clearWishes}
+                >
+                  찜 목록 비우기
+                </button>
               </div>
             </article>
           )}

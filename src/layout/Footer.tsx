@@ -34,7 +34,7 @@ export default function Footer() {
                 나이로비
               </address>
             </li>
-            <li>팀 : 멋쟁이사자처럼 플러스 1기 13조 윤동주</li>
+            <li>팀 : 멋쟁이사자처럼 프론트엔드 스쿨 플러스 1기 13조 윤동주</li>
           </ul>
         </div>
         <button
