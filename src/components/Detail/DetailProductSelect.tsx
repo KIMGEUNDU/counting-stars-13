@@ -1,8 +1,7 @@
-import axios from 'axios';
+import toast from 'react-hot-toast';
+import axiosInstance from '@/utils/axiosInstance';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import toast from 'react-hot-toast';
 import { putWish } from '@/utils/HandleWish';
 
 function DetailProductSelect({
@@ -75,27 +74,24 @@ function DetailProductSelect({
 
   const putCart = () => {
     if (selectOption.length === 0) {
-      toast('옵션을 선택해주세요.');
+      toast.error('옵션을 선택해주세요.');
       return;
     }
 
-    selectOption.map(async (item) => {
-      const cart = {
-        product_id: id,
-        quantity: count[item],
-        option: item,
-        optionPrice: info[item],
-      };
+    Promise.all(
+      selectOption.map(async (item) => {
+        const cart = {
+          product_id: id,
+          quantity: count[item],
+          option: item,
+          optionPrice: info[item],
+        };
 
-      await axios.post('https://localhost/api/carts/', cart, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-    });
-    setSelectOption([]);
+        await axiosInstance.post('/carts', cart);
+      })
+    );
 
-    toast('장바구니에 추가되었습니다.');
+    toast.success('장바구니에 담았습니다.');
   };
 
   return (
