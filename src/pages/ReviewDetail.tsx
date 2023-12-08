@@ -6,6 +6,7 @@ import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
+import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
@@ -19,8 +20,8 @@ function ReviewDetail() {
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
-  const [comment, setComment] = useState<Replies[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { comment, setDeleteComment } = useComment();
   const { id } = useParams();
 
   // 로그인유저정보
@@ -107,7 +108,7 @@ function ReviewDetail() {
         (v: Replies) =>
           v.extra?.type === 'reviewComment' && String(v.extra?.boardId) === id
       );
-      setComment(filterComment);
+      setDeleteComment(filterComment);
     };
 
     repliesData();
@@ -162,15 +163,6 @@ function ReviewDetail() {
             writer={String(currentData.user!._id)}
           />
         )}
-        {comment &&
-          comment.map((v, i) => (
-            <CommentItem
-              key={i}
-              writer={v.user?.name}
-              createdAt={v.createdAt}
-              content={v.content}
-            />
-          ))}
         {userInfo && (
           <CommentInput writer={userInfo.name} collection="review" />
         )}
@@ -181,6 +173,18 @@ function ReviewDetail() {
             </p>
           </Link>
         )}
+        {comment.length > 0 &&
+          comment.map((v, i) => (
+            <CommentItem
+              key={i}
+              writer={v.user?.name}
+              createdAt={v.createdAt}
+              content={v.content}
+            />
+          ))}
+
+        <p className="center border-t-4 border-t-starPink py-2"></p>
+
         <PageListOrder
           prev={prevData}
           next={nextData}

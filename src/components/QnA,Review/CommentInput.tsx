@@ -1,3 +1,4 @@
+import { useComment } from '@/store/useComment';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { FormEvent, useRef } from 'react';
@@ -11,10 +12,11 @@ function CommentInput({
   writer: string;
   collection: string;
 }) {
+  const { setComment } = useComment();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { id } = useParams();
 
-  // 임시 댓글 달기
+  // 댓글업로드
   const uploadComment = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -42,6 +44,8 @@ function CommentInput({
       commentRef.current.value = '';
 
       if (response.data.ok === 1) {
+        setComment(commentData);
+
         toast('업로드하였습니다 :)', {
           icon: '⭐',
           duration: 2000,
