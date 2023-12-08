@@ -11,6 +11,7 @@ function DetailProductResult({
   required,
   handleClickUp,
   handleClickDown,
+  setQuantity,
 }: DetailProductResult) {
   return (
     <>
@@ -26,6 +27,7 @@ function DetailProductResult({
             value={quantity}
             handleClickUp={handleClickUp}
             handleClickDown={handleClickDown}
+            setQuantity={setQuantity}
           />
           {required && (
             <button type="button">

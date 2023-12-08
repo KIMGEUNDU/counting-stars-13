@@ -94,6 +94,14 @@ function DetailProductSelect({
     toast.success('장바구니에 담았습니다.');
   };
 
+  // const handleInputChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   id: number
+  // ) => {
+  // console.log(e.target.value);
+  // console.log(id, count[id]);
+  // };
+
   return (
     <>
       <Helmet>
@@ -149,6 +157,7 @@ function DetailProductSelect({
                   type="text"
                   className="w-9 pl-1"
                   value={count[item]}
+                  // onChange={(e) => handleInputChange(e, item)}
                   readOnly
                 />
                 <div className="flex flex-col gap-2 justify-center">

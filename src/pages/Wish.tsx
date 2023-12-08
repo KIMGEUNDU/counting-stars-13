@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
   const [checkWish, setCheckWish] = useState<number[]>([]);
+  const [checkControl, setCheckControl] = useState<boolean>(false);
 
   useEffect(() => {
     async function getWishes() {
@@ -27,8 +28,12 @@ export default function Wish() {
   ) => {
     if (e.target.checked) {
       setCheckWish([...checkWish, id]);
+      if (checkWish.length + 1 === wishData.length) {
+        setCheckControl(true);
+      }
     } else {
       setCheckWish(checkWish.filter((item) => item !== id));
+      setCheckControl(false);
     }
   };
 
@@ -49,6 +54,8 @@ export default function Wish() {
       if (check) {
         await deleteAllWishes(wishData, setWishData);
       }
+
+      setCheckControl(false);
     } catch (error) {
       toast.error('잠시 후 다시 시도해주세요.');
     }
@@ -67,6 +74,17 @@ export default function Wish() {
     setWishData(wishData.filter((item) => !checkWish.includes(item._id)));
     setCheckWish([]);
     toast.success('삭제되었습니다.');
+    setCheckControl(false);
+  };
+
+  const controlCheck = () => {
+    setCheckControl(!checkControl);
+
+    if (checkControl) {
+      setCheckWish([]);
+    } else {
+      setCheckWish(wishData.map((item) => item._id));
+    }
   };
 
   return (
@@ -85,7 +103,12 @@ export default function Wish() {
             <thead>
               <tr className="bg-gray-50 h-10 border-y text-sm">
                 <td className="w-[5%]">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={controlCheck}
+                    checked={checkControl}
+                    disabled={wishData.length === 0}
+                  />
                 </td>
                 <td className="w-[10%]">이미지</td>
                 <td className="w-[30%]">상품정보</td>
@@ -104,6 +127,9 @@ export default function Wish() {
                           <input
                             id="wishCheck"
                             type="checkbox"
+                            checked={
+                              checkControl || checkWish.includes(item._id)
+                            }
                             className="w-5 h-5 cursor-pointer"
                             onChange={(e) => handleCheckWish(e, item._id)}
                           />

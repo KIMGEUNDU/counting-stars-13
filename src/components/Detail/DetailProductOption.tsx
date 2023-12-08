@@ -58,6 +58,7 @@ function DetailProductOption({ data }: { data: ProductData }) {
               required={data?.options.length > 0}
               handleClickUp={handleClickUp}
               handleClickDown={handleClickDown}
+              setQuantity={setQuantity}
             />
           )}
         </form>
