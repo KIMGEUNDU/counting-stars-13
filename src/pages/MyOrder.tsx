@@ -1,43 +1,95 @@
 import OrderItem from '@/components/MyOrder/OrderItem';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
+import { useDeliveryState } from '@/store/useDeliveryState';
 import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-//TODO: 주문 리스트 map 돌리기
 export default function MyOrder() {
   const [isOrder, setOrder] = useState(false);
+  const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
 
-  const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
-  const handleGetUserInfo = async () => {
-    try {
-      const response = await axios.get(`https://localhost/api/orders`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
-      const item = response.data.item;
-      console.log(response);
-      setMyOrderInfo(item);
-      setOrder(true);
+  const myOrderProductList = [];
+  const myOrderProductDate = [];
 
-      //가져온정보 넣기
-    } catch (e) {
-      setOrder(false);
+  const {
+    myOrderInfo,
+    setMyOrderInfo,
+    myOrderProductInfo,
+    setMyOrderProductInfo,
+  } = useMyOrderInfo();
 
-      return toast('정보가 불러와지지 않음', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
-  };
+  console.log(myOrderInfo);
+
+  myOrderInfo.forEach((v) => {
+    myOrderProductDate.push(v.createdAt),
+      myOrderProductList.push(v.products.filter((v) => v.state === 'OS010'));
+  });
+
   useEffect(() => {
+    const handleGetUserInfo = async () => {
+      try {
+        const response = await axios.get(`https://localhost/api/orders`, {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        });
+
+        setMyOrderInfo(response.data.item);
+        setMyOrderProductInfo(response.data[0].item.products);
+        setOrder(true);
+
+        //가져온정보 넣기
+      } catch (e) {
+        setOrder(false);
+
+        return toast('정보가 불러와지지 않음', {
+          icon: '😢',
+          duration: 2000,
+        });
+      }
+    };
     handleGetUserInfo();
   }, []);
   const orderNum = myOrderInfo.length;
+
+  const handleFindOrderState = (e) => {
+    setFindDeliveryState(e.target.value);
+  };
+
+  // function deliveryState() {
+
+  //   switch (isFindDeliveryState) {
+  //     case 'OS010':
+  //       setDeliveryState('주문 완료');
+  //       break;
+  //     case 'OS030':
+  //       setDeliveryState('배송 준비중');
+  //       break;
+  //     case 'OS035':
+  //       setDeliveryState('배송중');
+  //       break;
+  //     case 'OS040':
+  //       setDeliveryState('배송 완료');
+  //       break;
+  //     case 'OS110':
+  //       setDeliveryState('반품 요청');
+  //       break;
+  //     case 'OS130':
+  //       setDeliveryState('반품 완료');
+  //       break;
+  //     case 'OS330':
+  //       setDeliveryState('환불 완료');
+  //       break;
+  //     case 'OS310':
+  //       setDeliveryState('환불 요청');
+  //       break;
+  //   }
+  // }
+  console.log(isFindDeliveryState);
 
   return (
     <>
@@ -55,8 +107,9 @@ export default function MyOrder() {
             </button> */}
           </nav>
           <section className="flex items-center gap-5 border-4 p-6 mb-2">
-            <select className="border">
+            <select className="border" onClick={handleFindOrderState}>
               <option>전체 주문처리 상태</option>
+              <option>주문 완료</option>
               <option>배송준비중</option>
               <option>배송중</option>
               <option>배송완료</option>
@@ -87,7 +140,7 @@ export default function MyOrder() {
               주문 상품 정보
             </h3>
             <div className="mb-[90px]">
-              <table className="table-fixed text-center">
+              <table className="table-fixed text-center w-full">
                 <thead>
                   <tr className="bg-gray-50 h-[40px] border-y-[1px] text-sm">
                     <td className="w-[10%]">
@@ -103,7 +156,45 @@ export default function MyOrder() {
                     <td className="w-[10%]">취소/교환/반품</td>
                   </tr>
                 </thead>
-                {isOrder ? (
+                {/* {isFindDeliveryState === '전체 주문처리 상태'
+                  ? Object.values(myOrderInfo).map(
+                      (i: typeof myOrderInfo, index) => (
+                        <OrderItem orderDate={i.createdAt} index={index} />
+                      )
+                    )
+                  : 'sdffdf'} */}
+
+                {isFindDeliveryState === '주문 완료'
+                  ? myOrderProductDate.map((v, i) => {
+                      return (
+                        <OrderItem
+                          key={i}
+                          orderDate={v}
+                          productList={myOrderProductList[i]}
+                        />
+                      );
+                    })
+                  : 'dfsdfsdffsd'}
+                {/* : // Object.values(myOrderInfo).map((v) =>
+                    //     v.products.filter((v) => v.state === 'OS010')
+                    //   )
+                    // ? myOrderProductList
+                    //     .filter(
+                    //       (item: typeof myOrderInfo) => (item.state = 'OS010')
+                    //     )
+                    //     .map((i: typeof myOrderInfo, index: number) => (
+                    //       <OrderItem orderDate={i.createdAt} index={index} />
+                    //     ))
+                    // isFindDeliveryState === '취소/반품'
+                    // ? Object.values(myOrderInfo)[0]
+                    //     .products.filter(
+                    //       (item: typeof myOrderInfo) => (item.state = 'OS310')
+                    //     )
+                    //     .map((i: typeof myOrderInfo, index: number) => (
+                    //       <OrderItem orderDate={i.createdAt} index={index} />
+                    //     ))
+                    ''} */}
+                {/* {isOrder ? (
                   Object.values(myOrderInfo).map(
                     (i: typeof myOrderInfo, index) => (
                       <OrderItem orderDate={i.createdAt} index={index} />
@@ -116,7 +207,7 @@ export default function MyOrder() {
                       주문 내역이 없습니다.
                     </td>
                   </tr>
-                )}
+                )} */}
                 {/* <thead>
                   <tr className="h-[110px] border-b-[1px]">
                     <td>
@@ -157,6 +248,7 @@ export default function MyOrder() {
                 .fill('')
                 .map((_, i) => (
                   <span
+                    key={i}
                     className={`hover:bg-starPink hover:text-white px-2 rounded-sm ${
                       i === 0 ? 'bg-starPink text-white' : ''
                     }`}

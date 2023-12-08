@@ -1,3 +1,4 @@
+import { useDeliveryState } from '@/store/useDeliveryState';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,28 +12,44 @@ export default function OrderItemDetail({
 }: OrderItemDetail) {
   const [isDeliveryState, setDeliveryState] = useState('');
 
-  const deliveryState = deliveryStateNum;
-  console.log();
-
   useEffect(() => {
     setDeliveryState(deliveryStateNum);
   }, []);
 
-  console.log(isDeliveryState);
-
   useEffect(() => {
     function deliveryState() {
-      switch (isDeliveryState) {
+      console.log(deliveryStateNum);
+
+      switch (deliveryStateNum) {
         case 'OS010':
           setDeliveryState('주문 완료');
           break;
+        case 'OS030':
+          setDeliveryState('배송 준비중');
+          break;
+        case 'OS035':
+          setDeliveryState('배송중');
+          break;
+        case 'OS040':
+          setDeliveryState('배송 완료');
+          break;
+        case 'OS110':
+          setDeliveryState('반품 요청');
+          break;
+        case 'OS130':
+          setDeliveryState('반품 완료');
+          break;
+        case 'OS330':
+          setDeliveryState('환불 완료');
+          break;
         case 'OS310':
-          setDeliveryState('환불 처리 중');
+          setDeliveryState('환불 요청');
           break;
       }
     }
     deliveryState();
-  }, [isDeliveryState]);
+  }, [deliveryStateNum]);
+
   return (
     <>
       <td className="p-2 w-[13%]">
