@@ -111,7 +111,7 @@ function ReviewDetail() {
     };
 
     repliesData();
-  }, [id, comment, setComment]);
+  }, []);
 
   return (
     <>
