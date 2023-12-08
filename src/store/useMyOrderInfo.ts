@@ -1,8 +1,17 @@
 import { create } from 'zustand';
 
+type myOrderInfoProducts = {
+  state: string;
+};
+
+type myOrderInfoType = {
+  createdAt: object;
+  products: myOrderInfoProducts[];
+};
+
 interface myOrderInfo {
-  myOrderInfo: object[];
-  setMyOrderInfo: (val: object[]) => void;
+  myOrderInfo: myOrderInfoType[];
+  setMyOrderInfo: (val: myOrderInfoType[]) => void;
   myOrderProductInfo: object[];
   setMyOrderProductInfo: (val: object[]) => void;
 }
