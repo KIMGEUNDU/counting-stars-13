@@ -39,6 +39,7 @@ interface DetailProductResult {
   required: boolean;
   handleClickUp: () => void;
   handleClickDown: () => void;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface QnaReviewData {
@@ -203,4 +204,7 @@ interface OrderItemDetail {
   number: number;
   price: number;
   deliveryStateNum: string;
+  _id?: string;
+  quantity?: number;
+  state?: string;
 }
