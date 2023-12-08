@@ -8,7 +8,7 @@ type board = {
   link?: string;
   date: string | undefined;
   item?: string;
-  grade?: number;
+  grade?: number | string;
   itemImg?: string;
   attachFile?: string | undefined;
   collection?: string;
@@ -35,7 +35,9 @@ export default function EachPost({
   return (
     <>
       <tr className="border-b border-gray-200">
-        <td className={`py-4 ${tag === '공지' ? 'font-bold' : ''}`}>{tag}</td>
+        <td className={`py-4 ${typeof tag === 'string' ? 'font-bold' : ''}`}>
+          {tag}
+        </td>
 
         {item && (
           <td className="whitespace-nowrap h-10 px-2">
@@ -47,7 +49,9 @@ export default function EachPost({
         )}
 
         {grade && (
-          <td className="truncate pl-6 text-left">{starGrade(grade)}</td>
+          <td className="truncate pl-6 text-left">
+            {starGrade(Number(grade))}
+          </td>
         )}
 
         {link && (

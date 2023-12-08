@@ -3,7 +3,7 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import Thead from '@/components/QnA,Review/Thead';
-import { useMyBoard } from '@/store/useMyBoard';
+import { useData } from '@/store/useData';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { sortQnaReviewData } from '@/utils/getProductsData';
@@ -22,7 +22,7 @@ function MyBoard() {
     pageData,
     setPageData,
     setPageNumber,
-  } = useMyBoard();
+  } = useData();
 
   useEffect(() => {
     const getReplies = async () => {
@@ -35,7 +35,10 @@ function MyBoard() {
       const sortBoard = sortQnaReviewData(res.data.item);
 
       const filterBoard = sortBoard.filter(
-        (v) => v.user?._id === userInfo?._id
+        (v) =>
+          v.user?._id === userInfo?._id &&
+          v.extra?.type !== 'qnaComment' &&
+          v.extra?.type !== 'reviewComment'
       );
 
       setAllData(filterBoard);
@@ -83,19 +86,27 @@ function MyBoard() {
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={allData.length - i}
-                    title={v.extra?.title}
+                    tag={(v as Replies).extra?.type.toUpperCase()}
+                    title={(v as Replies).extra?.title}
                     writer={userInfo?.name}
-                    grade={v.rating}
-                    date={v.createdAt}
-                    item={v.product?.name}
-                    itemImg={v.product?.image}
+                    grade={
+                      (v as Replies).extra?.type === 'qna'
+                        ? ' '
+                        : (v as Replies).rating
+                    }
+                    date={(v as Replies).createdAt}
+                    item={(v as Replies).product?.name}
+                    itemImg={(v as Replies).product?.image}
                     link={
-                      v.extra?.type === 'qna'
+                      (v as Replies).extra?.type === 'qna'
                         ? `/qna-detail/${v._id}`
                         : `/review-detail/${v._id}`
                     }
-                    attachFile={v.extra?.attachFile ? v.extra?.attachFile : ''}
+                    attachFile={
+                      (v as Replies).extra?.attachFile
+                        ? (v as Replies).extra?.attachFile
+                        : ''
+                    }
                   />
                 ))}
             </tbody>

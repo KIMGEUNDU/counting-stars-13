@@ -101,13 +101,14 @@ function QnaDetail() {
       const qna = res.data.item;
       const filterComment = qna.filter(
         (v: Replies) =>
-          v.extra?.type === 'qnaComment' && v.extra?.boardId === id
+          v.extra?.type === 'qnaComment' && String(v.extra?.boardId) === id
       );
+
       setComment(filterComment);
     };
 
     repliesData();
-  }, [id, comment, setComment]);
+  }, []);
 
   return (
     <>
