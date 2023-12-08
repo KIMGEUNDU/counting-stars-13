@@ -3,10 +3,12 @@ import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useData } from '@/store/useData';
 
 export default function Header() {
   const { setLogin } = useLogin();
   const { setUserInfo } = useUserInfo();
+  const { setAllData, setPageData } = useData();
   const navigate = useNavigate();
 
   const isLoginState = localStorage.getItem('id');
@@ -26,6 +28,14 @@ export default function Header() {
 
     navigate('/');
   };
+
+  const moveSearch = () => {
+    setAllData([]);
+    setPageData([]);
+
+    navigate('/search');
+  };
+
   return (
     <header className="relative z-50">
       <section className="w-full border-b-2 flex justify-center fixed h-24 bg-white">
@@ -124,13 +134,14 @@ export default function Header() {
                   </>
                 )}
               </ul>
-              <Link
-                to="/search"
+              <button
+                type="button"
+                onClick={moveSearch}
                 aria-label="검색 버튼"
                 className="inline-block absolute -translate-y-1/2 top-1/2 -right-14"
               >
                 <img src="/headerSearch.png" className="max-w-[20px]" />
-              </Link>
+              </button>
             </div>
           </nav>
         </article>

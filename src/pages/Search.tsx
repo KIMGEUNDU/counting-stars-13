@@ -56,15 +56,18 @@ export default function Search() {
   useEffect(() => {
     const getProducts = async () => {
       const res = await axios.get(`https://localhost/api/products`);
-      setAllData(res.data.item);
-      setDataLength(res.data.item.length);
-      setPageData(res.data.item.slice(0, 10));
-      setDataLengthPage(Math.ceil(res.data.item.length / 10));
-      setPageNumber(1);
+
+      if (res.data.ok === 1) {
+        setAllData(res.data.item);
+        setDataLength(res.data.item.length);
+        setPageData(res.data.item.slice(0, 10));
+        setDataLengthPage(Math.ceil(res.data.item.length / 10));
+        setPageNumber(1);
+      }
     };
 
     getProducts();
-  }, [setAllData]);
+  }, [setAllData, setPageData]);
 
   return (
     <>
