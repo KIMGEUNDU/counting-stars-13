@@ -203,4 +203,7 @@ interface OrderItemDetail {
   number: number;
   price: number;
   deliveryStateNum: string;
+  _id?: string;
+  quantity?: number;
+  state?: string;
 }

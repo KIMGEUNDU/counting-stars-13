@@ -1,32 +1,36 @@
-import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import OrderItemDetail from './OrderItemDetail';
 
-export default function OrderItem({ orderDate, index }) {
-  const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
+export default function OrderItem({
+  orderDate,
+  productList,
+}: {
+  orderDate: string;
+  productList: OrderItemDetail[];
+}) {
+  // const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
 
-  const orderList = Object.values(myOrderInfo).filter(
-    (i: typeof myOrderInfo, ind) => index === ind
-  );
-  orderDate = orderDate.slice(0, 10);
+  console.log(productList);
+
+  orderDate = orderDate?.slice(0, 10);
 
   return (
     <thead>
-      <tr className="h-[110px] border-b">
+      <tr className="h-[90px] border-b">
         <td className="bg-gray-50">
           <span className="text-sm">
             {orderDate} <br />
           </span>
         </td>
         <td className="" colSpan={6}>
-          {orderList[0].products.map((item) => (
+          {productList.map((item) => (
             <div className="flex items-center">
               <OrderItemDetail
-                link={item._id}
-                img={item.image}
+                link={item._id ? item._id : ''}
+                img={item.img}
                 name={item.name}
-                number={item.quantity}
+                number={item.quantity ? item.quantity : 0}
                 price={item.price}
-                deliveryStateNum={item.state}
+                deliveryStateNum={item.state ? item.state : ''}
               />
             </div>
           ))}
