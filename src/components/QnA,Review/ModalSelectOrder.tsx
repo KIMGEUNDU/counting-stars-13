@@ -36,7 +36,6 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         }
       }
 
-      // 주문목록 다 되면 시도해볼 예정
       setOrderData(orderProducts);
     }
 
