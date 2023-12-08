@@ -22,7 +22,8 @@ export const putCart = async (id: number, quantity: number) => {
 };
 
 export const clearCart = async (
-  setCartData: React.Dispatch<React.SetStateAction<CartItem[]>>
+  setCartData: React.Dispatch<React.SetStateAction<CartItem[]>>,
+  setCheckControl: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const check = confirm('장바구니를 정말 비우시겠습니까?');
   if (check) {
@@ -30,4 +31,5 @@ export const clearCart = async (
     if (response.status === 200) setCartData([]);
   }
   toast.success('삭제되었습니다.');
+  setCheckControl(false);
 };
