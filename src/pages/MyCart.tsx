@@ -14,6 +14,7 @@ export default function MyCart() {
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
   const [checkControl, setCheckControl] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
 
   useEffect(() => {
     async function getUsers() {
@@ -22,6 +23,14 @@ export default function MyCart() {
     }
     getUsers();
   }, []);
+
+  useEffect(() => {
+    const initialQuantity = cartData.reduce((acc, item) => {
+      acc[item._id] = item.quantity;
+      return acc;
+    }, {} as { [id: string]: number });
+    setQuantity(initialQuantity);
+  }, [cartData]);
 
   const handleCheckProduct = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -58,6 +67,7 @@ export default function MyCart() {
     setCartData(cartData.filter((item) => !checkProduct.includes(item._id)));
     setCheckProduct([]);
     toast.success('삭제되었습니다.');
+    setCheckControl(false);
   };
 
   const controlCheck = () => {
@@ -67,6 +77,71 @@ export default function MyCart() {
       setCheckProduct([]);
     } else {
       setCheckProduct(cartData.map((item) => item._id));
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    const inputValue = e.target.value;
+
+    if (inputValue === '') {
+      setQuantity((prev) => ({ ...prev, [id]: '' }));
+    } else {
+      let finalValue = Number(inputValue);
+
+      if (finalValue < 1) {
+        finalValue = 1;
+      } else if (finalValue > 99) {
+        finalValue = 99;
+      }
+
+      setQuantity((prev) => ({ ...prev, [id]: finalValue }));
+    }
+  };
+
+  const handleUpClick = (id: string) => {
+    setQuantity((prev) => ({ ...prev, [id]: Math.min(prev[id] + 1, 99) }));
+  };
+
+  const handleDownClick = (id: string) => {
+    setQuantity((prev) => ({ ...prev, [id]: Math.max(prev[id] - 1, 1) }));
+  };
+
+  const handleChangeQuantity = async (id: number) => {
+    const changeCheck = cartData.some((item) => {
+      if (item._id === id) {
+        if (item['quantity'] === quantity[id]) return true;
+      }
+    });
+
+    if (changeCheck) {
+      toast.error('장바구니 상품 개수가 변경되지 않았습니다.');
+      return;
+    }
+
+    const cart = {
+      quantity: quantity[id],
+    };
+
+    try {
+      const res = await axiosInstance.patch(`/carts/${id}`, cart);
+
+      if (res.status === 200) {
+        setCartData((prev) =>
+          prev.map((item) => {
+            if (item._id === id) {
+              return { ...item, quantity: quantity[id] };
+            } else {
+              return item;
+            }
+          })
+        );
+      }
+      toast.success('장바구니 상품 주문 개수가 변경되었습니다.');
+    } catch (error) {
+      toast.error('문제가 발생했습니다. 잠시 후 시도해주세요.');
     }
   };
 
@@ -86,7 +161,12 @@ export default function MyCart() {
                 <thead>
                   <tr className="bg-gray-50 h-10 border-b text-sm">
                     <th className="w-[5%]">
-                      <input type="checkbox" onClick={controlCheck} />
+                      <input
+                        type="checkbox"
+                        onChange={controlCheck}
+                        checked={checkControl}
+                        disabled={cartData.length === 0}
+                      />
                     </th>
                     <th className="w-[10%]">이미지</th>
                     <th className="w-[30%]">상품 정보</th>
@@ -135,13 +215,20 @@ export default function MyCart() {
                               <input
                                 type="text"
                                 className="w-3/4 pl-2"
-                                defaultValue={item.quantity}
+                                value={quantity[item._id] || 0}
+                                onChange={(e) => handleInputChange(e, item._id)}
                               />
                               <div className="flex flex-col gap-2 justify-center">
-                                <button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpClick(`${item._id}`)}
+                                >
                                   <img src="/cartArrowUp.png" className="w-3" />
                                 </button>
-                                <button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownClick(`${item._id}`)}
+                                >
                                   <img
                                     src="/cartArrowDown.png"
                                     className="w-3"
@@ -149,7 +236,11 @@ export default function MyCart() {
                                 </button>
                               </div>
                             </div>
-                            <button className="w-full text-sm border-gray-300 border-2 rounded-sm">
+                            <button
+                              type="button"
+                              className="w-full text-sm border-gray-300 border-2 rounded-sm"
+                              onClick={() => handleChangeQuantity(item._id)}
+                            >
                               변경
                             </button>
                           </td>
@@ -203,7 +294,7 @@ export default function MyCart() {
                   <div>
                     <button
                       className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm"
-                      onClick={() => clearCart(setCartData)}
+                      onClick={() => clearCart(setCartData, setCheckControl)}
                     >
                       장바구니 비우기
                     </button>
