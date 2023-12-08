@@ -5,13 +5,12 @@ export default function OrderItem({
   productList,
 }: {
   orderDate: string;
-  productList: OrderItemDetail[];
+  productList: object;
 }) {
   // const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
 
-  console.log(productList);
-
   orderDate = orderDate?.slice(0, 10);
+  console.log(typeof orderDate);
 
   return (
     <thead>
@@ -22,7 +21,7 @@ export default function OrderItem({
           </span>
         </td>
         <td className="" colSpan={6}>
-          {productList.map((item) => (
+          {Object.values(productList).map((item) => (
             <div className="flex items-center">
               <OrderItemDetail
                 link={item._id ? item._id : ''}

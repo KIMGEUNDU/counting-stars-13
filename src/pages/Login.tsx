@@ -14,6 +14,7 @@ export default function Login() {
   //아이디 비밀번호 정보 값
   const { isLoginInfo, setLoginInfo } = useLoginInfo();
   const { setUserInfo } = useUserInfo();
+  console.log(isLoginInfo);
 
   const navigate = useNavigate();
 
@@ -53,15 +54,14 @@ export default function Login() {
         'https://localhost/api/users/login',
         isLoginInfo
       );
-      console.log(response);
+
       const responseItem = response.data.item;
-      console.log(responseItem.token.accessToken);
 
       localStorage.clear();
       localStorage.setItem('id', responseItem._id);
       localStorage.setItem('accessToken', responseItem.token.accessToken);
       localStorage.setItem('refreshToken', responseItem.token.refreshToken);
-      //TODO: 로그인시 가져오는 유저 인포 변경(타입오류)
+
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
         navigate(-1);

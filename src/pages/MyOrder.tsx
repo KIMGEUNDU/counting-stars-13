@@ -9,18 +9,14 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function MyOrder() {
-  const [isOrder, setOrder] = useState(false);
+  const [, setOrder] = useState(false);
   const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
 
-  const myOrderProductList = [];
-  const myOrderProductDate = [];
+  const myOrderProductList: object[] = [];
+  const myOrderProductDate: object[] = [];
 
-  const {
-    myOrderInfo,
-    setMyOrderInfo,
-    myOrderProductInfo,
-    setMyOrderProductInfo,
-  } = useMyOrderInfo();
+  const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
+    useMyOrderInfo();
 
   console.log(myOrderInfo);
 
@@ -56,7 +52,7 @@ export default function MyOrder() {
   }, []);
   const orderNum = myOrderInfo.length;
 
-  const handleFindOrderState = (e) => {
+  const handleFindOrderState = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFindDeliveryState(e.target.value);
   };
 
@@ -107,7 +103,7 @@ export default function MyOrder() {
             </button> */}
           </nav>
           <section className="flex items-center gap-5 border-4 p-6 mb-2">
-            <select className="border" onClick={handleFindOrderState}>
+            <select className="border" onChange={handleFindOrderState}>
               <option>전체 주문처리 상태</option>
               <option>주문 완료</option>
               <option>배송준비중</option>
@@ -166,10 +162,12 @@ export default function MyOrder() {
 
                 {isFindDeliveryState === '주문 완료'
                   ? myOrderProductDate.map((v, i) => {
+                      //object형식을 string으로 변경
+                      const orderDate = JSON.stringify(v);
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={v}
+                          orderDate={orderDate}
                           productList={myOrderProductList[i]}
                         />
                       );
