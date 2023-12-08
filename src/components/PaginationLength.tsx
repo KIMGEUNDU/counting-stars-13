@@ -8,7 +8,9 @@ function PaginationLength({ length }: { length: number }) {
     const startIdx = i * 10;
     const lastIdx = startIdx + 10;
 
-    setPageData(allData.slice(startIdx, lastIdx));
+    if (allData) {
+      setPageData(allData.slice(startIdx, lastIdx));
+    }
   };
 
   return (
