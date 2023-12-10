@@ -13,17 +13,50 @@ export default function MyOrder() {
   const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
 
   const myOrderProductList: object[] = [];
+  // const [myOrderProductList, setMyOrderProductList] = useState([])
   const myOrderProductDate: object[] = [];
 
   const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
     useMyOrderInfo();
 
-  console.log(myOrderInfo);
-
-  myOrderInfo.forEach((v) => {
-    myOrderProductDate.push(v.createdAt),
-      myOrderProductList.push(v.products.filter((v) => v.state === 'OS010'));
-  });
+  if (isFindDeliveryState === '주문 완료') {
+    myOrderInfo.forEach((v) => {
+      myOrderProductDate.push(v.createdAt),
+        myOrderProductList.push(v.products.filter((v) => v.state === 'OS010'));
+    });
+  }
+  if (isFindDeliveryState === '배송 준비중') {
+    myOrderInfo.forEach((v) => {
+      myOrderProductDate.push(v.createdAt),
+        myOrderProductList.push(v.products.filter((v) => v.state === 'OS030'));
+    });
+  }
+  if (isFindDeliveryState === '배송중') {
+    myOrderInfo.forEach((v) => {
+      myOrderProductDate.push(v.createdAt),
+        myOrderProductList.push(v.products.filter((v) => v.state === 'OS035'));
+    });
+  }
+  if (isFindDeliveryState === '배송 완료') {
+    myOrderInfo.forEach((v) => {
+      myOrderProductDate.push(v.createdAt),
+        myOrderProductList.push(v.products.filter((v) => v.state === 'OS040'));
+    });
+  }
+  if (isFindDeliveryState === '취소/반품') {
+    myOrderInfo.forEach((v) => {
+      myOrderProductDate.push(v.createdAt),
+        myOrderProductList.push(
+          v.products.filter(
+            (v) =>
+              v.state === 'OS110' ||
+              v.state === 'OS130' ||
+              v.state === 'OS330' ||
+              v.state === 'OS310'
+          )
+        );
+    });
+  }
 
   useEffect(() => {
     const handleGetUserInfo = async () => {
@@ -33,14 +66,15 @@ export default function MyOrder() {
             Authorization: `Bearer ${AUTH_TOKEN()}`,
           },
         });
+        console.log('정보가 불러옴');
 
         setMyOrderInfo(response.data.item);
         setMyOrderProductInfo(response.data[0].item.products);
         setOrder(true);
-
         //가져온정보 넣기
       } catch (e) {
         setOrder(false);
+        console.log('정보가 불러와지지 않음');
 
         return toast('정보가 불러와지지 않음', {
           icon: '😢',
@@ -85,7 +119,6 @@ export default function MyOrder() {
   //       break;
   //   }
   // }
-  console.log(isFindDeliveryState);
 
   return (
     <>
@@ -136,7 +169,7 @@ export default function MyOrder() {
               주문 상품 정보
             </h3>
             <div className="mb-[90px]">
-              <table className="table-fixed text-center w-full">
+              <table className="table-fixed text-center w-full mb-60">
                 <thead>
                   <tr className="bg-gray-50 h-[40px] border-y-[1px] text-sm">
                     <td className="w-[10%]">
@@ -152,18 +185,23 @@ export default function MyOrder() {
                     <td className="w-[10%]">취소/교환/반품</td>
                   </tr>
                 </thead>
-                {/* {isFindDeliveryState === '전체 주문처리 상태'
-                  ? Object.values(myOrderInfo).map(
-                      (i: typeof myOrderInfo, index) => (
-                        <OrderItem orderDate={i.createdAt} index={index} />
-                      )
-                    )
-                  : 'sdffdf'} */}
+                {isFindDeliveryState === '전체 주문처리 상태' ? (
+                  myOrderInfo.map((v, i) => (
+                    <OrderItem
+                      key={i}
+                      orderDate={String(v.createdAt)}
+                      productList={v.products}
+                    />
+                  ))
+                ) : isFindDeliveryState === '주문 완료' ? (
+                  myOrderProductDate.map((v, i) => {
+                    //object형식을 string으로 변경
 
-                {isFindDeliveryState === '주문 완료'
-                  ? myOrderProductDate.map((v, i) => {
-                      //object형식을 string으로 변경
-                      const orderDate = JSON.stringify(v);
+                    const orderDate = JSON.stringify(v);
+                    if (
+                      myOrderProductList[i] &&
+                      Object.keys(myOrderProductList[i]).length > 0
+                    ) {
                       return (
                         <OrderItem
                           key={i}
@@ -171,8 +209,94 @@ export default function MyOrder() {
                           productList={myOrderProductList[i]}
                         />
                       );
-                    })
-                  : 'dfsdfsdffsd'}
+                    }
+                    // myOrderProductList[i]가 빈 값일 경우 null 반환
+                    return null;
+                  })
+                ) : isFindDeliveryState === '배송준비중' ? (
+                  myOrderProductDate.map((v, i) => {
+                    //object형식을 string으로 변경
+                    const orderDate = JSON.stringify(v);
+                    if (
+                      myOrderProductList[i] &&
+                      Object.keys(myOrderProductList[i]).length > 0
+                    ) {
+                      return (
+                        <OrderItem
+                          key={i}
+                          orderDate={orderDate}
+                          productList={myOrderProductList[i]}
+                        />
+                      );
+                    }
+                    // myOrderProductList[i]가 빈 값일 경우 null 반환
+                    return null;
+                  })
+                ) : isFindDeliveryState === '배송중' ? (
+                  myOrderProductDate.map((v, i) => {
+                    //object형식을 string으로 변경
+                    const orderDate = JSON.stringify(v);
+                    if (
+                      myOrderProductList[i] &&
+                      Object.keys(myOrderProductList[i]).length > 0
+                    ) {
+                      return (
+                        <OrderItem
+                          key={i}
+                          orderDate={orderDate}
+                          productList={myOrderProductList[i]}
+                        />
+                      );
+                    }
+                    // myOrderProductList[i]가 빈 값일 경우 null 반환
+                    return null;
+                  })
+                ) : isFindDeliveryState === '배송완료' ? (
+                  myOrderProductDate.map((v, i) => {
+                    //object형식을 string으로 변경
+                    const orderDate = JSON.stringify(v);
+                    if (
+                      myOrderProductList[i] &&
+                      Object.keys(myOrderProductList[i]).length > 0
+                    ) {
+                      return (
+                        <OrderItem
+                          key={i}
+                          orderDate={orderDate}
+                          productList={myOrderProductList[i]}
+                        />
+                      );
+                    }
+                    // myOrderProductList[i]가 빈 값일 경우 null 반환
+                    return null;
+                  })
+                ) : isFindDeliveryState === '취소/반품' ? (
+                  myOrderProductDate.map((v, i) => {
+                    //object형식을 string으로 변경
+                    const orderDate = JSON.stringify(v);
+                    if (
+                      myOrderProductList[i] &&
+                      Object.keys(myOrderProductList[i]).length > 0
+                    ) {
+                      return (
+                        <OrderItem
+                          key={i}
+                          orderDate={orderDate}
+                          productList={myOrderProductList[i]}
+                        />
+                      );
+                    }
+                    // myOrderProductList[i]가 빈 값일 경우 null 반환
+                    return null;
+                  })
+                ) : (
+                  <tr>
+                    <td className="h-[110px]" colSpan={7}>
+                      {' '}
+                      주문 내역이 없습니다.
+                    </td>
+                  </tr>
+                )}
                 {/* : // Object.values(myOrderInfo).map((v) =>
                     //     v.products.filter((v) => v.state === 'OS010')
                     //   )
@@ -227,7 +351,7 @@ export default function MyOrder() {
                 </thead> */}
               </table>
             </div>
-            <div className="flex gap-3 justify-center items-center py-4 mb-[130px]">
+            {/* <div className="flex gap-3 justify-center items-center py-4 mb-[130px]">
               <button type="button">
                 <img
                   className="rotate-180"
@@ -260,7 +384,7 @@ export default function MyOrder() {
               <button type="button">
                 <img src="/pagination2.png" alt="마지막으로" />
               </button>
-            </div>
+            </div> */}
           </section>
         </div>
       </main>
