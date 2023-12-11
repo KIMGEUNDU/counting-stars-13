@@ -10,7 +10,6 @@ export default function OrderItem({
   // const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
 
   orderDate = orderDate?.slice(0, 10);
-  console.log(typeof orderDate);
 
   return (
     <thead>
@@ -20,12 +19,13 @@ export default function OrderItem({
             {orderDate} <br />
           </span>
         </td>
-        <td className="" colSpan={6}>
-          {Object.values(productList).map((item) => (
-            <div className="flex items-center">
+        <td colSpan={6}>
+          {Object.values(productList).map((item, i) => (
+            <div key={i} className="flex items-center">
               <OrderItemDetail
+                key={i}
                 link={item._id ? item._id : ''}
-                img={item.img}
+                img={item.image}
                 name={item.name}
                 number={item.quantity ? item.quantity : 0}
                 price={item.price}
