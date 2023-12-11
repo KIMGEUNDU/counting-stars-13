@@ -3,6 +3,19 @@ import axiosInstance from '@/utils/axiosInstance';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { putWish } from '@/utils/HandleWish';
+import axios from 'axios';
+
+const fetchData = async (id: number) => {
+  const response = await axios.get(`/products`, {
+    params: {
+      custom: JSON.stringify({
+        'extra.depth': 2,
+        'extra.parent': id,
+      }),
+    },
+  });
+  return response.data.item;
+};
 
 function DetailProductSelect({
   id,
@@ -16,37 +29,25 @@ function DetailProductSelect({
   option: { [key: string]: string }[] | string[];
 }) {
   const [info] = useState<{ [key: string]: number }>({});
+  const [optionId] = useState<{ [key: string]: number }>({});
   const [count, setCount] = useState<{ [key: string]: number }>({});
   const [selectOption, setSelectOption] = useState<string[]>([]);
 
   useEffect(() => {
-    option.map((item: string | optionObject) => {
-      if (typeof item === 'string') {
-        info[item] = price;
-        count[item] = 0;
+    const processOptionData = async (id: number) => {
+      try {
+        const data = await fetchData(id);
+        data.map((item: ProductData) => {
+          info[item.option] = item.price;
+          optionId[item.option] = item._id;
+          count[item.option] = 0;
+        });
+      } catch (error) {
+        toast.error(`${error}가 발생했습니다. 잠시 후 시도해주세요.`);
       }
-      if (item instanceof Object) {
-        const optionName = Object.values(item)[0] as string;
-        if (!optionName.includes('+') && !optionName.includes('-')) {
-          info[optionName] = price;
-          count[optionName] = 0;
-          return;
-        }
+    };
 
-        if (optionName.includes('-')) {
-          const optionPrice = +optionName.split('-')[1].replace(/[^0-9]/g, '');
-          info[optionName] = price - optionPrice;
-          count[optionName] = 0;
-          return;
-        }
-
-        if (optionName.includes('+')) {
-          const optionPrice = +optionName.split('+')[1].replace(/[^0-9]/g, '');
-          info[optionName] = price + optionPrice;
-          count[optionName] = 0;
-        }
-      }
-    });
+    processOptionData(id);
   }, [option, price, info]);
 
   const handleClickUp = (item: string) => {
@@ -81,10 +82,8 @@ function DetailProductSelect({
     Promise.all(
       selectOption.map(async (item) => {
         const cart = {
-          product_id: id,
+          product_id: optionId[item],
           quantity: count[item],
-          option: item,
-          optionPrice: info[item],
         };
 
         await axiosInstance.post('/carts', cart);

@@ -9,6 +9,20 @@ import { deleteAllWishes, deleteEachWish } from '@/utils/HandleWish';
 import axiosInstance from '@/utils/axiosInstance';
 import toast from 'react-hot-toast';
 
+const fetchData = async (id: number) => {
+  const response = await axiosInstance.get(`/products`, {
+    params: {
+      custom: JSON.stringify({
+        'extra.depth': 2,
+        'extra.parent': id,
+      }),
+    },
+  });
+  const item = await response.data.item;
+
+  return await item[0]?._id;
+};
+
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
   const [checkWish, setCheckWish] = useState<number[]>([]);
@@ -87,6 +101,12 @@ export default function Wish() {
     }
   };
 
+  async function handleAddToCart(productId: number, item: CartItem) {
+    const id =
+      item.product.options.length > 0 ? await fetchData(productId) : productId;
+    putCart(id, 1);
+  }
+
   return (
     <>
       <Helmet>
@@ -162,7 +182,7 @@ export default function Wish() {
                         </button>
                         <button
                           className={`text-sm border-gray-300 rounded-sm my-1 w-[90%] h-1/5 border`}
-                          onClick={() => putCart(item.product_id, 1)}
+                          onClick={() => handleAddToCart(item.product_id, item)}
                         >
                           장바구니 담기
                         </button>
