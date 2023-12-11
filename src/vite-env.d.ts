@@ -78,8 +78,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string; };
-  cost: { products: number; shippingFees: number; total: number; };
+  address: { name: string; value: string };
+  cost: { products: number; shippingFees: number; total: number };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -94,7 +94,7 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string; }[];
+  options: { [key: string]: string }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -109,6 +109,7 @@ interface ProductData {
     category: string[];
     sort: number;
   };
+  option: string;
 }
 
 interface optionObject {
@@ -147,6 +148,13 @@ interface Product {
   image: string;
   quantity: number;
   buyQuantity: number;
+  option: string;
+  extra: Extra;
+  options: string | [];
+}
+
+interface Extra {
+  parent: number;
 }
 
 interface Replies {
@@ -195,3 +203,34 @@ interface CommentInput {
     boardId: number;
   };
 }
+
+interface Posts {
+  _id?: number;
+  type?: string;
+  product_id?: number;
+  title?: string;
+  content: string;
+  createdAt?: string;
+  updatedAt?: string;
+  product?: {
+    _id: number;
+    name: string;
+    image: string;
+  };
+  writer?: string;
+  user_id?: number;
+  user?: {
+    _id?: number;
+    name?: string;
+  };
+  extra?: {
+    attachFile?: string;
+    tag?: string;
+    boardId?: number;
+  };
+}
+
+type myOrderInfoType = {
+  createdAt: Date;
+  products: myOrderInfoProducts[];
+};
