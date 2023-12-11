@@ -17,11 +17,11 @@ export default function MyCart() {
   const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
 
   useEffect(() => {
-    async function getUsers() {
+    async function getCartData() {
       const res = await axiosInstance.get(`/carts`);
       setCartData(res.data.item);
     }
-    getUsers();
+    getCartData();
   }, []);
 
   useEffect(() => {
@@ -205,6 +205,14 @@ export default function MyCart() {
                           <td>
                             <Link to={`/detail/${item.product_id}`}>
                               {item.product.name}
+                              {item.product.option && (
+                                <>
+                                  <br />
+                                  <span className="text-sm">
+                                    - {item.product.option} -
+                                  </span>
+                                </>
+                              )}
                             </Link>
                           </td>
                           <td className="font-bold">
@@ -256,7 +264,11 @@ export default function MyCart() {
                             </button>
                             <button
                               className="my-1 w-[90%] h-1/5 text-sm border-gray-300 border rounded-sm"
-                              onClick={() => putWish(item.product_id)}
+                              onClick={
+                                item.product.extra.parent
+                                  ? () => putWish(item.product.extra.parent)
+                                  : () => putWish(item.product_id)
+                              }
                             >
                               찜하기
                             </button>
