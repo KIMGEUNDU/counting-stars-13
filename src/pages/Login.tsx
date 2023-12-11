@@ -14,7 +14,6 @@ export default function Login() {
   //아이디 비밀번호 정보 값
   const { isLoginInfo, setLoginInfo } = useLoginInfo();
   const { setUserInfo } = useUserInfo();
-  console.log(isLoginInfo);
 
   const navigate = useNavigate();
 
