@@ -86,6 +86,7 @@ export default function Review() {
                     item={(v as Replies).product?.name}
                     itemImg={(v as Replies).product?.image}
                     link={`/review-detail/${v._id}`}
+                    collection="review"
                     attachFile={
                       (v as Replies).extra?.attachFile
                         ? (v as Replies).extra?.attachFile

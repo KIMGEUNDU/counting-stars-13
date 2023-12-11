@@ -6,6 +6,7 @@ import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
+import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
@@ -19,8 +20,8 @@ function QnaDetail() {
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
-  const [comment, setComment] = useState<Replies[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { comment, setDeleteComment } = useComment();
   const { id } = useParams();
 
   // 로그인유저정보
@@ -104,7 +105,7 @@ function QnaDetail() {
           v.extra?.type === 'qnaComment' && String(v.extra?.boardId) === id
       );
 
-      setComment(filterComment);
+      setDeleteComment(filterComment);
     };
 
     repliesData();
@@ -155,7 +156,15 @@ function QnaDetail() {
           />
         )}
 
-        {comment &&
+        {userInfo && <CommentInput writer={userInfo.name} collection="qna" />}
+        {!userInfo && (
+          <Link to="/login">
+            <p className="center p-2 border bg-gray-100 my-5">
+              회원에게만 댓글 작성 권한이 있습니다.
+            </p>
+          </Link>
+        )}
+        {comment.length > 0 &&
           comment.map((v, i) => (
             <CommentItem
               key={i}
@@ -165,14 +174,7 @@ function QnaDetail() {
             />
           ))}
 
-        {userInfo && <CommentInput writer={userInfo.name} collection="qna" />}
-        {!userInfo && (
-          <Link to="/login">
-            <p className="center p-2 border bg-gray-100 my-5">
-              회원에게만 댓글 작성 권한이 있습니다.
-            </p>
-          </Link>
-        )}
+        <p className="center border-t-4 border-t-starPink py-2"></p>
 
         <PageListOrder
           prev={prevData}

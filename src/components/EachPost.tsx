@@ -1,5 +1,6 @@
+import { useComment } from '@/store/useComment';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type board = {
   tag: string | number | undefined;
@@ -27,9 +28,16 @@ export default function EachPost({
   collection,
 }: board) {
   const [view, setView] = useState(false);
+  const navigate = useNavigate();
+  const { setDeleteComment } = useComment();
 
   const starGrade = (grade: number) => {
     return '⭐'.repeat(grade);
+  };
+
+  const moveDetail = (link: string) => {
+    setDeleteComment([]);
+    navigate(link);
   };
 
   return (
@@ -64,8 +72,9 @@ export default function EachPost({
                 : ''
             }`}
           >
-            <Link
-              to={link}
+            <button
+              type="button"
+              onClick={() => moveDetail(link)}
               onMouseOver={() => setView(true)}
               onMouseLeave={() => setView(false)}
             >
@@ -97,7 +106,7 @@ export default function EachPost({
                   </>
                 )}
               </div>
-            </Link>
+            </button>
           </td>
         )}
 

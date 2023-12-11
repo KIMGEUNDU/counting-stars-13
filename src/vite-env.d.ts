@@ -42,30 +42,6 @@ interface DetailProductResult {
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
-interface QnaReviewData {
-  _id?: number;
-  title?: string;
-  writer: string;
-  writerId?: string;
-  date?: string | undefined;
-  createdAt?: string;
-  attachFile?: string;
-  content?: string;
-  tag?: string;
-  grade?: number;
-  attachFile?: string;
-  productId?: number;
-  productName?: string;
-  productPrice?: number;
-  productImg?: string;
-  qnaId?: number;
-  product?: {
-    name?: string;
-    image?: string;
-    price?: number;
-  };
-}
-
 interface Data {
   active: boolean;
   createdAt: string;
@@ -102,8 +78,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string };
-  cost: { products: number; shippingFees: number; total: number };
+  address: { name: string; value: string; };
+  cost: { products: number; shippingFees: number; total: number; };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -118,7 +94,7 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string }[];
+  options: { [key: string]: string; }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -177,7 +153,8 @@ interface Replies {
   _id?: number;
   content: string;
   rating?: number;
-  createdAt: string;
+  createdAt?: string;
+  product_id?: number;
   product?: {
     _id: number;
     name: string;
@@ -207,4 +184,14 @@ interface OrderItemDetail {
   _id?: string;
   quantity?: number;
   state?: string;
+}
+
+interface CommentInput {
+  rating: number;
+  product_id: number;
+  content: string;
+  extra: {
+    type: string;
+    boardId: number;
+  };
 }

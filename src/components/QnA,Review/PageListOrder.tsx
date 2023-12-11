@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useComment } from '@/store/useComment';
+import { useNavigate } from 'react-router-dom';
 
 interface PageListOrder {
   prev: Replies | null;
@@ -8,6 +9,21 @@ interface PageListOrder {
 }
 
 function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
+  const { setDeleteComment } = useComment();
+  const navigate = useNavigate();
+
+  const moveNextData = () => {
+    setDeleteComment([]);
+
+    navigate(nextLink);
+  };
+
+  const movePrevData = () => {
+    setDeleteComment([]);
+
+    navigate(prevLink);
+  };
+
   return (
     <table className="pageListOrder center text-left text-sm mb-10">
       <tbody>
@@ -24,7 +40,9 @@ function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
             </th>
             <td>
               <p className="w-1/4 truncate">
-                <Link to={nextLink}>{next.extra?.title}</Link>
+                <button type="button" onClick={moveNextData}>
+                  {next.extra?.title}
+                </button>
               </p>
             </td>
           </tr>
@@ -42,7 +60,9 @@ function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
             </th>
             <td>
               <p className="w-1/4 truncate">
-                <Link to={prevLink}>{prev.extra?.title}</Link>
+                <button type="button" onClick={movePrevData}>
+                  {prev.extra?.title}
+                </button>
               </p>
             </td>
           </tr>
