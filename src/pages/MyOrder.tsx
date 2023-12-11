@@ -6,45 +6,69 @@ import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 
 export default function MyOrder() {
   const [, setOrder] = useState(false);
   const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
+  const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
+    useMyOrderInfo();
+  const [filteredOrders, setFilteredOrders] = useState(myOrderInfo);
+  const [orderDate, setOrderDate] = useState({
+    dateForm: '',
+    dateTo: '',
+  });
+  const handleOrderDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOrderDate({ ...orderDate, [e.target.name]: new Date(e.target.value) });
+  };
 
   const myOrderProductList: object[] = [];
   // const [myOrderProductList, setMyOrderProductList] = useState([])
   const myOrderProductDate: object[] = [];
 
-  const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
-    useMyOrderInfo();
+  useEffect(() => {
+    let result;
+    if (!orderDate.dateForm && !orderDate.dateTo) {
+      result = myOrderInfo;
+    } else {
+      result = myOrderInfo.filter((v) => {
+        const orderDateRange = new Date(v.createdAt);
+        const dateFrom = new Date(orderDate.dateForm);
+        dateFrom.setDate(dateFrom.getDate());
+        const dateTo = new Date(orderDate.dateTo);
+        dateTo.setDate(dateTo.getDate());
+        return orderDateRange >= dateFrom && orderDateRange <= dateTo;
+      });
+    }
+
+    setFilteredOrders(result);
+  }, [myOrderInfo, orderDate.dateForm, orderDate.dateTo]);
 
   if (isFindDeliveryState === '주문 완료') {
-    myOrderInfo.forEach((v) => {
+    filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS010'));
     });
   }
   if (isFindDeliveryState === '배송 준비중') {
-    myOrderInfo.forEach((v) => {
+    filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS030'));
     });
   }
   if (isFindDeliveryState === '배송중') {
-    myOrderInfo.forEach((v) => {
+    filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS035'));
     });
   }
   if (isFindDeliveryState === '배송 완료') {
-    myOrderInfo.forEach((v) => {
+    filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS040'));
     });
   }
   if (isFindDeliveryState === '취소/반품') {
-    myOrderInfo.forEach((v) => {
+    filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(
           v.products.filter(
@@ -66,7 +90,6 @@ export default function MyOrder() {
             Authorization: `Bearer ${AUTH_TOKEN()}`,
           },
         });
-        console.log('정보가 불러옴');
 
         setMyOrderInfo(response.data.item);
         setMyOrderProductInfo(response.data[0].item.products);
@@ -74,12 +97,6 @@ export default function MyOrder() {
         //가져온정보 넣기
       } catch (e) {
         setOrder(false);
-        console.log('정보가 불러와지지 않음');
-
-        return toast('정보가 불러와지지 않음', {
-          icon: '😢',
-          duration: 2000,
-        });
       }
     };
     handleGetUserInfo();
@@ -89,36 +106,6 @@ export default function MyOrder() {
   const handleFindOrderState = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFindDeliveryState(e.target.value);
   };
-
-  // function deliveryState() {
-
-  //   switch (isFindDeliveryState) {
-  //     case 'OS010':
-  //       setDeliveryState('주문 완료');
-  //       break;
-  //     case 'OS030':
-  //       setDeliveryState('배송 준비중');
-  //       break;
-  //     case 'OS035':
-  //       setDeliveryState('배송중');
-  //       break;
-  //     case 'OS040':
-  //       setDeliveryState('배송 완료');
-  //       break;
-  //     case 'OS110':
-  //       setDeliveryState('반품 요청');
-  //       break;
-  //     case 'OS130':
-  //       setDeliveryState('반품 완료');
-  //       break;
-  //     case 'OS330':
-  //       setDeliveryState('환불 완료');
-  //       break;
-  //     case 'OS310':
-  //       setDeliveryState('환불 요청');
-  //       break;
-  //   }
-  // }
 
   return (
     <>
@@ -136,7 +123,7 @@ export default function MyOrder() {
             </button> */}
           </nav>
           <section className="flex items-center gap-5 border-4 p-6 mb-2">
-            <select className="border" onChange={handleFindOrderState}>
+            <select className="border-2 h-7" onChange={handleFindOrderState}>
               <option>전체 주문처리 상태</option>
               <option>주문 완료</option>
               <option>배송준비중</option>
@@ -144,19 +131,29 @@ export default function MyOrder() {
               <option>배송완료</option>
               <option>취소/반품</option>
             </select>
-            <div className="border-[1.5px] inline-block">
+            {/* <div className="border-[1.5px] inline-block">
               <button className="border bg-gray-100 px-1 py-0.5">오늘</button>
               <button className="border bg-gray-100 px-1 py-0.5">1주일</button>
               <button className="border bg-gray-100 px-1 py-0.5">1개월</button>
-            </div>
+            </div> */}
             <div>
-              <input type="date" className="mx-2 border"></input>
+              <input
+                name="dateForm"
+                type="date"
+                className="mx-2 border"
+                onChange={handleOrderDate}
+              ></input>
               <span>~</span>
-              <input type="date" className="mx-2 border-[1px]"></input>
+              <input
+                name="dateTo"
+                type="date"
+                className="mx-2 border-[1px]"
+                onChange={handleOrderDate}
+              ></input>
             </div>
-            <button className="text-white bg-gray-600 text-base px-2 py-0.5">
+            {/* <button className="text-white bg-gray-600 text-base px-2 py-0.5">
               조회
-            </button>
+            </button> */}
           </section>
           <p className="text-gray-400 text-sm mb-16">
             - 기본적으로 최근 3개월간의 자료가 조회되며, 기간 검색시 지난
@@ -186,13 +183,15 @@ export default function MyOrder() {
                   </tr>
                 </thead>
                 {isFindDeliveryState === '전체 주문처리 상태' ? (
-                  myOrderInfo.map((v, i) => (
-                    <OrderItem
-                      key={i}
-                      orderDate={String(v.createdAt)}
-                      productList={v.products}
-                    />
-                  ))
+                  filteredOrders.map((v, i) => {
+                    return (
+                      <OrderItem
+                        key={i}
+                        orderDate={String(v.createdAt)}
+                        productList={v.products}
+                      />
+                    );
+                  })
                 ) : isFindDeliveryState === '주문 완료' ? (
                   myOrderProductDate.map((v, i) => {
                     //object형식을 string으로 변경
@@ -205,7 +204,7 @@ export default function MyOrder() {
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={orderDate}
+                          orderDate={orderDate.slice(1, 11)}
                           productList={myOrderProductList[i]}
                         />
                       );
@@ -224,7 +223,7 @@ export default function MyOrder() {
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={orderDate}
+                          orderDate={orderDate.slice(1, 11)}
                           productList={myOrderProductList[i]}
                         />
                       );
@@ -243,7 +242,7 @@ export default function MyOrder() {
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={orderDate}
+                          orderDate={orderDate.slice(1, 11)}
                           productList={myOrderProductList[i]}
                         />
                       );
@@ -262,7 +261,7 @@ export default function MyOrder() {
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={orderDate}
+                          orderDate={orderDate.slice(1, 11)}
                           productList={myOrderProductList[i]}
                         />
                       );
@@ -281,7 +280,7 @@ export default function MyOrder() {
                       return (
                         <OrderItem
                           key={i}
-                          orderDate={orderDate}
+                          orderDate={orderDate.slice(1, 11)}
                           productList={myOrderProductList[i]}
                         />
                       );
@@ -297,94 +296,8 @@ export default function MyOrder() {
                     </td>
                   </tr>
                 )}
-                {/* : // Object.values(myOrderInfo).map((v) =>
-                    //     v.products.filter((v) => v.state === 'OS010')
-                    //   )
-                    // ? myOrderProductList
-                    //     .filter(
-                    //       (item: typeof myOrderInfo) => (item.state = 'OS010')
-                    //     )
-                    //     .map((i: typeof myOrderInfo, index: number) => (
-                    //       <OrderItem orderDate={i.createdAt} index={index} />
-                    //     ))
-                    // isFindDeliveryState === '취소/반품'
-                    // ? Object.values(myOrderInfo)[0]
-                    //     .products.filter(
-                    //       (item: typeof myOrderInfo) => (item.state = 'OS310')
-                    //     )
-                    //     .map((i: typeof myOrderInfo, index: number) => (
-                    //       <OrderItem orderDate={i.createdAt} index={index} />
-                    //     ))
-                    ''} */}
-                {/* {isOrder ? (
-                  Object.values(myOrderInfo).map(
-                    (i: typeof myOrderInfo, index) => (
-                      <OrderItem orderDate={i.createdAt} index={index} />
-                    )
-                  )
-                ) : (
-                  <tr>
-                    <td className="h-[110px]" colSpan={7}>
-                      {' '}
-                      주문 내역이 없습니다.
-                    </td>
-                  </tr>
-                )} */}
-                {/* <thead>
-                  <tr className="h-[110px] border-b-[1px]">
-                    <td>
-                      <span>
-                        2023.11.23 <br /> (주문번호)
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      <img src="/logoChar.png" className="100%" />
-                    </td>
-                    <td>
-                      별도넛 <span>[옵션:자색고구마/보라색]</span>
-                    </td>
-                    <td className="font-bold">{orderNum}</td>
-                    <td className="pr-3 font-bold">{allProductNum}원</td>
-                    <td className="">배송준비중</td>
-                    <td className="h-[110px]"></td>
-                  </tr>
-                </thead> */}
               </table>
             </div>
-            {/* <div className="flex gap-3 justify-center items-center py-4 mb-[130px]">
-              <button type="button">
-                <img
-                  className="rotate-180"
-                  src="/pagination2.png"
-                  alt="처음으로"
-                />
-              </button>
-              <button type="button">
-                <img
-                  className="rotate-180"
-                  src="/pagination1.png"
-                  alt="이전으로"
-                />
-              </button>
-              {Array(5)
-                .fill('')
-                .map((_, i) => (
-                  <span
-                    key={i}
-                    className={`hover:bg-starPink hover:text-white px-2 rounded-sm ${
-                      i === 0 ? 'bg-starPink text-white' : ''
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
-                ))}
-              <button type="button">
-                <img src="/pagination1.png" alt="다음으로" />
-              </button>
-              <button type="button">
-                <img src="/pagination2.png" alt="마지막으로" />
-              </button>
-            </div> */}
           </section>
         </div>
       </main>

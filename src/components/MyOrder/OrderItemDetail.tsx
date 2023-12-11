@@ -54,13 +54,15 @@ export default function OrderItemDetail({
           <img src={img} className="100%" />
         </Link>
       </div>
-      <div className="w-[39%]">
+      <div className="w-[40.5%]">
         <span>{name}</span>
       </div>
-      <div className="font-medium w-[12%]">{number}</div>
-      <div className="pr-3 font-semibold w-[12%]">{price}원</div>
-      <div className="w-[12%]">{isDeliveryState}</div>
-      <div className="h-[12%] w-[12%]"> - </div>
+      <div className="font-medium w-[13%]">{number}</div>
+      <div className="pr-3 font-semibold w-[12%]">
+        {price.toLocaleString()}원
+      </div>
+      <div className="w-[11%]">{isDeliveryState}</div>
+      <div className="h-[12%] w-[11%]"> - </div>
     </>
   );
 }
