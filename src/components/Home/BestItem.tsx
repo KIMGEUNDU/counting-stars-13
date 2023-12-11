@@ -14,7 +14,7 @@ function BestItem() {
     queryFn: () =>
       axios.get(`/products?`, {
         params: {
-          extra: JSON.stringify({
+          custom: JSON.stringify({
             'extra.category.0': `PC-shop`,
             'extra.category.1': `PC-${category}`,
           }),
