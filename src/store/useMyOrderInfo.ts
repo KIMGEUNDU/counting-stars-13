@@ -5,7 +5,7 @@ type myOrderInfoProducts = {
 };
 
 type myOrderInfoType = {
-  createdAt: object;
+  createdAt: Date;
   products: myOrderInfoProducts[];
 };
 
