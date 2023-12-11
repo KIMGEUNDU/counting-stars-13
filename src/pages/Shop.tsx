@@ -23,7 +23,7 @@ const fetchData = (id: string) => {
   } else {
     const response = axios.get(`/products?`, {
       params: {
-        extra: JSON.stringify({
+        custom: JSON.stringify({
           'extra.category.1': `PC-${id}`,
         }),
       },
