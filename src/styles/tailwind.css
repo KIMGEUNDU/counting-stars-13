@@ -24,7 +24,7 @@
   }
 
   .quaReviewDetailButton {
-    @apply w-[10%] py-1 border border-gray-300;
+    @apply px-2 py-1 border border-gray-300;
   }
 
   .informationList {
