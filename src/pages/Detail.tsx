@@ -30,7 +30,10 @@ function Detail() {
         />
         <DetailProductOption data={data} />
       </article>
-      <DetailProductInformation imgArray={data?.descriptImages} />
+      <DetailProductInformation
+        imgArray={data?.descriptImages}
+        reply={data?.replies}
+      />
     </section>
   );
 }

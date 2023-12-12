@@ -2,10 +2,11 @@ import InformationTableTr from './InformationTableTr';
 
 function InformationTable({
   title,
-  length,
+  reply,
 }: {
   title: string;
   length?: number;
+  reply: [];
 }) {
   return (
     <>
@@ -23,28 +24,26 @@ function InformationTable({
           </button>
         </div>
       </div>
-      {length && (
-        <section className="border-t border-starBlack">
-          <table className="w-full">
-            {Array(length)
-              .fill('')
-              .map((_, i) => (
+      <section className="border-t border-starBlack">
+        <table className="w-full">
+          {reply?.length > 0 &&
+            reply.map((item: Review, i) => {
+              return (
                 <InformationTableTr
                   key={i}
-                  link="/detail"
-                  length={length}
+                  link={item._id}
                   number={i}
-                  content="생일파티용으로 주문했는데 이뻤어용^^ 아쉬운건 생각보다 사이즈가 작은게 ....... 메인메뉴가 아니여서 다행이긴했지만 색감이랑 모양은 진짜 이뻐용 ㅋㅋ"
-                  writer="윤**"
-                  date="2023-11-21 17:11:18"
+                  content={item.extra.title}
+                  writer={item.user.name}
+                  date={item.createdAt.split(' ')[0]}
                 />
-              ))}
-          </table>
-        </section>
-      )}
-      {!length && (
+              );
+            })}
+        </table>
+      </section>
+      {reply?.length === 0 && (
         <section className="border-b border-t border-t-starBlack border-b-gray-300 py-10 text-center">
-          <p>게시물이 없습니다</p>
+          <p>게시물이 없습니다.</p>
         </section>
       )}
     </>

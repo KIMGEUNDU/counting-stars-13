@@ -8,7 +8,7 @@ function ProductItem({ link, src, title, price }: ProductItem) {
         <figure className=" flex flex-col justify-center items-center relative">
           <div className="dimmedImg w-full overflow-hidden">
             <img src={src} alt={title} className="scaleImg" />
-            <ProductOption />
+            <ProductOption link={link} />
           </div>
         </figure>
         <figcaption className="py-1 ellipsis">{title}</figcaption>
