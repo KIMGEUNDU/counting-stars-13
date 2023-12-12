@@ -18,12 +18,15 @@ export default function MyOrder() {
     dateTo: '',
   });
   const handleOrderDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOrderDate({ ...orderDate, [e.target.name]: new Date(e.target.value) });
+    const newDateValue = e.target.value ? new Date(e.target.value) : '';
+    setOrderDate({ ...orderDate, [e.target.name]: newDateValue });
   };
 
   const myOrderProductList: object[] = [];
   // const [myOrderProductList, setMyOrderProductList] = useState([])
   const myOrderProductDate: object[] = [];
+  console.log(filteredOrders);
+  console.log(orderDate.dateForm, orderDate.dateTo);
 
   useEffect(() => {
     let result;
@@ -32,11 +35,19 @@ export default function MyOrder() {
     } else {
       result = myOrderInfo.filter((v) => {
         const orderDateRange = new Date(v.createdAt);
-        const dateFrom = new Date(orderDate.dateForm);
-        dateFrom.setDate(dateFrom.getDate());
-        const dateTo = new Date(orderDate.dateTo);
-        dateTo.setDate(dateTo.getDate());
-        return orderDateRange >= dateFrom && orderDateRange <= dateTo;
+        let dateFrom, dateTo;
+        if (orderDate.dateForm) {
+          dateFrom = new Date(orderDate.dateForm);
+          dateFrom.setDate(dateFrom.getDate());
+        }
+        if (orderDate.dateTo) {
+          dateTo = new Date(orderDate.dateTo);
+          dateTo.setDate(dateTo.getDate());
+        }
+        return (
+          (dateFrom ? orderDateRange >= dateFrom : true) &&
+          (dateTo ? orderDateRange <= dateTo : true)
+        );
       });
     }
 
@@ -55,7 +66,7 @@ export default function MyOrder() {
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS030'));
     });
   }
-  if (isFindDeliveryState === '배송중') {
+  if (isFindDeliveryState === '배송 중') {
     filteredOrders.forEach((v: myOrderInfoType) => {
       myOrderProductDate.push(v.createdAt),
         myOrderProductList.push(v.products.filter((v) => v.state === 'OS035'));
@@ -116,7 +127,7 @@ export default function MyOrder() {
         <div className="w-[80%] mx-auto mt-5">
           <nav className="w-full flex justify-center gap-2 border-b-[1px] my-8">
             <button className="text-[19px] font-bold border-b-[2px] border-gray-900 inline py-3 px-4 ">
-              주문내역조회 ({orderNum})
+              주문 내역 조회 ({orderNum})
             </button>
             {/* <button className="text-[19px] font-bold border-b-[2px] border-gray-300 text-gray-300 inline py-3 px-4 ">
               취소/반품/교환내역 ({deletOrderNum})
@@ -126,9 +137,9 @@ export default function MyOrder() {
             <select className="border-2 h-7" onChange={handleFindOrderState}>
               <option>전체 주문처리 상태</option>
               <option>주문 완료</option>
-              <option>배송준비중</option>
-              <option>배송중</option>
-              <option>배송완료</option>
+              <option>배송 준비 중</option>
+              <option>배송 중</option>
+              <option>배송 완료</option>
               <option>취소/반품</option>
             </select>
             {/* <div className="border-[1.5px] inline-block">
@@ -169,13 +180,9 @@ export default function MyOrder() {
               <table className="table-fixed text-center w-full mb-60">
                 <thead>
                   <tr className="bg-gray-50 h-[40px] border-y-[1px] text-sm">
-                    <td className="w-[10%]">
-                      주문일자
-                      <br />
-                      (주문번호)
-                    </td>
+                    <td className="w-[10%]">주문일자</td>
                     <td className="w-[10%]">이미지</td>
-                    <td className="w-[33%]">상품정보</td>
+                    <td className="w-[33%]">상품 정보</td>
                     <td className="w-[10%]">수량</td>
                     <td className="w-[10%]">상품구매금액</td>
                     <td className="w-[10%]">주문처리상태</td>
@@ -212,7 +219,7 @@ export default function MyOrder() {
                     // myOrderProductList[i]가 빈 값일 경우 null 반환
                     return null;
                   })
-                ) : isFindDeliveryState === '배송준비중' ? (
+                ) : isFindDeliveryState === '배송 준비 중' ? (
                   myOrderProductDate.map((v, i) => {
                     //object형식을 string으로 변경
                     const orderDate = JSON.stringify(v);
@@ -231,7 +238,7 @@ export default function MyOrder() {
                     // myOrderProductList[i]가 빈 값일 경우 null 반환
                     return null;
                   })
-                ) : isFindDeliveryState === '배송중' ? (
+                ) : isFindDeliveryState === '배송 중' ? (
                   myOrderProductDate.map((v, i) => {
                     //object형식을 string으로 변경
                     const orderDate = JSON.stringify(v);
@@ -250,7 +257,7 @@ export default function MyOrder() {
                     // myOrderProductList[i]가 빈 값일 경우 null 반환
                     return null;
                   })
-                ) : isFindDeliveryState === '배송완료' ? (
+                ) : isFindDeliveryState === '배송 완료' ? (
                   myOrderProductDate.map((v, i) => {
                     //object형식을 string으로 변경
                     const orderDate = JSON.stringify(v);
