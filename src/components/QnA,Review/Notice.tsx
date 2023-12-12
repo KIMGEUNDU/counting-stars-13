@@ -10,16 +10,15 @@ export default function Notice({ collection }: { collection: string }) {
   // 공지 데이터
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/replies/all', {
+      const res = await axios.get('https://localhost/api/posts?type=notice', {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
       const sortNotice = sortQnaReviewData(res.data.item);
-      const filterNotice = sortNotice.filter((v) => v.extra?.type === 'notice');
 
-      setNotice(filterNotice);
+      setNotice(sortNotice);
     };
 
     getReplies();
@@ -32,13 +31,9 @@ export default function Notice({ collection }: { collection: string }) {
         collection === 'qna' ? `/qnaNotice/${v._id}` : `/reviewNotice/${v._id}`
       }
       tag={(v as Replies).extra?.tag}
-      title={
-        (v as Replies).extra?.title
-          ? (v as Replies).extra?.title
-          : (v as Replies).content
-      }
+      title={(v as Replies).title}
       writer="별해달"
-      date={(v as Replies).createdAt}
+      date={(v as Replies).updatedAt?.split(' ')[0]}
       collection={collection}
     />
   ));

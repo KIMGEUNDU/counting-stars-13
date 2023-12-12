@@ -41,7 +41,7 @@ function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
             <td>
               <p className="w-1/4 truncate">
                 <button type="button" onClick={moveNextData}>
-                  {next.extra?.title}
+                  {next.extra?.title ? next.extra?.title : next.title}
                 </button>
               </p>
             </td>
@@ -61,7 +61,7 @@ function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
             <td>
               <p className="w-1/4 truncate">
                 <button type="button" onClick={movePrevData}>
-                  {prev.extra?.title}
+                  {prev.extra?.title ? prev.extra?.title : prev.title}
                 </button>
               </p>
             </td>

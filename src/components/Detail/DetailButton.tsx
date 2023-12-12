@@ -12,7 +12,7 @@ interface DetailButton {
   onClick3: () => void;
   style: string;
   center?: string;
-  writer?: string;
+  writer?: number;
 }
 
 function DetailButton({
@@ -47,23 +47,23 @@ function DetailButton({
   }, [setUserInfo]);
 
   return (
-    <div className={`${center} flex gap-4 justify-between py-5 mb-10`}>
+    <div className={`${center} flex justify-between py-5 mb-10`}>
       <button type="button" className={style} onClick={onClick1}>
         {btn1}
       </button>
-      {btn2 && (
-        <button type="button" className={style} onClick={onClick2}>
-          {btn2}
-        </button>
-      )}
-      {userInfo && userInfo._id === Number(writer) && (
-        <button
-          type="button"
-          className={`${style} bg-starBlack text-white`}
-          onClick={onClick3}
-        >
-          {btn3}
-        </button>
+      {userInfo && userInfo._id === writer && (
+        <div className="flex gap-3">
+          <button type="button" className={`${style}`} onClick={onClick2}>
+            {btn2}
+          </button>
+          <button
+            type="button"
+            className={`${style} bg-starBlack text-white`}
+            onClick={onClick3}
+          >
+            {btn3}
+          </button>
+        </div>
       )}
     </div>
   );

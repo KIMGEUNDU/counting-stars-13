@@ -24,11 +24,23 @@ function NoticeDetail() {
   const { setUserInfo } = useUserInfo();
 
   // 삭제이벤트
-  const handleDelete = () => {
-    toast('기능 수정중.', {
-      icon: '⭐',
-      duration: 2000,
-    });
+  const handleDelete = async () => {
+    const result = confirm('삭제하시겠습니까?');
+
+    if (result) {
+      await axios.delete(`https://localhost/api/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      toast('삭제되었습니다', {
+        icon: '⭐',
+        duration: 2000,
+      });
+
+      navigate(`${location.pathname.includes('qna') ? '/qna' : '/review'}`);
+    }
   };
 
   // 목록페이지로 이동
@@ -60,64 +72,55 @@ function NoticeDetail() {
   useEffect(() => {
     // 현재 데이터
     const repliesCurrentData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/${id}`, {
+      const res = await axios.get(`https://localhost/api/posts/${id}`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
-      setCurrentData(res.data.item[0]);
+      setCurrentData(res.data.item);
     };
 
     // 전체 데이터
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/all`, {
+      const res = await axios.get(`https://localhost/api/posts?type=notice`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
       const notice = res.data.item;
-      const filterNotice = notice.filter(
-        (v: Replies) => v.extra?.type === 'notice'
-      );
-      const currentNotice = filterNotice.filter(
-        (v: Replies) => v._id === Number(id)
-      );
+      const currentNotice = notice.filter((v: Replies) => v._id === Number(id));
 
-      filterNotice.forEach((v: Replies, i: number) => {
+      notice.forEach((v: Replies, i: number) => {
         if (v._id === Number(id)) {
           setCurrentIndex(i);
         }
       });
 
       setCurrentData(currentNotice[0]);
-      setPrevData(filterNotice[currentIndex + 1]);
-      setNextData(filterNotice[currentIndex - 1]);
+      setPrevData(notice[currentIndex + 1]);
+      setNextData(notice[currentIndex - 1]);
     };
 
     repliesCurrentData();
     repliesData();
   }, [currentIndex, id, setCurrentData]);
 
+  console.log(currentData);
+
   return (
     <>
-      <Helmet>
-        {currentData && <title>{currentData.extra?.title}</title>}
-      </Helmet>
+      <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
 
       <div>
         <PageMap route="notice" />
         <PageDetailTitle title="공지사항" explan="공지사항입니다." />
         {currentData && (
           <PageDetailTable
-            title={
-              currentData.extra?.title
-                ? currentData.extra?.title
-                : currentData.content
-            }
+            title={currentData.title}
             writer={currentData.user?.name}
-            createdAt={currentData.createdAt}
+            createdAt={currentData.updatedAt}
             attachFile={
               currentData.extra?.attachFile ? currentData.extra?.attachFile : ''
             }
@@ -127,12 +130,14 @@ function NoticeDetail() {
         {currentData && (
           <DetailButton
             btn1="목록"
-            btn3="삭제"
+            btn2="삭제"
+            btn3="수정"
             onClick1={handleListPage}
-            onClick3={handleDelete}
+            onClick2={handleDelete}
+            onClick3={() => navigate(`/noticeEdit/${id}`)}
             style="quaReviewDetailButton"
             center="center"
-            writer={currentData.user?.name}
+            writer={currentData.user?._id}
           />
         )}
         <PageListOrder
