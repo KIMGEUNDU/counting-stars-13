@@ -5,23 +5,13 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { putCart } from '@/utils/HandleCart';
-import { deleteAllWishes, deleteEachWish } from '@/utils/HandleWish';
+import {
+  deleteAllWishes,
+  deleteEachWish,
+  fetchFirstOption,
+} from '@/utils/HandleWish';
 import axiosInstance from '@/utils/axiosInstance';
 import toast from 'react-hot-toast';
-
-const fetchData = async (id: number) => {
-  const response = await axiosInstance.get(`/products`, {
-    params: {
-      custom: JSON.stringify({
-        'extra.depth': 2,
-        'extra.parent': id,
-      }),
-    },
-  });
-  const item = await response.data.item;
-
-  return await item[0]?._id;
-};
 
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
@@ -53,7 +43,12 @@ export default function Wish() {
 
   const handleCheckPutCart = () => {
     Promise.all(
-      wishData.map((item) => {
+      wishData.map(async (item) => {
+        if (checkWish.includes(item._id) && item.product.options.length > 0) {
+          const id = await fetchFirstOption(item.product_id);
+          putCart(id, 1);
+          return;
+        }
         if (checkWish.includes(item._id)) {
           putCart(item.product_id, 1);
         }
@@ -103,7 +98,9 @@ export default function Wish() {
 
   async function handleAddToCart(productId: number, item: CartItem) {
     const id =
-      item.product.options.length > 0 ? await fetchData(productId) : productId;
+      item.product.options.length > 0
+        ? await fetchFirstOption(productId)
+        : productId;
     putCart(id, 1);
   }
 

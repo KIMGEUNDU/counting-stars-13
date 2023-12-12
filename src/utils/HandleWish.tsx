@@ -47,3 +47,17 @@ export const deleteAllWishes = async (
   setWishData([]);
   toast.success('삭제되었습니다.');
 };
+
+export const fetchFirstOption = async (id: number) => {
+  const response = await axiosInstance.get(`/products`, {
+    params: {
+      custom: JSON.stringify({
+        'extra.depth': 2,
+        'extra.parent': id,
+      }),
+    },
+  });
+  const item = await response.data.item;
+
+  return await item[0]?._id;
+};
