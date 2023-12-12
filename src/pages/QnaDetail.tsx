@@ -9,6 +9,7 @@ import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { sortQnaReviewData } from '@/utils/getProductsData';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -17,20 +18,57 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function QnaDetail() {
   const navigate = useNavigate();
+  const [edit, setEdit] = useState(true);
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { comment, setDeleteComment } = useComment();
+  const { qnaComment, setDeleteQnaComment } = useComment();
   const { id } = useParams();
 
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
 
   // 삭제이벤트
-  const handleDelete = () => {
-    toast('지원되지 않는 기능입니다.', {
-      icon: '⭐',
+  const handleDelete = async () => {
+    const result = confirm('삭제하시겠습니까?');
+
+    if (result) {
+      await axios.delete(`https://localhost/api/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      toast('삭제되었습니다', {
+        icon: '⭐',
+        duration: 2000,
+      });
+
+      navigate(`${location.pathname.includes('qna') ? '/qna' : '/review'}`);
+    }
+  };
+
+  // 댓글 삭제 이벤트
+  const deleteComment = async (commentId: number) => {
+    const result = confirm('삭제하시겠습니까?');
+
+    if (result) {
+      await axios.delete(
+        `https://localhost/api/posts/${id}/replies/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        }
+      );
+    }
+
+    const setDeleteComment = qnaComment.filter((v) => v._id !== commentId);
+    setDeleteQnaComment(setDeleteComment);
+
+    toast('삭제하였습니다 :)', {
+      icon: '🗑️',
       duration: 2000,
     });
   };
@@ -55,35 +93,34 @@ function QnaDetail() {
   useEffect(() => {
     // 현재 데이터
     const repliesCurrentData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/${id}`, {
+      const res = await axios.get(`https://localhost/api/posts/${id}`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
-      setCurrentData(res.data.item[0]);
+      setCurrentData(res.data.item);
     };
 
     // 전체 데이터
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/all`, {
+      const res = await axios.get(`https://localhost/api/posts?type=qna`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
       const qna = res.data.item;
-      const filterQna = qna.filter((v: Replies) => v.extra!.type === 'qna');
-      const currentQna = filterQna.filter((v: Replies) => v._id === Number(id));
-      filterQna.forEach((v: Replies, i: number) => {
+      const currentQna = qna.filter((v: Replies) => v._id === Number(id));
+      qna.forEach((v: Replies, i: number) => {
         if (v._id === Number(id)) {
           setCurrentIndex(i);
         }
       });
 
       setCurrentData(currentQna[0]);
-      setPrevData(filterQna[currentIndex + 1]);
-      setNextData(filterQna[currentIndex - 1]);
+      setPrevData(qna[currentIndex + 1]);
+      setNextData(qna[currentIndex - 1]);
     };
 
     repliesCurrentData();
@@ -93,19 +130,18 @@ function QnaDetail() {
   // 실시간 댓글
   useEffect(() => {
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/all`, {
+      const res = await axios.get(`https://localhost/api/posts/${id}`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
       const qna = res.data.item;
-      const filterComment = qna.filter(
-        (v: Replies) =>
-          v.extra?.type === 'qnaComment' && String(v.extra?.boardId) === id
-      );
+      const sortComment = sortQnaReviewData(qna.replies);
 
-      setDeleteComment(filterComment);
+      if (qna.replies) {
+        setDeleteQnaComment(sortComment);
+      }
     };
 
     repliesData();
@@ -113,11 +149,7 @@ function QnaDetail() {
 
   return (
     <>
-      <Helmet>
-        {currentData && currentData.extra && (
-          <title>{currentData.extra.title}</title>
-        )}
-      </Helmet>
+      <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
 
       <div>
         <PageMap route="qna" category="상품 Q&A" />
@@ -129,30 +161,26 @@ function QnaDetail() {
             name={currentData.product.name}
           />
         )}
-        {currentData && currentData.extra && currentData.user && (
+        {currentData && (
           <PageDetailTable
-            title={
-              currentData.extra.title
-                ? currentData.extra.title
-                : currentData.content
-            }
-            writer={currentData.user.name}
-            createdAt={currentData.createdAt}
-            attachFile={
-              currentData.extra.attachFile ? currentData.extra.attachFile : ''
-            }
+            title={currentData.title}
+            writer={currentData.user?.name}
+            createdAt={currentData.updatedAt}
+            attachFile={currentData.extra ? currentData.extra.attachFile : ''}
             content={currentData.content}
           />
         )}
-        {currentData && currentData.user && (
+        {currentData && (
           <DetailButton
             btn1="목록"
-            btn3="삭제"
+            btn2="삭제"
+            btn3="수정"
             onClick1={() => navigate('/qna')}
-            onClick3={handleDelete}
+            onClick2={handleDelete}
+            onClick3={() => navigate(`/noticeEdit/${id}`)}
             style="quaReviewDetailButton"
             center="center"
-            writer={String(currentData.user!._id)}
+            writer={currentData.user?._id}
           />
         )}
 
@@ -164,13 +192,18 @@ function QnaDetail() {
             </p>
           </Link>
         )}
-        {comment.length > 0 &&
-          comment.map((v, i) => (
+        {qnaComment.length > 0 &&
+          qnaComment.map((v, i) => (
             <CommentItem
               key={i}
               writer={v.user?.name}
-              createdAt={v.createdAt}
+              createdAt={v.updatedAt}
               content={v.content}
+              writerId={v.user?._id ? v.user?._id : 0}
+              edit={edit}
+              onEdit={() => setEdit(!edit)}
+              onDelete={() => deleteComment(v._id ? v._id : 0)}
+              onEditComplete={() => setEdit(!edit)}
             />
           ))}
 

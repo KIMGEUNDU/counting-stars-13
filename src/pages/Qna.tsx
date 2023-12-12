@@ -39,7 +39,7 @@ export default function Qna() {
 
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/replies/all', {
+      const res = await axios.get('https://localhost/api/posts?type=qna', {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
@@ -47,13 +47,11 @@ export default function Qna() {
 
       const sortQna = sortQnaReviewData(res.data.item);
 
-      const filterQna = sortQna.filter((v) => v.extra?.type === 'qna');
-
-      setAllData(filterQna);
-      setDataLength(filterQna.length);
+      setAllData(sortQna);
+      setDataLength(sortQna.length);
       setPageNumber(1);
-      setPageData(filterQna.slice(0, 10));
-      setDataLengthPage(Math.ceil(filterQna.length / 10));
+      setPageData(sortQna.slice(0, 10));
+      setDataLengthPage(Math.ceil(sortQna.length / 10));
     };
 
     getReplies();
@@ -79,13 +77,9 @@ export default function Qna() {
                   <EachPost
                     key={i}
                     tag={allData.length - i}
-                    title={
-                      (v as Replies).extra?.title
-                        ? (v as Replies).extra?.title
-                        : (v as Replies).content
-                    }
+                    title={(v as Replies).title}
                     writer={(v as Replies).user?.name}
-                    date={(v as Replies).createdAt}
+                    date={(v as Replies).createdAt?.split(' ')[0]}
                     item={(v as Replies).product?.name}
                     itemImg={(v as Replies).product?.image}
                     link={`/qna-detail/${v._id}`}
