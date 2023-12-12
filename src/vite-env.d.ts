@@ -16,7 +16,7 @@ interface ProductItem {
 }
 
 interface ReviewItem {
-  link: string;
+  link: number;
   productSrc: string;
   productName: string;
   content: string;
@@ -159,9 +159,12 @@ interface Extra {
 
 interface Replies {
   _id?: number;
+  type?: string;
+  title?: string | undefined;
   content: string;
   rating?: number;
   createdAt?: string;
+  updatedAt?: string;
   product_id?: number;
   product?: {
     _id: number;
@@ -169,6 +172,7 @@ interface Replies {
     image: string;
   };
   writer?: string;
+  user_id?: number;
   user?: {
     _id: number;
     name: string;
@@ -177,6 +181,35 @@ interface Replies {
     type: string;
     attachFile?: string;
     title?: string;
+    tag?: string;
+    boardId?: number;
+    user?: {
+      _id: number;
+      name: string;
+    };
+  };
+}
+
+interface Review {
+  _id: number;
+  content: string;
+  rating: number;
+  createdAt: string;
+  product_id: number;
+  product: {
+    _id: number;
+    name: string;
+    image: string;
+  };
+  writer?: string;
+  user: {
+    _id: number;
+    name: string;
+  };
+  extra: {
+    type: string;
+    attachFile?: string;
+    title: string;
     tag?: string;
     boardId?: number;
   };
@@ -201,32 +234,6 @@ interface CommentInput {
   extra: {
     type: string;
     boardId: number;
-  };
-}
-
-interface Posts {
-  _id?: number;
-  type?: string;
-  product_id?: number;
-  title?: string;
-  content: string;
-  createdAt?: string;
-  updatedAt?: string;
-  product?: {
-    _id: number;
-    name: string;
-    image: string;
-  };
-  writer?: string;
-  user_id?: number;
-  user?: {
-    _id?: number;
-    name?: string;
-  };
-  extra?: {
-    attachFile?: string;
-    tag?: string;
-    boardId?: number;
   };
 }
 
