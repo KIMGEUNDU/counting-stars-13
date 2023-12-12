@@ -25,7 +25,7 @@ export default function OrderItemDetail({
           setDeliveryState('배송 준비중');
           break;
         case 'OS035':
-          setDeliveryState('배송중');
+          setDeliveryState('배송 중');
           break;
         case 'OS040':
           setDeliveryState('배송 완료');
