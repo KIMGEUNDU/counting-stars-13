@@ -198,12 +198,24 @@ export default function MyCart() {
                             </label>
                           </td>
                           <td className="p-2">
-                            <Link to={`/detail/${item.product_id}`}>
+                            <Link
+                              to={`/detail/${
+                                item.product.extra.parent
+                                  ? item.product.extra.parent
+                                  : item.product_id
+                              }`}
+                            >
                               <img src={item.product.image} />
                             </Link>
                           </td>
                           <td>
-                            <Link to={`/detail/${item.product_id}`}>
+                            <Link
+                              to={`/detail/${
+                                item.product.extra.parent
+                                  ? item.product.extra.parent
+                                  : item.product_id
+                              }`}
+                            >
                               {item.product.name}
                               {item.product.option && (
                                 <>
