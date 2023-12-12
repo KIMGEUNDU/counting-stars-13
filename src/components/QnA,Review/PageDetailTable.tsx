@@ -1,3 +1,4 @@
+import { setAnonymousName } from '@/utils/setAnonymousName';
 import ContentsViewer from './ContentsViewer';
 
 function PageDetailTable({
@@ -7,7 +8,7 @@ function PageDetailTable({
   rating,
   createdAt,
   attachFile,
-}: Replies & { title: string; attachFile: string }) {
+}: Replies & { attachFile: string | undefined }) {
   return (
     <div className="center">
       <table className="QnaReviewTable w-full border-t-2 border-t-gray-500 border-b border-b-gray-300 text-left">
@@ -18,7 +19,7 @@ function PageDetailTable({
           </tr>
           <tr>
             <td className="w-1/12 whitespace-nowrap">작성자</td>
-            <td>{writer === '무*' ? '별해달' : writer}</td>
+            <td>{setAnonymousName(writer)}</td>
           </tr>
         </tbody>
       </table>
@@ -52,7 +53,11 @@ function PageDetailTable({
         )}
       </ul>
       {attachFile && (
-        <img className="m-auto py-20 w-1/3" src={attachFile} alt={title} />
+        <img
+          className={`m-auto w-1/3 ${content ? 'pt-20' : 'py-20'}`}
+          src={attachFile}
+          alt={title}
+        />
       )}
       <div className="py-10 px-2 border-b border-b-gray-200 text-4xl">
         <ContentsViewer contents={content} />
