@@ -4,13 +4,19 @@ import ProductInformation from './ProductInformation';
 import ProductQnA from './ProductQnA';
 import ProductReviews from './ProductReviews';
 
-function DetailProductInformation({ imgArray }: { imgArray: [] }) {
+function DetailProductInformation({
+  imgArray,
+  reply,
+}: {
+  imgArray: [];
+  reply: [];
+}) {
   return (
     <div className="center">
       <ProductInformation imgArray={imgArray} />
       <DeliveryInformation />
       <ExchangeReturnInformation />
-      <ProductReviews />
+      <ProductReviews reply={reply} />
       <ProductQnA />
     </div>
   );
