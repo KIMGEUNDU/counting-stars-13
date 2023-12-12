@@ -1,5 +1,7 @@
 import { useComment } from '@/store/useComment';
+import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { writeDate } from '@/utils/writeDate';
 import axios from 'axios';
 import { FormEvent, useRef } from 'react';
 import toast from 'react-hot-toast';
@@ -12,12 +14,13 @@ function CommentInput({
   writer: string;
   collection: string;
 }) {
-  const { setComment } = useComment();
+  const { qnaComment, setComment, setQnaComment } = useComment();
+  const { userInfo } = useUserInfo();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { id } = useParams();
 
-  // 댓글업로드
-  const uploadComment = async (e: FormEvent) => {
+  // Review 댓글업로드
+  const uploadReviewComment = async (e: FormEvent) => {
     e.preventDefault();
 
     if (commentRef.current && commentRef.current.value) {
@@ -26,7 +29,7 @@ function CommentInput({
         product_id: 1,
         content: commentRef.current.value,
         extra: {
-          type: collection === 'qna' ? 'qnaComment' : 'reviewComment',
+          type: 'reviewComment',
           boardId: Number(id),
         },
       };
@@ -54,10 +57,48 @@ function CommentInput({
     }
   };
 
+  // Qna 댓글업로드
+  const uploadQnaComment = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (commentRef.current && commentRef.current.value) {
+      const commentData = {
+        _id: qnaComment.length + 1,
+        user: {
+          _id: userInfo!._id,
+          name: userInfo!.name,
+        },
+        content: commentRef.current.value,
+        updatedAt: writeDate(),
+      };
+
+      const response = await axios.post(
+        `https://localhost/api/posts/${id}/replies`,
+        { content: commentRef.current.value },
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        }
+      );
+
+      commentRef.current.value = '';
+
+      if (response.data.ok === 1) {
+        setQnaComment(commentData);
+
+        toast('업로드하였습니다 :)', {
+          icon: '⭐',
+          duration: 2000,
+        });
+      }
+    }
+  };
+
   return (
     <form
       className="center border border-gray-300 p-3 bg-gray-50 text-sm flex flex-col gap-3 my-7"
-      onSubmit={uploadComment}
+      onSubmit={collection === 'qna' ? uploadQnaComment : uploadReviewComment}
     >
       <h3 className="font-semibold">댓글달기</h3>
       <div className="font-semibold">⭐ {writer}</div>
@@ -76,7 +117,11 @@ function CommentInput({
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              uploadComment(e);
+              if (collection === 'qna') {
+                uploadQnaComment(e);
+              } else {
+                uploadReviewComment(e);
+              }
             }
           }}
         />
