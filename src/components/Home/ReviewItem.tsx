@@ -8,36 +8,17 @@ function ReviewItem({
   score,
   nickName,
 }: ReviewItem) {
-  const starNickName = (nickName: string) => {
-    return nickName.substring(0, 3) + '*'.repeat(`${nickName}`.length - 3);
-  };
-
-  const hideNickName = starNickName(`${nickName}`);
-
   return (
-    <div className="w-52 text-sm border-[1px] border-gray-200">
-      <Link to={link}>
-        <img src={productSrc} alt={productName} className="w-full h-52" />
+    <div className="text-sm border border-gray-200">
+      <Link to={`/review-detail/${link}`}>
+        <img src={productSrc} alt={productName} className="w-full" />
       </Link>
       <div className="flex flex-col gap-2 p-5">
-        <p className="">{content}</p>
+        <p className="ellipsis w-full">{content}</p>
         <div className="">
-          {Array(score)
-            .fill('★')
-            .map((v, i) => (
-              <span key={i} className="text-starRed">
-                {v}
-              </span>
-            ))}
-          {Array(5 - score)
-            .fill('★')
-            .map((v, i) => (
-              <span key={i} className="text-gray-400">
-                {v}
-              </span>
-            ))}
+          <span className="text-starRed">{'★'.repeat(score)}</span>
         </div>
-        <span>{hideNickName}</span>
+        <span>{nickName}</span>
       </div>
     </div>
   );
