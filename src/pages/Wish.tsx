@@ -1,9 +1,8 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-import MiniButton from '@/components/Wish/MiniButton';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { putCart } from '@/utils/HandleCart';
 import {
   deleteAllWishes,
@@ -12,11 +11,14 @@ import {
 } from '@/utils/HandleWish';
 import axiosInstance from '@/utils/axiosInstance';
 import toast from 'react-hot-toast';
+import { useOrderSet } from '@/store/useOrderSet';
 
 export default function Wish() {
+  const navigate = useNavigate();
   const [wishData, setWishData] = useState<CartItem[]>([]);
   const [checkWish, setCheckWish] = useState<number[]>([]);
   const [checkControl, setCheckControl] = useState<boolean>(false);
+  const { setProduct } = useOrderSet();
 
   useEffect(() => {
     async function getWishes() {
@@ -104,6 +106,24 @@ export default function Wish() {
     putCart(id, 1);
   }
 
+  async function handleOrder(productId: number, item: CartItem) {
+    const id =
+      item.product.options.length > 0
+        ? await fetchFirstOption(productId)
+        : productId;
+    setProduct([{ _id: id, quantity: 1 }]);
+    navigate('/order');
+  }
+
+  const handleOrderAll = () => {
+    const orderProduct: Order[] = [];
+    wishData.map((item) => {
+      orderProduct.push({ _id: item.product_id, quantity: 1 });
+    });
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
   return (
     <>
       <Helmet>
@@ -173,11 +193,14 @@ export default function Wish() {
                       </td>
                       <td className="h-28">
                         <button
+                          type="button"
                           className={`text-sm border-gray-300 rounded-sm my-1 w-[90%] h-1/5 border bg-gray-700 text-white`}
+                          onClick={() => handleOrder(item.product_id, item)}
                         >
                           주문하기
                         </button>
                         <button
+                          type="button"
                           className={`text-sm border-gray-300 rounded-sm my-1 w-[90%] h-1/5 border`}
                           onClick={() => handleAddToCart(item.product_id, item)}
                         >
@@ -223,12 +246,13 @@ export default function Wish() {
                 </button>
               </div>
               <div>
-                <MiniButton
-                  text={'전체 상품 주문'}
-                  className={
-                    'm-1 py-4 px-6 border rounded-lg bg-gray-500 hover:bg-gray-700 text-white'
-                  }
-                />
+                <button
+                  type="button"
+                  className={`text-sm border-gray-300 m-1 py-4 px-6 border rounded-sm bg-gray-500 hover:bg-gray-700 text-white`}
+                  onClick={handleOrderAll}
+                >
+                  전체 상품 주문
+                </button>
                 <button
                   className={`text-sm border-gray-300 rounded-sm m-1 py-4 px-6 border bg-gray-700 text-white`}
                   onClick={clearWishes}
