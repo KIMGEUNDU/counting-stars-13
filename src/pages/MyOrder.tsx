@@ -6,6 +6,9 @@ import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import moment from 'moment';
+import axiosInstance from '@/utils/axiosInstance';
 
 export default function MyOrder() {
   const [, setOrder] = useState(false);
@@ -25,8 +28,6 @@ export default function MyOrder() {
   const myOrderProductList: object[] = [];
   // const [myOrderProductList, setMyOrderProductList] = useState([])
   const myOrderProductDate: object[] = [];
-  console.log(filteredOrders);
-  console.log(orderDate.dateForm, orderDate.dateTo);
 
   useEffect(() => {
     let result;
@@ -38,11 +39,11 @@ export default function MyOrder() {
         let dateFrom, dateTo;
         if (orderDate.dateForm) {
           dateFrom = new Date(orderDate.dateForm);
-          dateFrom.setDate(dateFrom.getDate());
+          dateFrom.setDate(dateFrom.getDate() - 1);
         }
         if (orderDate.dateTo) {
           dateTo = new Date(orderDate.dateTo);
-          dateTo.setDate(dateTo.getDate());
+          dateTo.setDate(dateTo.getDate() + 1);
         }
         return (
           (dateFrom ? orderDateRange >= dateFrom : true) &&
@@ -96,11 +97,7 @@ export default function MyOrder() {
   useEffect(() => {
     const handleGetUserInfo = async () => {
       try {
-        const response = await axios.get(`https://localhost/api/orders`, {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        });
+        const response = await axiosInstance.get(`/orders`);
 
         setMyOrderInfo(response.data.item);
         setMyOrderProductInfo(response.data[0].item.products);
@@ -120,6 +117,9 @@ export default function MyOrder() {
 
   return (
     <>
+      <Helmet>
+        <title>주문조회</title>
+      </Helmet>
       <main>
         <PageMap route="주문조회" />
         <PageMainTitle title="주문조회" />
@@ -149,6 +149,11 @@ export default function MyOrder() {
             </div> */}
             <div>
               <input
+                max={
+                  orderDate.dateTo
+                    ? moment(orderDate.dateTo).format('YYYY-MM-DD')
+                    : ''
+                }
                 name="dateForm"
                 type="date"
                 className="mx-2 border"
@@ -156,6 +161,11 @@ export default function MyOrder() {
               ></input>
               <span>~</span>
               <input
+                min={
+                  orderDate.dateForm
+                    ? moment(orderDate.dateForm).format('YYYY-MM-DD')
+                    : ''
+                }
                 name="dateTo"
                 type="date"
                 className="mx-2 border-[1px]"
@@ -291,9 +301,9 @@ export default function MyOrder() {
                           productList={myOrderProductList[i]}
                         />
                       );
+                      // myOrderProductList[i]가 빈 값일 경우 null 반환
+                      return null;
                     }
-                    // myOrderProductList[i]가 빈 값일 경우 null 반환
-                    return null;
                   })
                 ) : (
                   <tr>
