@@ -47,7 +47,9 @@ export default function Review() {
       });
 
       const sortReview = sortQnaReviewData(res.data.item);
-      const filterReview = sortReview.filter((v) => v.extra?.type === 'review');
+      const filterReview = sortReview.filter(
+        (v: Replies) => v.extra?.type === 'review'
+      );
 
       setAllData(filterReview);
       setDataLength(filterReview.length);
@@ -82,7 +84,8 @@ export default function Review() {
                     title={(v as Replies).extra?.title}
                     grade={(v as Replies).rating}
                     writer={(v as Replies).user?.name}
-                    date={(v as Replies).createdAt}
+                    date={(v as Replies).createdAt?.split(' ')[0]}
+                    itemLink={(v as Replies).product?._id}
                     item={(v as Replies).product?.name}
                     itemImg={(v as Replies).product?.image}
                     link={`/review-detail/${v._id}`}
