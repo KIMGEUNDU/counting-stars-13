@@ -69,12 +69,21 @@ function CommentInput({
           name: userInfo!.name,
         },
         content: commentRef.current.value,
+        createdAt: writeDate(),
         updatedAt: writeDate(),
+        extra: {
+          boardId: Number(id),
+        },
       };
 
       const response = await axios.post(
         `https://localhost/api/posts/${id}/replies`,
-        { content: commentRef.current.value },
+        {
+          content: commentRef.current.value,
+          extra: {
+            boardId: Number(id),
+          },
+        },
         {
           headers: {
             Authorization: `Bearer ${AUTH_TOKEN()}`,
@@ -127,9 +136,9 @@ function CommentInput({
         />
         <button
           type="submit"
-          className="quaReviewDetailButton bg-starBlack text-white"
+          className="quaReviewDetailButton bg-starBlack text-white whitespace-nowrap"
         >
-          확인
+          등록
         </button>
       </fieldset>
     </form>

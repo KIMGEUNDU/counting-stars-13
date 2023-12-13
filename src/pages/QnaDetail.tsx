@@ -18,18 +18,19 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function QnaDetail() {
   const navigate = useNavigate();
-  const [edit, setEdit] = useState(true);
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { qnaComment, setDeleteQnaComment } = useComment();
   const { id } = useParams();
-
-  // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
+  const [editStatus, setEditStatus] = useState(false);
 
-  // 삭제이벤트
+  // 댓글정렬
+  const sortComment = sortQnaReviewData(qnaComment);
+
+  // 게시글 삭제이벤트
   const handleDelete = async () => {
     const result = confirm('삭제하시겠습니까?');
 
@@ -45,7 +46,7 @@ function QnaDetail() {
         duration: 2000,
       });
 
-      navigate(`${location.pathname.includes('qna') ? '/qna' : '/review'}`);
+      navigate(`${location.href.includes('qna') ? '/qna' : '/review'}`);
     }
   };
 
@@ -54,7 +55,7 @@ function QnaDetail() {
     const result = confirm('삭제하시겠습니까?');
 
     if (result) {
-      await axios.delete(
+      const res = await axios.delete(
         `https://localhost/api/posts/${id}/replies/${commentId}`,
         {
           headers: {
@@ -62,15 +63,17 @@ function QnaDetail() {
           },
         }
       );
+
+      if (res.data.ok === 1) {
+        toast('삭제하였습니다 :)', {
+          icon: '🗑️',
+          duration: 2000,
+        });
+
+        const exceptComment = qnaComment.filter((v) => v._id !== commentId);
+        setDeleteQnaComment(exceptComment);
+      }
     }
-
-    const setDeleteComment = qnaComment.filter((v) => v._id !== commentId);
-    setDeleteQnaComment(setDeleteComment);
-
-    toast('삭제하였습니다 :)', {
-      icon: '🗑️',
-      duration: 2000,
-    });
   };
 
   // 로그인유저정보 받아오기
@@ -127,7 +130,7 @@ function QnaDetail() {
     repliesData();
   }, [currentIndex, id, setCurrentData]);
 
-  // 실시간 댓글
+  // 댓글 데이터
   useEffect(() => {
     const repliesData = async () => {
       const res = await axios.get(`https://localhost/api/posts/${id}`, {
@@ -136,16 +139,20 @@ function QnaDetail() {
         },
       });
 
-      const qna = res.data.item;
-      const sortComment = sortQnaReviewData(qna.replies);
+      const commentData = res.data.item.replies;
 
-      if (qna.replies) {
-        setDeleteQnaComment(sortComment);
+      if (commentData) {
+        const filterData = commentData.filter(
+          (v: CommentData) => v.extra.boardId === Number(id)
+        );
+        setDeleteQnaComment(filterData);
       }
     };
 
     repliesData();
-  }, []);
+  }, [editStatus, id]);
+
+  console.log(currentData);
 
   return (
     <>
@@ -154,11 +161,13 @@ function QnaDetail() {
       <div>
         <PageMap route="qna" category="상품 Q&A" />
         <PageDetailTitle title="상품 Q&A" explan="상품 Q&A입니다." />
-        {currentData && currentData.product && (
+        {currentData && (
           <ReviewProductItem
-            link={`/detail/${currentData.product._id}`}
-            thumbnail={currentData.product.image}
-            name={currentData.product.name}
+            link={`/detail/${currentData.product_id}`}
+            thumbnail={
+              currentData.product?.image || currentData.extra?.product_image
+            }
+            name={currentData.product?.name || currentData.extra?.product_name}
           />
         )}
         {currentData && (
@@ -177,7 +186,7 @@ function QnaDetail() {
             btn3="수정"
             onClick1={() => navigate('/qna')}
             onClick2={handleDelete}
-            onClick3={() => navigate(`/noticeEdit/${id}`)}
+            onClick3={() => navigate(`/edit-qna/${id}`)}
             style="quaReviewDetailButton"
             center="center"
             writer={currentData.user?._id}
@@ -192,18 +201,18 @@ function QnaDetail() {
             </p>
           </Link>
         )}
-        {qnaComment.length > 0 &&
-          qnaComment.map((v, i) => (
+        {sortComment.length > 0 &&
+          sortComment.map((v, i) => (
             <CommentItem
               key={i}
               writer={v.user?.name}
               createdAt={v.updatedAt}
               content={v.content}
               writerId={v.user?._id ? v.user?._id : 0}
-              edit={edit}
-              onEdit={() => setEdit(!edit)}
               onDelete={() => deleteComment(v._id ? v._id : 0)}
-              onEditComplete={() => setEdit(!edit)}
+              commentId={v._id ? v._id : 0}
+              status={editStatus}
+              setStatus={setEditStatus}
             />
           ))}
 
@@ -212,8 +221,8 @@ function QnaDetail() {
         <PageListOrder
           prev={prevData}
           next={nextData}
-          prevLink={prevData ? `/qna-detail/${prevData!._id}` : ''}
-          nextLink={nextData ? `/qna-detail/${nextData!._id}` : ''}
+          prevLink={`/qna-detail/${prevData?._id}`}
+          nextLink={`/qna-detail/${nextData?._id}`}
         />
       </div>
     </>

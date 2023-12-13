@@ -1,5 +1,6 @@
 import { useComment } from '@/store/useComment';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 type board = {
@@ -13,6 +14,7 @@ type board = {
   itemImg?: string;
   attachFile?: string | undefined;
   collection?: string;
+  itemLink?: number | undefined;
 };
 
 export default function EachPost({
@@ -26,6 +28,7 @@ export default function EachPost({
   itemImg,
   attachFile,
   collection,
+  itemLink,
 }: board) {
   const [view, setView] = useState(false);
   const navigate = useNavigate();
@@ -49,10 +52,13 @@ export default function EachPost({
 
         {item && (
           <td className="whitespace-nowrap h-10 px-2">
-            <div className="flex justify-left items-center px-2">
+            <Link
+              to={`/detail/${itemLink}`}
+              className="flex justify-left items-center px-2"
+            >
               <img className="w-10 h-full pr-1" src={itemImg} alt={item} />
               <span className="">{item}</span>
-            </div>
+            </Link>
           </td>
         )}
 
@@ -121,7 +127,7 @@ export default function EachPost({
 
         {writer && <td className="w-[10%]">{writer}</td>}
 
-        <td className="font-extralight w-[12%]">{date}</td>
+        <td className="font-extralight w-[8%]">{date}</td>
       </tr>
     </>
   );
