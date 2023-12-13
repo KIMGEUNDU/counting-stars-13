@@ -31,6 +31,10 @@ interface useData {
   // 선택한 주문데이터 아이디
   selectOrderId: number | null;
   setSelectOrderId: (selectOrderId: number | null) => void;
+  // 데이터 합치기
+  combineData: Replies[];
+  setAddCombineData: (combineData: Replies) => void;
+  setCombineData: (data: Replies[]) => void;
 }
 
 export const useData = create<useData>((set) => ({
@@ -54,4 +58,7 @@ export const useData = create<useData>((set) => ({
   setOrderData: (orderData) => set({ orderData }),
   selectOrderId: null,
   setSelectOrderId: (selectOrderId) => set({ selectOrderId }),
+  combineData: [],
+  setAddCombineData: (combineData) => set((state) => ({ combineData: [...state.combineData, combineData] })),
+  setCombineData: (combineData) => set({ combineData }),
 }));
