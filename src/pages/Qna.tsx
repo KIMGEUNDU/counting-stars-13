@@ -7,6 +7,7 @@ import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { sortQnaReviewData } from '@/utils/getProductsData';
+import { setAnonymousName } from '@/utils/setAnonymousName';
 import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
@@ -78,8 +79,9 @@ export default function Qna() {
                     key={i}
                     tag={allData.length - i}
                     title={(v as Replies).title}
-                    writer={(v as Replies).user?.name}
-                    date={(v as Replies).createdAt?.split(' ')[0]}
+                    writer={setAnonymousName((v as Replies).user?.name)}
+                    date={(v as Replies).updatedAt?.split(' ')[0]}
+                    itemLink={(v as Replies).product_id}
                     item={(v as Replies).product?.name}
                     itemImg={(v as Replies).product?.image}
                     link={`/qna-detail/${v._id}`}
