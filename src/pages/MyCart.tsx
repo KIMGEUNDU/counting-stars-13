@@ -1,20 +1,23 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { putWish } from '@/utils/HandleWish';
 import CartGuide from 'components/Cart/CartGuide';
 import axiosInstance from '@/utils/axiosInstance';
 import { clearCart } from '@/utils/HandleCart';
 import toast from 'react-hot-toast';
+import { useOrderSet } from '@/store/useOrderSet';
+import { Helmet } from 'react-helmet-async';
 
 export default function MyCart() {
   const deliveryPrice = 0;
-
+  const navigate = useNavigate();
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
   const [checkControl, setCheckControl] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
+  const { setProduct } = useOrderSet();
 
   useEffect(() => {
     async function getCartData() {
@@ -109,6 +112,10 @@ export default function MyCart() {
     setQuantity((prev) => ({ ...prev, [id]: Math.max(prev[id] - 1, 1) }));
   };
 
+  const handleEachOrder = async (id: number, product_id: number) => {
+    setProduct([{ _id: product_id, quantity: quantity[id] }]);
+  };
+
   const handleChangeQuantity = async (id: number) => {
     const changeCheck = cartData.some((item) => {
       if (item._id === id) {
@@ -145,8 +152,37 @@ export default function MyCart() {
     }
   };
 
+  const handleOrderAll = () => {
+    const orderProduct: Order[] = [];
+    cartData.map((item) => {
+      orderProduct.push({ _id: item.product_id, quantity: item.quantity });
+    });
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
+  const handleOrderSelect = () => {
+    if (checkProduct.length === 0) {
+      toast.error('선택한 상품이 없습니다.');
+      return;
+    }
+
+    const orderProduct: Order[] = [];
+    cartData.map((item) => {
+      if (checkProduct.includes(item._id)) {
+        orderProduct.push({ _id: item.product_id, quantity: item.quantity });
+      }
+    });
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
   return (
     <>
+      <Helmet>
+        <title>장바구니</title>
+      </Helmet>
+
       <main className="">
         <PageMap route="장바구니" />
         <PageMainTitle title="장바구니" />
@@ -271,7 +307,14 @@ export default function MyCart() {
                             원
                           </td>
                           <td className="h-28">
-                            <button className="my-1 w-[90%] h-1/5 text-sm bg-gray-700 rounded-sm border text-white">
+                            <button
+                              type="button"
+                              className="my-1 w-[90%] h-1/5 text-sm bg-gray-700 rounded-sm border text-white"
+                              onClick={() => {
+                                handleEachOrder(item._id, item.product_id);
+                                navigate('/order');
+                              }}
+                            >
                               주문하기
                             </button>
                             <button
@@ -363,12 +406,20 @@ export default function MyCart() {
             </div>
             <ul className="flex gap-2 justify-center relative">
               <li>
-                <button className="w-32 h-10 text-base text-white bg-gray-700">
+                <button
+                  type="button"
+                  className="w-32 h-10 text-base text-white bg-gray-700"
+                  onClick={handleOrderAll}
+                >
                   전체 상품 주문
                 </button>
               </li>
               <li>
-                <button className="w-32 h-10 text-base text-white bg-gray-700">
+                <button
+                  type="button"
+                  className="w-32 h-10 text-base text-white bg-gray-700"
+                  onClick={handleOrderSelect}
+                >
                   선택 상품 주문
                 </button>
               </li>
