@@ -11,7 +11,7 @@ import { useEffect, useRef } from 'react';
 import 'tui-color-picker/dist/tui-color-picker.css';
 
 function FormCkEditor() {
-  const { setContent, setAttachFile } = useForm();
+  const { content, setContent, setAttachFile } = useForm();
   const editorRef = useRef<Editor | null>(null);
   const { userInfo, setUserInfo } = useUserInfo();
 
@@ -48,7 +48,7 @@ function FormCkEditor() {
           initialValue={
             userInfo?.type === 'admin'
               ? '마크다운 문법으로 작성해주세요 : )'
-              : ' '
+              : content
           }
           height="600px"
           initialEditType="wysiwyg"
