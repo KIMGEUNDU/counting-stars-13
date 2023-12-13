@@ -36,17 +36,19 @@ export default function WriteQna() {
       });
     } else if (selectData && selectId && titleRef.current) {
       const newQna = {
+        title: titleRef.current.value,
+        type: 'qna',
         content,
         product_id: selectId,
         extra: {
-          type: 'qna',
-          title: titleRef.current.value,
           attachFile: attachFile,
+          product_name: selectData.name,
+          product_image: selectData.detailImages[0],
         },
       };
 
       const response = await axios.post(
-        'https://localhost/api/replies/',
+        'https://localhost/api/posts/',
         newQna,
         {
           headers: {
