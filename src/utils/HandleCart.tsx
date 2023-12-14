@@ -29,7 +29,7 @@ export const clearCart = async (
   if (check) {
     const response = await axiosInstance.delete(`/carts/cleanup`);
     if (response.status === 200) setCartData([]);
+    toast.success('삭제되었습니다.');
+    setCheckControl(false);
   }
-  toast.success('삭제되었습니다.');
-  setCheckControl(false);
 };
