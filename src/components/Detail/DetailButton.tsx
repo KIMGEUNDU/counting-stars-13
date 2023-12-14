@@ -53,9 +53,11 @@ function DetailButton({
       </button>
       {userInfo && userInfo._id === writer && (
         <div className="flex gap-3">
-          <button type="button" className={`${style}`} onClick={onClick2}>
-            {btn2}
-          </button>
+          {btn2 && (
+            <button type="button" className={`${style}`} onClick={onClick2}>
+              {btn2}
+            </button>
+          )}
           <button
             type="button"
             className={`${style} bg-starBlack text-white`}
