@@ -7,14 +7,25 @@ import '@toast-ui/editor/dist/i18n/ko-kr';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import axios from 'axios';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import 'tui-color-picker/dist/tui-color-picker.css';
 
-function FormCkEditor() {
+function FormCkEditor({ type }: { type?: string }) {
   const { content, setContent, setAttachFile } = useForm();
   const editorRef = useRef<Editor | null>(null);
   const { userInfo, setUserInfo } = useUserInfo();
+  const [view, setView] = useState(false);
 
+  // 사진은 한개만 업로드된다는 안내문
+  const noticeImageUpload = () => {
+    toast('사진은 최대 1개만 업로드 가능합니다 : )', {
+      icon: '📷',
+      duration: 2000,
+    });
+  };
+
+  // 사진 변경
   const onChange = () => {
     if (editorRef && editorRef.current) {
       const content = editorRef.current.getInstance().getHTML();
@@ -41,52 +52,113 @@ function FormCkEditor() {
     }
   }, [setUserInfo]);
 
+  // 수정페이지 콘텐츠 가져오기
+  useEffect(() => {
+    if (type === '수정') {
+      editorRef.current?.getInstance().setMarkdown(content);
+      setView(true);
+    }
+  }, [content, type]);
+
+  // 이미지버튼 가져오기
+  useEffect(() => {
+    const imageUploadButton = document.querySelector(
+      '.image.toastui-editor-toolbar-icons'
+    );
+
+    imageUploadButton?.addEventListener('click', noticeImageUpload);
+  }, []);
+
   return (
     <tr className="border-b border-gray-300">
       <td colSpan={2} className="edit_wrap bg-gray-50 py-5 w-full">
-        <Editor
-          initialValue={
-            userInfo?.type === 'admin'
-              ? '마크다운 문법으로 작성해주세요 : )'
-              : content
-          }
-          height="600px"
-          initialEditType="wysiwyg"
-          useCommandShortcut={false}
-          hideModeSwitch={true}
-          plugins={[colorSyntax]}
-          language="ko-KR"
-          ref={editorRef}
-          onChange={onChange}
-          hooks={{
-            addImageBlobHook(
-              blob: Blob | File,
-              callback: (url: string, alt: string) => void
-            ) {
-              const postImage = async () => {
-                try {
-                  const formData = new FormData();
-                  formData.append('attach', blob);
+        {!type && (
+          <Editor
+            initialValue={
+              userInfo?.type === 'admin'
+                ? '마크다운 문법으로 작성해주세요 : )'
+                : location.href.includes('review')
+                ? '⚠️ 리뷰 작성 후 수정 및 삭제가 불가능합니다'
+                : '내용을 적어주세요 : )'
+            }
+            height="600px"
+            initialEditType="wysiwyg"
+            useCommandShortcut={false}
+            hideModeSwitch={true}
+            plugins={[colorSyntax]}
+            language="ko-KR"
+            ref={editorRef}
+            onChange={onChange}
+            hooks={{
+              addImageBlobHook(
+                blob: Blob | File,
+                callback: (url: string, alt: string) => void
+              ) {
+                const postImage = async () => {
+                  try {
+                    const formData = new FormData();
+                    formData.append('attach', blob);
 
-                  const res = await axios.post(
-                    `https://localhost/api/files`,
-                    formData
-                  );
+                    const res = await axios.post(
+                      `https://localhost/api/files`,
+                      formData
+                    );
 
-                  const imageName = res.data.file.name;
-                  const imagePath = res.data.file.path;
-                  const imageUrl = `https://localhost:443${imagePath}`;
+                    const imageName = res.data.file.name;
+                    const imagePath = res.data.file.path;
+                    const imageUrl = `https://localhost:443${imagePath}`;
 
-                  callback(imageUrl, imageName);
-                  setAttachFile(imageUrl);
-                } catch (error) {
-                  console.error('이미지 업로드 중 오류 발생:', error);
-                }
-              };
-              postImage();
-            },
-          }}
-        />
+                    callback(imageUrl, imageName);
+                    setAttachFile(imageUrl);
+                  } catch (error) {
+                    console.error('이미지 업로드 중 오류 발생:', error);
+                  }
+                };
+                postImage();
+              },
+            }}
+          />
+        )}
+        {view && (
+          <Editor
+            height="600px"
+            initialEditType="wysiwyg"
+            useCommandShortcut={false}
+            hideModeSwitch={true}
+            plugins={[colorSyntax]}
+            language="ko-KR"
+            ref={editorRef}
+            onChange={onChange}
+            hooks={{
+              addImageBlobHook(
+                blob: Blob | File,
+                callback: (url: string, alt: string) => void
+              ) {
+                const postImage = async () => {
+                  try {
+                    const formData = new FormData();
+                    formData.append('attach', blob);
+
+                    const res = await axios.post(
+                      `https://localhost/api/files`,
+                      formData
+                    );
+
+                    const imageName = res.data.file.name;
+                    const imagePath = res.data.file.path;
+                    const imageUrl = `https://localhost:443${imagePath}`;
+
+                    callback(imageUrl, imageName);
+                    setAttachFile(imageUrl);
+                  } catch (error) {
+                    console.error('이미지 업로드 중 오류 발생:', error);
+                  }
+                };
+                postImage();
+              },
+            }}
+          />
+        )}
       </td>
     </tr>
   );
