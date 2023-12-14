@@ -78,8 +78,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string; };
-  cost: { products: number; shippingFees: number; total: number; };
+  address: { name: string; value: string };
+  cost: { products: number; shippingFees: number; total: number };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -94,7 +94,8 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string; }[];
+  options: Item;
+  productOptions: { [key: string]: string }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -110,6 +111,10 @@ interface ProductData {
     sort: number;
   };
   option: string;
+}
+
+interface Item {
+  item: Product[];
 }
 
 interface optionObject {
@@ -151,6 +156,7 @@ interface Product {
   option: string;
   extra: Extra;
   options: string | [];
+  productOptions: string | [];
 }
 
 interface Extra {
@@ -278,4 +284,20 @@ interface OrderProduct {
 interface Order {
   _id: number;
   quantity: number;
+}
+
+interface Address {
+  address: string;
+  addressDetail: string;
+  zonecode: string;
+}
+
+interface payProduct {
+  products: Order[];
+  address: Address;
+}
+
+interface dateThreeMonthRange {
+  dateToThreeMonth: Date | undefined;
+  dateFromThreeMonth: Date | undefined;
 }
