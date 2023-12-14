@@ -6,7 +6,7 @@ import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import { sortQnaReviewData } from '@/utils/getProductsData';
+import { dateSortQnaReviewData } from '@/utils/getProductsData';
 import { setAnonymousName } from '@/utils/setAnonymousName';
 import axios from 'axios';
 import EachPost from 'components/EachPost';
@@ -46,7 +46,7 @@ export default function Qna() {
         },
       });
 
-      const sortQna = sortQnaReviewData(res.data.item);
+      const sortQna = dateSortQnaReviewData(res.data.item);
 
       setAllData(sortQna);
       setDataLength(sortQna.length);
@@ -56,7 +56,7 @@ export default function Qna() {
     };
 
     getReplies();
-  }, []);
+  }, [setAllData]);
 
   return (
     <>

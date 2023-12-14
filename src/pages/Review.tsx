@@ -6,7 +6,7 @@ import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import { sortQnaReviewData } from '@/utils/getProductsData';
+import { dateSortQnaReviewData } from '@/utils/getProductsData';
 import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
@@ -46,7 +46,7 @@ export default function Review() {
         },
       });
 
-      const sortReview = sortQnaReviewData(res.data.item);
+      const sortReview = dateSortQnaReviewData(res.data.item);
       const filterReview = sortReview.filter(
         (v: Replies) => v.extra?.type === 'review'
       );
