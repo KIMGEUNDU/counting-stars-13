@@ -55,11 +55,11 @@ export default function MyOrder() {
         let dateFrom, dateTo;
         if (orderDate.dateForm) {
           dateFrom = new Date(orderDate.dateForm);
-          dateFrom.setDate(dateFrom.getDate() - 1);
+          dateFrom.setHours(0, 0, 0, 0);
         }
         if (orderDate.dateTo) {
           dateTo = new Date(orderDate.dateTo);
-          dateTo.setDate(dateTo.getDate() + 1);
+          dateTo.setHours(23, 59, 59, 999);
         }
         return (
           (dateFrom ? orderDateRange >= dateFrom : true) &&
