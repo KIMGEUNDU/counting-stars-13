@@ -1,7 +1,5 @@
-import { useComment } from '@/store/useComment';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 type board = {
   tag: string | number | undefined;
@@ -32,14 +30,12 @@ export default function EachPost({
 }: board) {
   const [view, setView] = useState(false);
   const navigate = useNavigate();
-  const { setDeleteComment } = useComment();
 
   const starGrade = (grade: number) => {
     return '⭐'.repeat(grade);
   };
 
   const moveDetail = (link: string) => {
-    setDeleteComment([]);
     navigate(link);
   };
 
@@ -102,7 +98,7 @@ export default function EachPost({
                       alt="첨부파일 있음"
                     />
                     <img
-                      className={`absolute top-0 right-0 ${
+                      className={`absolute top-0 -right-12 ${
                         view ? 'w-14' : 'w-0'
                       }`}
                       src={attachFile}
