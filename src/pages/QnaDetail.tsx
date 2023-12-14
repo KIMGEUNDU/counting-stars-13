@@ -7,6 +7,7 @@ import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
+import { useForm } from '@/store/useForm';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import { sortQnaReviewData } from '@/utils/getProductsData';
@@ -26,6 +27,7 @@ function QnaDetail() {
   const { id } = useParams();
   const { userInfo, setUserInfo } = useUserInfo();
   const [editStatus, setEditStatus] = useState(false);
+  const { setContent } = useForm();
 
   // 댓글정렬
   const sortComment = sortQnaReviewData(qnaComment);
@@ -124,11 +126,12 @@ function QnaDetail() {
       setCurrentData(currentQna[0]);
       setPrevData(qna[currentIndex + 1]);
       setNextData(qna[currentIndex - 1]);
+      setContent('');
     };
 
     repliesCurrentData();
     repliesData();
-  }, [currentIndex, id, setCurrentData]);
+  }, [currentIndex, id, setContent]);
 
   // 댓글 데이터
   useEffect(() => {
@@ -145,14 +148,15 @@ function QnaDetail() {
         const filterData = commentData.filter(
           (v: CommentData) => v.extra.boardId === Number(id)
         );
+
         setDeleteQnaComment(filterData);
+      } else {
+        setDeleteQnaComment([]);
       }
     };
 
     repliesData();
   }, [editStatus, id]);
-
-  console.log(currentData);
 
   return (
     <>
@@ -164,10 +168,8 @@ function QnaDetail() {
         {currentData && (
           <ReviewProductItem
             link={`/detail/${currentData.product_id}`}
-            thumbnail={
-              currentData.product?.image || currentData.extra?.product_image
-            }
-            name={currentData.product?.name || currentData.extra?.product_name}
+            thumbnail={currentData.extra?.product_image}
+            name={currentData.extra?.product_name}
           />
         )}
         {currentData && (
