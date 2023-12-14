@@ -15,12 +15,14 @@ function CommentItem({
   commentId,
   status,
   setStatus,
+  type,
 }: Replies & {
   onDelete?: () => void;
   status?: boolean | undefined;
   setStatus?: (status: boolean) => void;
   writerId?: number;
   commentId?: number;
+  type?: string;
 }) {
   const [edit, setEdit] = useState(true);
   const { userInfo } = useUserInfo();
@@ -40,7 +42,9 @@ function CommentItem({
   // 댓글 수정 이벤트
   const handleEditCompleteComment = async () => {
     const res = await axios.patch(
-      `https://localhost/api/posts/${id}/replies/${commentId}`,
+      `https://localhost/api/posts/${
+        type === 'review' ? 7 : id
+      }/replies/${commentId}`,
       { content: inputContent },
       {
         headers: {
