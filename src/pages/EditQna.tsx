@@ -16,7 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 export default function EditQna() {
   const navigate = useNavigate();
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const { content, attachFile, setContent } = useForm();
+  const { content, attachFile, setContent, setAttachFile } = useForm();
   const {
     modal,
     setModal,
@@ -70,7 +70,7 @@ export default function EditQna() {
           duration: 2000,
         });
 
-        navigate(`/qna-detail/${id}`);
+        navigate(`/qna-detail/${response.data.updated._id}`);
       }
     }
   };
@@ -103,11 +103,14 @@ export default function EditQna() {
         titleRef.current.value = currentQna.title;
         setContent(currentQna.content);
         setSelectId(currentQna.product_id);
+        if (currentQna.extra.attachFile) {
+          setAttachFile(currentQna.extra.attachFile);
+        }
       }
     };
 
     getCurrentQnaData();
-  }, []);
+  }, [setContent, setSelectId]);
 
   // data, pageData 리셋
   useEffect(() => {
@@ -124,12 +127,28 @@ export default function EditQna() {
       <main>
         <PageMainTitle title="상품 Q&A" />
         <form className="w-4/5 mx-auto" onSubmit={handleRegistQna}>
-          <ProductSelect title="상품 선택" onClick={() => setModal(!modal)} />
+          <ProductSelect title="수정" />
           {modal && <Modal onClick={() => setModal(!modal)} />}
           <table className="w-full border-t border-gray-300">
             <tbody>
               <FormTitleInput titleRef={titleRef} />
-              <FormCkEditor />
+              <FormCkEditor type="수정" />
+              <tr className="border-b">
+                <td className="bg-gray-50 py-3">첨부파일</td>
+                {attachFile && (
+                  <td className="pl-5 flex gap-3">
+                    <img
+                      className="w-10"
+                      src={attachFile}
+                      alt="첨부파일 있음"
+                    />
+                    <button type="button" onClick={() => setAttachFile('')}>
+                      지우기
+                    </button>
+                  </td>
+                )}
+                {!attachFile && <td className="pl-5">없음</td>}
+              </tr>
             </tbody>
           </table>
           <WriteButton link="/qna" />
