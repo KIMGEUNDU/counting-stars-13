@@ -120,7 +120,9 @@ function CommentInput({
       onSubmit={collection === 'qna' ? uploadQnaComment : uploadReviewComment}
     >
       <h3 className="font-semibold">댓글 달기</h3>
-      <div className="font-semibold">🦦 {writer}</div>
+      <div className="font-semibold">
+        {writer === '무지' ? '⭐ 별해달' : `🦦${writer}`}
+      </div>
       <fieldset className="flex">
         <label htmlFor="comment" className="hidden">
           댓글입력창
