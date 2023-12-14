@@ -41,21 +41,21 @@ function DetailProductOption({ data }: { data: ProductData }) {
           </tbody>
         </table>
         <form>
-          {data?.options.length > 0 && (
+          {data?.options.item.length > 0 && (
             <DetailProductSelect
               id={data._id}
               name={data.name}
               price={data.price}
-              option={data.options}
+              option={data.productOptions}
             />
           )}
-          {data?.options.length === 0 && (
+          {data?.options.item.length === 0 && (
             <DetailProductResult
               id={data._id}
               name={data?.name}
               price={`${data?.price}`}
               quantity={quantity}
-              required={data?.options.length > 0}
+              required={data?.options.item.length > 0}
               handleClickUp={handleClickUp}
               handleClickDown={handleClickDown}
               setQuantity={setQuantity}

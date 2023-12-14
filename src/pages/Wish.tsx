@@ -44,9 +44,17 @@ export default function Wish() {
   };
 
   const handleCheckPutCart = () => {
+    if (checkWish.length === 0) {
+      toast.error('선택 상품이 없습니다.');
+      return;
+    }
+
     Promise.all(
       wishData.map(async (item) => {
-        if (checkWish.includes(item._id) && item.product.options.length > 0) {
+        if (
+          checkWish.includes(item._id) &&
+          item.product.productOptions.length > 0
+        ) {
           const id = await fetchFirstOption(item.product_id);
           putCart(id, 1);
           return;
@@ -100,7 +108,7 @@ export default function Wish() {
 
   async function handleAddToCart(productId: number, item: CartItem) {
     const id =
-      item.product.options.length > 0
+      item.product.productOptions.length > 0
         ? await fetchFirstOption(productId)
         : productId;
     putCart(id, 1);
@@ -108,7 +116,7 @@ export default function Wish() {
 
   async function handleOrder(productId: number, item: CartItem) {
     const id =
-      item.product.options.length > 0
+      item.product.productOptions.length > 0
         ? await fetchFirstOption(productId)
         : productId;
     setProduct([{ _id: id, quantity: 1 }]);

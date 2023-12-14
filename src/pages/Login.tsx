@@ -80,7 +80,12 @@ export default function Login() {
   const handleLoginInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInfo({ ...isLoginInfo, [e.target.name]: e.target.value });
   };
-
+  const handleFindModal = () => {
+    toast(`해당 기능은 구현 중입니다.`, {
+      icon: '✏️',
+      duration: 2500,
+    });
+  };
   return (
     <>
       <Helmet>
@@ -130,12 +135,22 @@ export default function Login() {
           <hr className="my-5 mx-auto w-1/2" />
           <article>
             <ul className="flex justify-center mb-10 text-sm">
-              <Link to="/findid">
-                <li className="border-r border-gray-200 px-2">이메일 찾기</li>
-              </Link>
-              <Link to="/findpw">
-                <li className="border-r border-gray-200 px-2">비밀번호 찾기</li>
-              </Link>
+              {/* <Link to="/findid"> */}
+              <li
+                className="border-r border-gray-200 px-2 cursor-pointer"
+                onClick={handleFindModal}
+              >
+                이메일 찾기
+              </li>
+              {/* </Link> */}
+              {/* <Link to="/findpw"> */}
+              <li
+                className="border-r border-gray-200 px-2 cursor-pointer"
+                onClick={handleFindModal}
+              >
+                비밀번호 찾기
+              </li>
+              {/* </Link> */}
               <Link to="/join">
                 <li className="px-2">회원가입</li>
               </Link>
