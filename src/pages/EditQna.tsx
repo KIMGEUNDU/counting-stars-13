@@ -11,14 +11,22 @@ import axios from 'axios';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function WriteQna() {
+export default function EditQna() {
   const navigate = useNavigate();
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const { content, attachFile } = useForm();
-  const { modal, setModal, selectId, selectData, setAllData, setPageData } =
-    useData();
+  const { content, attachFile, setContent } = useForm();
+  const {
+    modal,
+    setModal,
+    selectId,
+    selectData,
+    setSelectId,
+    setAllData,
+    setPageData,
+  } = useData();
+  const { id } = useParams();
 
   // Qna 등록하기 (Axios)
   const handleRegistQna = async (e: React.FormEvent) => {
@@ -34,10 +42,9 @@ export default function WriteQna() {
         icon: '⭐',
         duration: 2000,
       });
-    } else if (selectData && selectId && titleRef.current) {
-      const newQna = {
+    } else if (titleRef.current) {
+      const editQna = {
         title: titleRef.current.value,
-        type: 'qna',
         content,
         product_id: selectId,
         extra: {
@@ -47,9 +54,9 @@ export default function WriteQna() {
         },
       };
 
-      const response = await axios.post(
-        'https://localhost/api/posts/',
-        newQna,
+      const response = await axios.patch(
+        `https://localhost/api/posts/${id}`,
+        editQna,
         {
           headers: {
             Authorization: `Bearer ${AUTH_TOKEN()}`,
@@ -58,12 +65,12 @@ export default function WriteQna() {
       );
 
       if (response.data.ok === 1) {
-        toast('업로드하였습니다 :)', {
+        toast('수정되었습니다 :)', {
           icon: '⭐',
           duration: 2000,
         });
 
-        navigate(`/qna-detail/${response.data.item._id}`);
+        navigate(`/qna-detail/${id}`);
       }
     }
   };
@@ -80,6 +87,27 @@ export default function WriteQna() {
   } else {
     document.body.style.overflow = 'unset';
   }
+
+  // 데이터 가져오기
+  useEffect(() => {
+    const getCurrentQnaData = async () => {
+      const res = await axios.get(`https://localhost/api/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const currentQna = res.data.item;
+
+      if (titleRef && titleRef.current) {
+        titleRef.current.value = currentQna.title;
+        setContent(currentQna.content);
+        setSelectId(currentQna.product_id);
+      }
+    };
+
+    getCurrentQnaData();
+  }, []);
 
   // data, pageData 리셋
   useEffect(() => {

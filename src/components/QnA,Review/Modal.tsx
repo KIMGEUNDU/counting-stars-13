@@ -17,6 +17,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setPageData,
     setPageNumber,
     pageNumber,
+    setSelectId,
   } = useData();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       setPageData(res.data.item.slice(0, 10));
       setDataLengthPage(Math.ceil(res.data.item.length / 10));
       setPageNumber(1);
+      setSelectId(null);
     };
 
     getProducts();
@@ -68,7 +70,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
                   key={i}
                   src={(v as Data).detailImages[0]}
                   title={(v as Data).name}
-                  price={String((v as Data).price)}
+                  price={String((v as Data).price.toLocaleString())}
                   id={v._id}
                 />
               ))}

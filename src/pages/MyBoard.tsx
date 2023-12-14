@@ -22,9 +22,13 @@ function MyBoard() {
     pageData,
     setPageData,
     setPageNumber,
+    combineData,
+    setCombineData,
+    setAddCombineData,
   } = useData();
 
   useEffect(() => {
+    // 리뷰데이터 가지고오기
     const getReplies = async () => {
       const res = await axios.get('https://localhost/api/replies/all', {
         headers: {
@@ -35,21 +39,52 @@ function MyBoard() {
       const sortBoard = sortQnaReviewData(res.data.item);
 
       const filterBoard = sortBoard.filter(
-        (v) =>
-          v.user?._id === userInfo?._id &&
-          v.extra?.type !== 'qnaComment' &&
-          v.extra?.type !== 'reviewComment'
+        (v: Replies) =>
+          v.user?._id === userInfo?._id && v.extra?.type !== 'reviewComment'
       );
 
-      setAllData(filterBoard);
-      setDataLength(filterBoard.length);
-      setPageNumber(1);
-      setPageData(filterBoard.slice(0, 10));
-      setDataLengthPage(Math.ceil(filterBoard.length / 10));
+      setCombineData(filterBoard);
+    };
+
+    // QNA 데이터 가지고오기
+    const getQna = async () => {
+      const res = await axios.get('https://localhost/api/posts?type=qna', {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const allQna = res.data.item;
+      const myQna = allQna.filter(
+        (v: Replies) => v.user?._id === userInfo?._id
+      );
+
+      myQna.forEach((v: Replies) => setAddCombineData(v));
     };
 
     getReplies();
-  }, []);
+    getQna();
+  }, [setAddCombineData, userInfo?._id]);
+
+  useEffect(() => {
+    if (combineData) {
+      const sortCombineData = combineData.sort((a, b) => {
+        if (a.createdAt && b.createdAt) {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        } else {
+          return 0;
+        }
+      });
+
+      setAllData(sortCombineData);
+      setDataLength(sortCombineData.length);
+      setPageNumber(1);
+      setPageData(sortCombineData.slice(0, 10));
+      setDataLengthPage(Math.ceil(sortCombineData.length / 10));
+    }
+  }, [combineData]);
 
   // 로그인유저정보 받아오기
   useEffect(() => {
@@ -86,21 +121,30 @@ function MyBoard() {
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={(v as Replies).extra?.type.toUpperCase()}
-                    title={(v as Replies).extra?.title}
+                    tag={(v as Replies).extra?.type ? 'REVIEW' : 'QNA'}
+                    title={
+                      (v as Replies).extra?.title
+                        ? (v as Replies).extra?.title
+                        : (v as Replies).title
+                    }
                     writer={userInfo?.name}
                     grade={
-                      (v as Replies).extra?.type === 'qna'
-                        ? ' '
-                        : (v as Replies).rating
+                      (v as Replies).extra?.type === 'review'
+                        ? (v as Replies).rating
+                        : ' '
                     }
-                    date={(v as Replies).createdAt}
+                    date={(v as Replies).createdAt?.split(' ')[0]}
+                    itemLink={
+                      (v as Replies).product?._id
+                        ? (v as Replies).product?._id
+                        : (v as Replies).product_id
+                    }
                     item={(v as Replies).product?.name}
                     itemImg={(v as Replies).product?.image}
                     link={
-                      (v as Replies).extra?.type === 'qna'
-                        ? `/qna-detail/${v._id}`
-                        : `/review-detail/${v._id}`
+                      (v as Replies).extra?.type === 'review'
+                        ? `/review-detail/${v._id}`
+                        : `/qna-detail/${v._id}`
                     }
                     attachFile={
                       (v as Replies).extra?.attachFile

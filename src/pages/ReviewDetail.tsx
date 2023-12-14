@@ -160,7 +160,7 @@ function ReviewDetail() {
             onClick3={handleDelete}
             style="quaReviewDetailButton"
             center="center"
-            writer={String(currentData.user!._id)}
+            writer={currentData.user!._id}
           />
         )}
         {userInfo && (

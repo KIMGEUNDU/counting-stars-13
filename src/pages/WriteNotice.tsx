@@ -3,9 +3,7 @@ import FormCkEditor from '@/components/QnA,Review/FormCkEditor';
 import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useForm } from '@/store/useForm';
-import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import { setAnonymousName } from '@/utils/setAnonymousName';
 import axios from 'axios';
 import { useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -16,7 +14,6 @@ function WriteNotice() {
   const navigate = useNavigate();
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { content, attachFile } = useForm();
-  const { userInfo } = useUserInfo();
 
   // Notice 등록하기 (Axios)
   const handleRegistNotice = async (e: React.FormEvent) => {
@@ -35,10 +32,6 @@ function WriteNotice() {
         extra: {
           tag: '공지',
           attachFile: attachFile,
-          user: {
-            _id: userInfo!._id,
-            name: setAnonymousName(userInfo!.name),
-          },
         },
       };
 

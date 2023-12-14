@@ -78,8 +78,8 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string };
-  cost: { products: number; shippingFees: number; total: number };
+  address: { name: string; value: string; };
+  cost: { products: number; shippingFees: number; total: number; };
   createdAt: string;
   products: OrderData[];
   user_id: number;
@@ -94,7 +94,7 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string }[];
+  options: { [key: string]: string; }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -177,8 +177,9 @@ interface Replies {
     _id: number;
     name: string;
   };
+  replies?: CommentData[];
   extra?: {
-    type: string;
+    type?: string;
     attachFile?: string;
     title?: string;
     tag?: string;
@@ -187,6 +188,8 @@ interface Replies {
       _id: number;
       name: string;
     };
+    product_name?: string;
+    product_image?: string;
   };
 }
 
@@ -241,3 +244,38 @@ type myOrderInfoType = {
   createdAt: Date;
   products: myOrderInfoProducts[];
 };
+
+interface CommentData {
+  _id: number;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+  user: {
+    _id: number;
+    name: string;
+  };
+  extra: {
+    boardId: number;
+  };
+}
+
+interface OrderExtra {
+  sort: number;
+  parent: number;
+}
+
+interface OrderProduct {
+  _id: number;
+  quantity: number;
+  seller_id: number;
+  name: string;
+  option: string;
+  image: string;
+  price: number;
+  extra: OrderExtra;
+}
+
+interface Order {
+  _id: number;
+  quantity: number;
+}
