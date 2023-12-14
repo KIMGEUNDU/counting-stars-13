@@ -132,3 +132,7 @@ input::-webkit-autofill:active {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.toastui-editor-contents p {
+  font-size: 15px;
+}
