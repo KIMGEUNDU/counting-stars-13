@@ -14,11 +14,11 @@ function PageDetailTable({
       <table className="QnaReviewTable w-full border-t-2 border-t-gray-500 border-b border-b-gray-300 text-left">
         <tbody>
           <tr>
-            <td className="w-1/12 whitespace-nowrap">제목</td>
+            <td className="w-1/12 whitespace-nowrap font-semibold">제목</td>
             <td>{title}</td>
           </tr>
           <tr>
-            <td className="w-1/12 whitespace-nowrap">작성자</td>
+            <td className="w-1/12 whitespace-nowrap font-semibold">작성자</td>
             <td>{setAnonymousName(writer)}</td>
           </tr>
         </tbody>
@@ -26,7 +26,9 @@ function PageDetailTable({
       <ul className="flex border-b border-b-gray-200 py-5 px-2">
         {createdAt && (
           <>
-            <li className="font-semibold pr-3 whitespace-nowrap">작성일</li>
+            <li className="font-semibold pl-2 pr-3 whitespace-nowrap">
+              작성일
+            </li>
             <li className="text-gray-400 pr-10">{createdAt}</li>
           </>
         )}
@@ -54,12 +56,16 @@ function PageDetailTable({
       </ul>
       {attachFile && (
         <img
-          className={`m-auto w-1/3 ${content ? 'pt-20' : 'py-20'}`}
+          className={`m-auto max-w-1/2 ${content ? 'pt-20' : 'py-20'}`}
           src={attachFile}
           alt={title}
         />
       )}
-      <div className="py-10 px-2 border-b border-b-gray-200 text-4xl">
+      <div
+        className={`py-10 px-2 border-b border-b-gray-200 ${
+          location.href.includes('Notice') ? 'text-center' : ''
+        }`}
+      >
         <ContentsViewer contents={content} />
       </div>
     </div>
