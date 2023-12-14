@@ -3,7 +3,13 @@ import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect } from 'react';
 
-function ProductSelect({ title, onClick }: ContainerTitle) {
+function ProductSelect({
+  title,
+  onClick,
+}: {
+  title?: string;
+  onClick?: () => void;
+}) {
   const {
     selectId,
     setSelectId,
@@ -57,11 +63,15 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
         <>
           <div className="py-3 px-2 flex flex-col">
             <p className="font-bold">{selectData.name}</p>
-            <span className="text-starRed font-bold">{selectData.price}원</span>
+            <span className="text-starRed font-bold">
+              {selectData.price.toLocaleString()}원
+            </span>
           </div>
           <button
             type="button"
-            className="border py-2 px-2 bg-starBlack text-white ml-4"
+            className={`border py-2 px-2 bg-starBlack text-white ml-4 ${
+              title === '수정' ? 'hidden' : ''
+            }`}
             onClick={onClick}
           >
             상품 변경
