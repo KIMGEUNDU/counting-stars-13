@@ -3,8 +3,6 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import { useDeliveryState } from '@/store/useDeliveryState';
 import { useMyOrderInfo } from '@/store/useMyOrderInfo';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import moment from 'moment';
@@ -15,6 +13,16 @@ export default function MyOrder() {
   const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
   const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
     useMyOrderInfo();
+  const today = moment(new Date()).format('YYYY-MM-DD');
+  const todayThreeMonth = new Date();
+  todayThreeMonth.setDate(todayThreeMonth.getDate() - 91);
+  console.log(todayThreeMonth);
+  // 리스트 최근 3개월로
+  const datefilterdOrders = myOrderInfo.filter((v) => {
+    return new Date(v.createdAt) > todayThreeMonth;
+  });
+  console.log(datefilterdOrders);
+
   const [filteredOrders, setFilteredOrders] = useState(myOrderInfo);
   const [orderDate, setOrderDate] = useState({
     dateForm: '',
@@ -28,8 +36,16 @@ export default function MyOrder() {
   const myOrderProductList: object[] = [];
   // const [myOrderProductList, setMyOrderProductList] = useState([])
   const myOrderProductDate: object[] = [];
+  const [dateThreeMonthRange, setDateThreeMonthRange] =
+    useState<dateThreeMonthRange>({
+      dateToThreeMonth: new Date(),
+      dateFromThreeMonth: new Date(),
+    });
 
   useEffect(() => {
+    let dateToThreeMonth;
+
+    let dateFromThreeMonth;
     let result;
     if (!orderDate.dateForm && !orderDate.dateTo) {
       result = myOrderInfo;
@@ -39,11 +55,11 @@ export default function MyOrder() {
         let dateFrom, dateTo;
         if (orderDate.dateForm) {
           dateFrom = new Date(orderDate.dateForm);
-          dateFrom.setDate(dateFrom.getDate() - 1);
+          dateFrom.setHours(0, 0, 0, 0);
         }
         if (orderDate.dateTo) {
           dateTo = new Date(orderDate.dateTo);
-          dateTo.setDate(dateTo.getDate() + 1);
+          dateTo.setHours(23, 59, 59, 999);
         }
         return (
           (dateFrom ? orderDateRange >= dateFrom : true) &&
@@ -52,6 +68,21 @@ export default function MyOrder() {
       });
     }
 
+    if (orderDate.dateForm) {
+      dateToThreeMonth = new Date(orderDate.dateForm);
+      dateToThreeMonth.setDate(dateToThreeMonth.getDate() + 91);
+    }
+    console.log(dateToThreeMonth);
+
+    if (orderDate.dateTo) {
+      dateFromThreeMonth = new Date(orderDate.dateTo);
+      dateFromThreeMonth.setDate(dateFromThreeMonth.getDate() - 91);
+    }
+
+    setDateThreeMonthRange({
+      dateFromThreeMonth: dateFromThreeMonth,
+      dateToThreeMonth: dateToThreeMonth,
+    });
     setFilteredOrders(result);
   }, [myOrderInfo, orderDate.dateForm, orderDate.dateTo]);
 
@@ -114,6 +145,9 @@ export default function MyOrder() {
   const handleFindOrderState = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFindDeliveryState(e.target.value);
   };
+  console.log(
+    moment(dateThreeMonthRange.dateToThreeMonth).format('YYYY-MM-DD') < today
+  );
 
   return (
     <>
@@ -149,10 +183,17 @@ export default function MyOrder() {
             </div> */}
             <div>
               <input
+                min={
+                  orderDate.dateTo
+                    ? moment(dateThreeMonthRange.dateFromThreeMonth).format(
+                        'YYYY-MM-DD'
+                      )
+                    : ''
+                }
                 max={
                   orderDate.dateTo
                     ? moment(orderDate.dateTo).format('YYYY-MM-DD')
-                    : ''
+                    : today
                 }
                 name="dateForm"
                 type="date"
@@ -164,6 +205,17 @@ export default function MyOrder() {
                 min={
                   orderDate.dateForm
                     ? moment(orderDate.dateForm).format('YYYY-MM-DD')
+                    : ''
+                }
+                max={
+                  moment(dateThreeMonthRange.dateToThreeMonth).format(
+                    'YYYY-MM-DD'
+                  ) < today
+                    ? moment(dateThreeMonthRange.dateToThreeMonth).format(
+                        'YYYY-MM-DD'
+                      )
+                    : orderDate.dateForm
+                    ? today
                     : ''
                 }
                 name="dateTo"
@@ -199,8 +251,19 @@ export default function MyOrder() {
                     <td className="w-[10%]">취소/교환/반품</td>
                   </tr>
                 </thead>
-                {isFindDeliveryState === '전체 주문처리 상태' ? (
+                {isFindDeliveryState === '전체 주문처리 상태' &&
+                (orderDate.dateForm || orderDate.dateTo) ? (
                   filteredOrders.map((v, i) => {
+                    return (
+                      <OrderItem
+                        key={i}
+                        orderDate={String(v.createdAt)}
+                        productList={v.products}
+                      />
+                    );
+                  })
+                ) : isFindDeliveryState === '전체 주문처리 상태' ? (
+                  datefilterdOrders.map((v, i) => {
                     return (
                       <OrderItem
                         key={i}

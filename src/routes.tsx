@@ -26,6 +26,7 @@ const FindPw = lazy(() => import('pages/FindPw'));
 const MyCart = lazy(() => import('pages/MyCart'));
 const MyShopping = lazy(() => import('pages/MyShopping'));
 const MyOrder = lazy(() => import('pages/MyOrder'));
+const MyOrderDetail = lazy(() => import('pages/MyOrderDetail'));
 const Search = lazy(() => import('pages/Search'));
 const Wish = lazy(() => import('pages/Wish'));
 const Order = lazy(() => import('pages/Order'));
@@ -59,6 +60,7 @@ const router = createHashRouter(
       <Route path="myCart" element={<MyCart />} />
       <Route path="myShopping" element={<MyShopping />} />
       <Route path="myOrder" element={<MyOrder />} />
+      <Route path="myOrderDetail" element={<MyOrderDetail />} />
       <Route path="wish" element={<Wish />} />
       <Route path="order" element={<Order />} />
       <Route path="myBoard" element={<MyBoard />} />
