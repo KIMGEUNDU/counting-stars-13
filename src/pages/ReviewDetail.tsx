@@ -9,6 +9,7 @@ import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { sortQnaReviewData } from '@/utils/getProductsData';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -21,18 +22,46 @@ function ReviewDetail() {
   const [currentData, setCurrentData] = useState<Replies | null>(null);
   const [nextData, setNextData] = useState<Replies | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { comment, setDeleteComment } = useComment();
+  const { reviewComment, setDeleteReviewComment } = useComment();
   const { id } = useParams();
-
-  // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
+  const [editStatus, setEditStatus] = useState(false);
 
-  // 삭제이벤트
+  // 댓글정렬
+  const sortComment = sortQnaReviewData(reviewComment);
+
+  // 게시글 삭제이벤트
   const handleDelete = () => {
-    toast('지원되지 않는 기능입니다.', {
-      icon: '⭐',
+    toast('리뷰는 삭제할 수 없습니다', {
+      icon: '😭',
       duration: 2000,
     });
+  };
+
+  // 댓글 삭제 이벤트
+  const deleteComment = async (commentId: number) => {
+    const result = confirm('삭제하시겠습니까?');
+
+    if (result) {
+      const res = await axios.delete(
+        `https://localhost/api/posts/7/replies/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN()}`,
+          },
+        }
+      );
+
+      if (res.data.ok === 1) {
+        toast('삭제하였습니다 :)', {
+          icon: '🗑️',
+          duration: 2000,
+        });
+
+        const exceptComment = reviewComment.filter((v) => v._id !== commentId);
+        setDeleteReviewComment(exceptComment);
+      }
+    }
   };
 
   // 로그인유저정보 받아오기
@@ -94,25 +123,27 @@ function ReviewDetail() {
     repliesData();
   }, [currentIndex, id]);
 
-  // 실시간 댓글
+  // 댓글 데이터
   useEffect(() => {
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/all`, {
+      const res = await axios.get(`https://localhost/api/posts/7`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN()}`,
         },
       });
 
-      const review = res.data.item;
-      const filterComment = review.filter(
-        (v: Replies) =>
-          v.extra?.type === 'reviewComment' && String(v.extra?.boardId) === id
-      );
-      setDeleteComment(filterComment);
+      const commentData = res.data.item.replies;
+
+      if (commentData) {
+        const filterComment = commentData.filter(
+          (v: Replies) => v.extra?.boardId === Number(id)
+        );
+        setDeleteReviewComment(filterComment);
+      }
     };
 
     repliesData();
-  }, []);
+  }, [editStatus, id]);
 
   return (
     <>
@@ -173,13 +204,19 @@ function ReviewDetail() {
             </p>
           </Link>
         )}
-        {comment.length > 0 &&
-          comment.map((v, i) => (
+        {sortComment.length > 0 &&
+          sortComment.map((v, i) => (
             <CommentItem
               key={i}
               writer={v.user?.name}
+              writerId={v.user?._id ? v.user?._id : 0}
               createdAt={v.createdAt}
               content={v.content}
+              onDelete={() => deleteComment(v._id ? v._id : 0)}
+              commentId={v._id ? v._id : 0}
+              status={editStatus}
+              setStatus={setEditStatus}
+              type="review"
             />
           ))}
 
