@@ -55,7 +55,9 @@ export default function OrderItemDetail({
         </Link>
       </div>
       <div className="w-[40.5%]">
-        <span>{name}</span>
+        <Link to={`/MyOrderDetail`}>
+          <span>{name}</span>
+        </Link>
       </div>
       <div className="font-medium w-[13%]">{number}</div>
       <div className="pr-3 font-semibold w-[12%]">
