@@ -83,6 +83,13 @@ function CommentItem({
             </button>
           </div>
         )}
+        {userInfo?.type === 'admin' && writerId !== userInfo?._id && edit && (
+          <div className="flex gap-2">
+            <button type="button" onClick={onDelete}>
+              <img className="w-5" src="/deleteIcon.png" alt="댓글 삭제" />
+            </button>
+          </div>
+        )}
         {writerId === userInfo?._id && !edit && (
           <button type="button" onClick={handleEditCompleteComment}>
             <img className="w-5" src="/completeIcon.png" alt="수정 완료" />
