@@ -10,15 +10,19 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import axiosInstance from '@/utils/axiosInstance';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useOrderSet } from '@/store/useOrderSet';
 
 export default function Order() {
+  const navigate = useNavigate();
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
   const { orderUserInfo, setOrderUserInfo } = useOrderUserInfo();
-  const { order } = useOrderSet();
+  const { order, removeProduct } = useOrderSet();
   const [orderData, setOrderData] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [checkProduct, setCheckProduct] = useState<number[]>([]);
+  const [checkControl, setCheckControl] = useState<boolean>(false);
+  const [finalAgreement, setFinalAgreement] = useState<boolean>(false);
 
   const handleGetUserInfo = async () => {
     try {
@@ -38,8 +42,14 @@ export default function Order() {
       const response = await axiosInstance.post(`/orders`, order);
       const item = await response.data.item.products;
       const totalPrice = await response.data.item.cost.products;
+
       setTotalPrice(totalPrice);
       setOrderData(item);
+
+      if (order.products.length === 0) {
+        toast.error('주문 상품이 없습니다.');
+        navigate('/myCart');
+      }
     } catch (e) {
       return toast('정보가 불러와지지 않음', {
         icon: '😢',
@@ -53,6 +63,15 @@ export default function Order() {
     handleGetOrder();
   }, []);
 
+  useEffect(() => {
+    handleGetOrder();
+  }, [order]);
+
+  // 번호 앞자리, 뒷자리 나누기 값
+  useEffect(() => {
+    phoneNumber(orderUserInfo?.phone, setPhoneNumber);
+  }, [orderUserInfo?.phone, setPhoneNumber]);
+
   const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrderUserInfo({ ...orderUserInfo, [e.target.name]: e.target.value });
   };
@@ -65,10 +84,84 @@ export default function Order() {
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
   };
 
-  // 번호 앞자리, 뒷자리 나누기 값
-  useEffect(() => {
-    phoneNumber(orderUserInfo?.phone, setPhoneNumber);
-  }, [orderUserInfo?.phone]);
+  const handleSelectDelete = () => {
+    if (checkProduct.length === 0) {
+      toast.error('선택 상품이 없습니다.');
+      return;
+    }
+
+    checkProduct.map((id: number) => {
+      removeProduct(id);
+    });
+
+    setCheckProduct([]);
+    setCheckControl(false);
+    toast.success('삭제되었습니다.');
+  };
+
+  const handleCheckProduct = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    if (e.target.checked) {
+      setCheckProduct([...checkProduct, id]);
+      if (checkProduct.length + 1 === orderData.length) {
+        setCheckControl(true);
+      }
+    } else {
+      setCheckProduct(checkProduct.filter((item) => item !== id));
+      setCheckControl(false);
+    }
+  };
+
+  const controlCheck = () => {
+    setCheckControl(!checkControl);
+
+    if (checkControl) {
+      setCheckProduct([]);
+    } else {
+      setCheckProduct(orderData.map((item: OrderProduct) => item._id));
+    }
+  };
+
+  const handlePayment = async () => {
+    if (!finalAgreement) {
+      toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
+      return;
+    }
+    if (!orderUserInfo.address.address) {
+      toast.error('주소를 입력해주세요.');
+      return;
+    }
+
+    const checkConfirm = confirm(
+      `당신은 당신의 반려견을 무척 사랑하며,\n앞으로도 좋은 간식 많이 먹이며 심히 예뻐할 것을 다짐합니까?`
+    );
+
+    if (checkConfirm) {
+      try {
+        const payOrder: payProduct = {
+          products: [],
+          address: { address: '', addressDetail: '', zonecode: '' },
+        };
+        payOrder.products = order.products;
+        payOrder.address = {
+          ...orderUserInfo.address,
+          address: orderUserInfo.address.addressDetail || '',
+          addressDetail: orderUserInfo.address.addressDetail || '',
+          zonecode: orderUserInfo.address.addressDetail || '',
+        };
+
+        const payComplete = await axiosInstance.post('/orders', payOrder);
+        if (payComplete.status === 200) {
+          toast.success('주문이 완료되었습니다❤');
+          navigate('/myOrder');
+        }
+      } catch (error) {
+        toast.error(`${error}가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+      }
+    }
+  };
 
   return (
     <>
@@ -82,15 +175,20 @@ export default function Order() {
 
         <section className="w-4/5 mx-auto my-5">
           <div className="my-10 ">
-            <section className="">
+            <section>
               <h3 className="text-xs border-t bg-gray-100 font-bold py-1 block border-b-2 px-4 ">
                 주문 내역
               </h3>
-              <table className="table-fixed text-center">
+              <table className="table-fixed text-center w-full">
                 <thead>
                   <tr className="bg-gray-50 h-10 border-b text-sm">
                     <td className="w-[5%]">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        onChange={controlCheck}
+                        checked={checkControl}
+                        disabled={orderData.length === 0}
+                      />
                     </td>
                     <td className="w-[10%]">이미지</td>
                     <td className="w-[30%]">상품정보</td>
@@ -100,27 +198,53 @@ export default function Order() {
                     <td className="w-[10%]">합계</td>
                   </tr>
                 </thead>
-                <thead>
+                <tbody>
+                  {orderData?.length === 0 && (
+                    <tr className="h-24 border-b">
+                      <td colSpan={7}>주문 상품이 없습니다.</td>
+                    </tr>
+                  )}
                   {orderData?.length > 0 &&
                     orderData.map((item: OrderProduct) => {
                       return (
                         <tr className="h-24 border-b" key={item._id}>
                           <td>
-                            <input type="checkbox" />
+                            <input
+                              type="checkbox"
+                              checked={
+                                checkControl || checkProduct.includes(item._id)
+                              }
+                              className="w-5 h-5 cursor-pointer"
+                              onChange={(e) => handleCheckProduct(e, item._id)}
+                            />
                           </td>
                           <td className="p-2">
-                            <img src={item.image} className="100%" />
+                            <Link
+                              to={`/detail/${
+                                item.extra.parent ? item.extra.parent : item._id
+                              }`}
+                              target="_blank"
+                            >
+                              <img src={item.image} />
+                            </Link>
                           </td>
                           <td>
-                            {item.name}
-                            {item.option && (
-                              <>
-                                <br />
-                                <span className="text-sm">
-                                  - {item.option} -
-                                </span>
-                              </>
-                            )}
+                            <Link
+                              to={`/detail/${
+                                item.extra.parent ? item.extra.parent : item._id
+                              }`}
+                              target="_blank"
+                            >
+                              {item.name}
+                              {item.option && (
+                                <>
+                                  <br />
+                                  <span className="text-sm">
+                                    - {item.option} -
+                                  </span>
+                                </>
+                              )}
+                            </Link>
                           </td>
                           <td className="font-bold">
                             {(item.price / item.quantity).toLocaleString()}원
@@ -135,10 +259,10 @@ export default function Order() {
                         </tr>
                       );
                     })}
-                </thead>
+                </tbody>
               </table>
               <div className="h-20 text-sm font-medium flex justify-between items-center bg-gray-50 py-1 border-b-2 px-4 ">
-                <span className="block">[기본배송]</span>
+                <span className="block">[기본 배송]</span>
                 <p className="block text-sm">
                   상품 구매 금액{' '}
                   <strong>{totalPrice.toLocaleString()}원</strong> + 배송비 0원
@@ -158,7 +282,11 @@ export default function Order() {
               <div className="flex justify-between h-15 mb-20">
                 <div>
                   <span className="font-medium text-sm">선택 상품</span>
-                  <button className="m-1 py-1 px-3 text-sm bg-gray-700 rounded-sm border-2 text-white">
+                  <button
+                    type="button"
+                    className="m-1 py-1 px-3 text-sm bg-gray-700 rounded-sm border-2 text-white"
+                    onClick={handleSelectDelete}
+                  >
                     삭제
                   </button>
                 </div>
@@ -309,9 +437,6 @@ export default function Order() {
                   <tr className="border-b">
                     <td className="bg-gray-50 w-40 p-3 ">
                       <label htmlFor="inputId">배송 메시지</label>
-                      <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                        *
-                      </span>
                     </td>
                     <td className="p-3 ">
                       <textarea
@@ -416,11 +541,20 @@ export default function Order() {
                     </span>{' '}
                     원
                   </p>
-                  <input type="checkbox" id="buyAgree" className="mr-2" />
+                  <input
+                    type="checkbox"
+                    id="buyAgree"
+                    className="mr-2"
+                    onChange={() => setFinalAgreement(!finalAgreement)}
+                  />
                   <label htmlFor="buyAgree">
                     결제 정보를 확인하였으며, 구매 진행에 동의합니다.
                   </label>
-                  <button className="hover:bg-gray-800 block w-full h-14 text-base text-white bg-gray-700 mt-4">
+                  <button
+                    type="button"
+                    className="hover:bg-gray-800 block w-full h-14 text-base text-white bg-gray-700 mt-4"
+                    onClick={handlePayment}
+                  >
                     결제하기
                   </button>
                 </section>
