@@ -107,8 +107,6 @@ function NoticeDetail() {
     repliesData();
   }, [currentIndex, id, setCurrentData]);
 
-  console.log(currentData);
-
   return (
     <>
       <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
@@ -134,7 +132,7 @@ function NoticeDetail() {
             btn3="수정"
             onClick1={handleListPage}
             onClick2={handleDelete}
-            onClick3={() => navigate(`/noticeEdit/${id}`)}
+            onClick3={() => navigate(`/edit-notice/${id}`)}
             style="quaReviewDetailButton"
             center="center"
             writer={currentData.user?._id}
