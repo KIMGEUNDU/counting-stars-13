@@ -22,7 +22,7 @@ export default function OrderItemDetail({
           setDeliveryState('주문 완료');
           break;
         case 'OS030':
-          setDeliveryState('배송 준비중');
+          setDeliveryState('배송 준비 중');
           break;
         case 'OS035':
           setDeliveryState('배송 중');
