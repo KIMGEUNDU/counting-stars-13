@@ -106,7 +106,7 @@ function FormCkEditor({ type }: { type?: string }) {
 
                     const imageName = res.data.file.name;
                     const imagePath = res.data.file.path;
-                    const imageUrl = `https://localhost:443${imagePath}`;
+                    const imageUrl = `https://localhost/api/${imagePath}`;
 
                     callback(imageUrl, imageName);
                     setAttachFile(imageUrl);
