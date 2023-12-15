@@ -74,13 +74,14 @@ function FormCkEditor({ type }: { type?: string }) {
       <td colSpan={2} className="edit_wrap bg-gray-50 py-5 w-full">
         {!type && (
           <Editor
-            initialValue={
+            placeholder={
               userInfo?.type === 'admin'
                 ? '마크다운 문법으로 작성해주세요 : )'
                 : location.href.includes('review')
                 ? '⚠️ 리뷰 작성 후 수정 및 삭제가 불가능합니다'
                 : '내용을 적어주세요 : )'
             }
+            initialValue=" "
             height="600px"
             initialEditType="wysiwyg"
             useCommandShortcut={false}
@@ -106,7 +107,7 @@ function FormCkEditor({ type }: { type?: string }) {
 
                     const imageName = res.data.file.name;
                     const imagePath = res.data.file.path;
-                    const imageUrl = `https://localhost:443${imagePath}`;
+                    const imageUrl = `https://localhost/api/${imagePath}`;
 
                     callback(imageUrl, imageName);
                     setAttachFile(imageUrl);
