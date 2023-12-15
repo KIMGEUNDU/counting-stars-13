@@ -132,6 +132,23 @@ export default function MyOrder() {
     setFindDeliveryState(e.target.value);
   };
 
+  const getOrderList = () => {
+    if (isFindDeliveryState === '전체 주문 처리 상태') {
+      return orderDate.dateForm || orderDate.dateTo
+        ? filteredOrders
+        : datefilterdOrders;
+    }
+    if (myOrderProductDate.length > 0) {
+      return myOrderProductDate.map((date, i) => ({
+        createdAt: date,
+        products: myOrderProductList[i],
+      }));
+    }
+    return [];
+  };
+
+  const orderList = getOrderList();
+
   return (
     <>
       <Helmet>
@@ -224,62 +241,21 @@ export default function MyOrder() {
                   </tr>
                 </thead>
                 <tbody>
-                  {isFindDeliveryState === '전체 주문 처리 상태' &&
-                    (orderDate.dateForm || orderDate.dateTo) &&
-                    filteredOrders.map((v, i) => {
-                      return (
-                        <OrderItem
-                          key={i}
-                          orderDate={String(v.createdAt)}
-                          productList={v.products}
-                        />
-                      );
-                    })}
-                  {isFindDeliveryState === '전체 주문 처리 상태' &&
-                    !(orderDate.dateForm || orderDate.dateTo) &&
-                    datefilterdOrders.map((v, i) => {
-                      return (
-                        <OrderItem
-                          key={i}
-                          orderDate={String(v.createdAt)}
-                          productList={v.products}
-                        />
-                      );
-                    })}
-                  {isFindDeliveryState !== '전체 주문 처리 상태' &&
-                    myOrderProductDate.length > 0 &&
-                    myOrderProductDate.map((v, i) => {
-                      const orderDate = JSON.stringify(v);
-                      if (
-                        myOrderProductList[i] &&
-                        Object.keys(myOrderProductList[i]).length > 0
-                      ) {
-                        return (
-                          <OrderItem
-                            key={i}
-                            orderDate={orderDate.slice(1, 11)}
-                            productList={myOrderProductList[i]}
-                          />
-                        );
-                      }
-                      return null;
-                    })}
-                  {isFindDeliveryState === '전체 주문 처리 상태' &&
-                    filteredOrders.length === 0 && (
-                      <tr>
-                        <td className="h-28" colSpan={7}>
-                          주문 내역이 없습니다.
-                        </td>
-                      </tr>
-                    )}
-                  {isFindDeliveryState !== '전체 주문 처리 상태' &&
-                    myOrderProductDate.length === 0 && (
-                      <tr>
-                        <td className="h-28" colSpan={7}>
-                          주문 내역이 없습니다.
-                        </td>
-                      </tr>
-                    )}
+                  {orderList.length > 0 ? (
+                    orderList.map((order, i) => (
+                      <OrderItem
+                        key={i}
+                        orderDate={String(order.createdAt).slice(1, 11)}
+                        productList={order.products}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="h-28" colSpan={7}>
+                        주문 내역이 없습니다.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
