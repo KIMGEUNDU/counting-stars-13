@@ -23,7 +23,6 @@ function MyBoard() {
     setPageData,
     setPageNumber,
     combineData,
-    setCombineData,
     setAddCombineData,
   } = useData();
 
@@ -43,7 +42,7 @@ function MyBoard() {
           v.user?._id === userInfo?._id && v.extra?.type !== 'reviewComment'
       );
 
-      setCombineData(filterBoard);
+      filterBoard.forEach((v: Replies) => setAddCombineData(v));
     };
 
     // QNA 데이터 가지고오기
@@ -62,9 +61,26 @@ function MyBoard() {
       myQna.forEach((v: Replies) => setAddCombineData(v));
     };
 
+    // Notice 데이터 가지고오기
+    const getNotice = async () => {
+      const res = await axios.get('https://localhost/api/posts?type=notice', {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
+
+      const allNotice = res.data.item;
+      const myNotice = allNotice.filter(
+        (v: Replies) => v.user?._id === userInfo?._id
+      );
+
+      myNotice.forEach((v: Replies) => setAddCombineData(v));
+    };
+
     getReplies();
     getQna();
-  }, [setAddCombineData, userInfo?._id]);
+    getNotice();
+  }, []);
 
   useEffect(() => {
     if (combineData) {
@@ -78,11 +94,18 @@ function MyBoard() {
         }
       });
 
-      setAllData(sortCombineData);
-      setDataLength(sortCombineData.length);
+      const getUniqueObjects = (array: Replies[]) => {
+        const uniqueSet = new Set(array.map((obj) => JSON.stringify(obj)));
+        return Array.from(uniqueSet).map((strObj) => JSON.parse(strObj));
+      };
+
+      const uniqueObjects = getUniqueObjects(sortCombineData);
+
+      setAllData(uniqueObjects);
+      setDataLength(uniqueObjects.length);
       setPageNumber(1);
-      setPageData(sortCombineData.slice(0, 10));
-      setDataLengthPage(Math.ceil(sortCombineData.length / 10));
+      setPageData(uniqueObjects.slice(0, 10));
+      setDataLengthPage(Math.ceil(uniqueObjects.length / 10));
     }
   }, [combineData]);
 
@@ -114,14 +137,24 @@ function MyBoard() {
         <PageMainTitle title="나의 게시물" />
         <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">
-            <Thead info="상품 정보" score="평점" />
+            {userInfo?.type !== 'admin' && (
+              <Thead info="상품 정보" score="평점" />
+            )}
+            {userInfo?.type === 'admin' && <Thead />}
             <tbody className="text-center">
-              {allData &&
+              {userInfo?.type !== 'admin' &&
+                allData &&
                 pageData &&
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={(v as Replies).extra?.type ? 'REVIEW' : 'QNA'}
+                    tag={
+                      (v as Replies).extra?.type
+                        ? 'REVIEW'
+                        : (v as Replies).type === 'notice'
+                        ? 'NOTICE'
+                        : 'QNA'
+                    }
                     title={
                       (v as Replies).extra?.title
                         ? (v as Replies).extra?.title
@@ -153,8 +186,39 @@ function MyBoard() {
                     }
                   />
                 ))}
+              {userInfo?.type === 'admin' &&
+                allData &&
+                pageData &&
+                pageData.map((v, i) => (
+                  <EachPost
+                    key={i}
+                    tag={
+                      (v as Replies).extra?.type
+                        ? 'REVIEW'
+                        : (v as Replies).type === 'notice'
+                        ? 'NOTICE'
+                        : 'QNA'
+                    }
+                    title={
+                      (v as Replies).extra?.title
+                        ? (v as Replies).extra?.title
+                        : (v as Replies).title
+                    }
+                    writer={userInfo?.name}
+                    date={(v as Replies).createdAt?.split(' ')[0]}
+                    link={`/qnaNotice/${v._id}`}
+                    attachFile={
+                      (v as Replies).extra?.attachFile
+                        ? (v as Replies).extra?.attachFile
+                        : ''
+                    }
+                  />
+                ))}
             </tbody>
           </table>
+          {allData && allData.length === 0 && (
+            <p className="text-center py-5">게시물이 존재하지않습니다</p>
+          )}
           <PaginationNumber length={allData ? dataLengthPage : 1} />
         </section>
       </main>

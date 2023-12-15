@@ -2,6 +2,7 @@ import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 import axios from 'axios';
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 interface DetailButton {
   btn1: string;
@@ -29,6 +30,14 @@ function DetailButton({
   // 로그인유저정보
   const { userInfo, setUserInfo } = useUserInfo();
 
+  // 게시글 삭제이벤트
+  const handleDelete = () => {
+    toast('리뷰데이터는 api에서 삭제해주세요', {
+      icon: '😭',
+      duration: 2000,
+    });
+  };
+
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
@@ -53,9 +62,11 @@ function DetailButton({
       </button>
       {userInfo && userInfo._id === writer && (
         <div className="flex gap-3">
-          <button type="button" className={`${style}`} onClick={onClick2}>
-            {btn2}
-          </button>
+          {btn2 && (
+            <button type="button" className={`${style}`} onClick={onClick2}>
+              {btn2}
+            </button>
+          )}
           <button
             type="button"
             className={`${style} bg-starBlack text-white`}
@@ -65,6 +76,21 @@ function DetailButton({
           </button>
         </div>
       )}
+      {userInfo &&
+        userInfo.type === 'admin' &&
+        !location.href.includes('Notice') && (
+          <div className="flex gap-3">
+            {btn3 && (
+              <button
+                type="button"
+                className={`${style} bg-starBlack text-white`}
+                onClick={onClick2 ? onClick2 : handleDelete}
+              >
+                삭제
+              </button>
+            )}
+          </div>
+        )}
     </div>
   );
 }

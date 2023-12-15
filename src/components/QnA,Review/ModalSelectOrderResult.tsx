@@ -50,7 +50,9 @@ function ModalSelectOrderResult({
       </td>
       <td className="flex flex-col h-20 py-2 justify-center">
         <span>{title}</span>
-        <span className="font-semibold text-amber-900">{price}원</span>
+        <span className="font-semibold text-amber-900">
+          {price.toLocaleString()}원
+        </span>
       </td>
       <td className="">{date}</td>
       <td className="text-center py-2">

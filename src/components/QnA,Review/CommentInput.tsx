@@ -14,7 +14,8 @@ function CommentInput({
   writer: string;
   collection: string;
 }) {
-  const { qnaComment, setComment, setQnaComment } = useComment();
+  const { qnaComment, reviewComment, setReviewComment, setQnaComment } =
+    useComment();
   const { userInfo } = useUserInfo();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { id } = useParams();
@@ -25,18 +26,27 @@ function CommentInput({
 
     if (commentRef.current && commentRef.current.value) {
       const commentData = {
-        rating: 1,
-        product_id: 1,
+        _id: reviewComment.length + 1,
+        user: {
+          _id: userInfo!._id,
+          name: userInfo!.name,
+        },
         content: commentRef.current.value,
+        createdAt: writeDate(),
+        updatedAt: writeDate(),
         extra: {
-          type: 'reviewComment',
           boardId: Number(id),
         },
       };
 
       const response = await axios.post(
-        'https://localhost/api/replies/',
-        commentData,
+        'https://localhost/api/posts/7/replies',
+        {
+          content: commentRef.current.value,
+          extra: {
+            boardId: Number(id),
+          },
+        },
         {
           headers: {
             Authorization: `Bearer ${AUTH_TOKEN()}`,
@@ -47,7 +57,7 @@ function CommentInput({
       commentRef.current.value = '';
 
       if (response.data.ok === 1) {
-        setComment(commentData);
+        setReviewComment(commentData);
 
         toast('업로드하였습니다 :)', {
           icon: '⭐',
@@ -106,11 +116,13 @@ function CommentInput({
 
   return (
     <form
-      className="center border border-gray-300 p-3 bg-gray-50 text-sm flex flex-col gap-3 my-7"
+      className="center border border-gray-300 p-3 bg-amber-50 text-sm flex flex-col gap-3 my-7"
       onSubmit={collection === 'qna' ? uploadQnaComment : uploadReviewComment}
     >
-      <h3 className="font-semibold">댓글달기</h3>
-      <div className="font-semibold">⭐ {writer}</div>
+      <h3 className="font-semibold">댓글 달기</h3>
+      <div className="font-semibold">
+        {writer === '무지' ? '⭐ 별해달' : `🦦${writer}`}
+      </div>
       <fieldset className="flex">
         <label htmlFor="comment" className="hidden">
           댓글입력창

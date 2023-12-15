@@ -3,11 +3,19 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useData } from '@/store/useData';
 
 export default function MyShopping() {
   const memberGrade = '일반 회원';
   const [name, setName] = useState<string>();
+  const navigate = useNavigate();
+  const { setCombineData } = useData();
+
+  const moveMyBoard = () => {
+    navigate('/myBoard');
+    setCombineData([]);
+  };
 
   useEffect(() => {
     async function getUserName() {
@@ -107,7 +115,11 @@ export default function MyShopping() {
                 {name} 님께서 찜한 상품의 목록입니다.
               </p>
             </Link>
-            <Link to="/myBoard" className="block w-1/4 border h-72 px-5">
+            <button
+              type="button"
+              onClick={moveMyBoard}
+              className="block w-1/4 border h-72 px-5"
+            >
               <img
                 src="/myShoppingBoard.png"
                 className="m-auto w-10 mt-12 mb-5"
@@ -118,7 +130,7 @@ export default function MyShopping() {
               <p className="mt-4 text-gray-400">
                 {name} 님께서 작성하신 게시물을 관리하는 공간입니다.
               </p>
-            </Link>
+            </button>
           </section>
         </div>
       </main>

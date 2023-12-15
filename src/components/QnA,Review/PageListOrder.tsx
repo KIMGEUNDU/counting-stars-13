@@ -9,18 +9,18 @@ interface PageListOrder {
 }
 
 function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
-  const { setDeleteComment, setDeleteQnaComment } = useComment();
+  const { setDeleteReviewComment, setDeleteQnaComment } = useComment();
   const navigate = useNavigate();
 
   const moveNextData = () => {
-    setDeleteComment([]);
+    setDeleteReviewComment([]);
     setDeleteQnaComment([]);
 
     navigate(nextLink);
   };
 
   const movePrevData = () => {
-    setDeleteComment([]);
+    setDeleteReviewComment([]);
     setDeleteQnaComment([]);
 
     navigate(prevLink);

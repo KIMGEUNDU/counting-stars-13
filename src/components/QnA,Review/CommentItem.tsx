@@ -15,12 +15,14 @@ function CommentItem({
   commentId,
   status,
   setStatus,
+  type,
 }: Replies & {
   onDelete?: () => void;
   status?: boolean | undefined;
   setStatus?: (status: boolean) => void;
   writerId?: number;
   commentId?: number;
+  type?: string;
 }) {
   const [edit, setEdit] = useState(true);
   const { userInfo } = useUserInfo();
@@ -40,7 +42,9 @@ function CommentItem({
   // 댓글 수정 이벤트
   const handleEditCompleteComment = async () => {
     const res = await axios.patch(
-      `https://localhost/api/posts/${id}/replies/${commentId}`,
+      `https://localhost/api/posts/${
+        type === 'review' ? 7 : id
+      }/replies/${commentId}`,
       { content: inputContent },
       {
         headers: {
@@ -74,6 +78,13 @@ function CommentItem({
             <button type="button" onClick={handleEditComment}>
               <img className="w-4" src="/editIcon.png" alt="댓글 수정" />
             </button>
+            <button type="button" onClick={onDelete}>
+              <img className="w-5" src="/deleteIcon.png" alt="댓글 삭제" />
+            </button>
+          </div>
+        )}
+        {userInfo?.type === 'admin' && writerId !== userInfo?._id && edit && (
+          <div className="flex gap-2">
             <button type="button" onClick={onDelete}>
               <img className="w-5" src="/deleteIcon.png" alt="댓글 삭제" />
             </button>

@@ -18,6 +18,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setPageNumber,
     pageNumber,
     setSelectId,
+    setSelectData,
   } = useData();
 
   useEffect(() => {
@@ -29,6 +30,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
       setDataLengthPage(Math.ceil(res.data.item.length / 10));
       setPageNumber(1);
       setSelectId(null);
+      setSelectData(null);
     };
 
     getProducts();
