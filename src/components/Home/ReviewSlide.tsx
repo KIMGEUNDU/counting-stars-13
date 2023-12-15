@@ -8,8 +8,11 @@ import MainTitle from '../MainTitle';
 import ReviewItem from './ReviewItem';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 export default function ReviewSlide() {
+  const [replyData, setReplyData] = useState([]);
+
   const { data } = useQuery({
     queryKey: ['reply'],
     queryFn: () => axios.get(`/replies/all`),
@@ -17,6 +20,10 @@ export default function ReviewSlide() {
     staleTime: 1000 * 2,
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    setReplyData(data?.filter((item: Review) => item.rating >= 4).slice(0, 10));
+  }, [data]);
 
   return (
     <div className="reviewSlide pb-32 m-auto">
@@ -29,8 +36,8 @@ export default function ReviewSlide() {
         autoplay={{ delay: 4000 }}
         className="w-2/3 s:w-11/12 flex justify-center"
       >
-        {data &&
-          data.map((item: Review) => (
+        {replyData &&
+          replyData.map((item: Review) => (
             <SwiperSlide key={item._id}>
               <ReviewItem
                 link={item._id}
