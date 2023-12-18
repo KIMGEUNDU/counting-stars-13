@@ -1,5 +1,4 @@
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import PageMainTitle from 'components/PageMainTitle';
 import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { phoneNumber } from '@/components/EditMember/phoneNumber';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 
 import debounce from '@/utils/debounce';
+import axiosInstance from '@/utils/axiosInstance';
 
 export default function EditMember() {
   //회원정보조회 정보
@@ -40,14 +40,7 @@ export default function EditMember() {
 
   const handleGetUserInfo = async () => {
     try {
-      const response = await axios.get(
-        `https://localhost/api/users/${AUTH_ID()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.get(`/users/${AUTH_ID()}`);
       const item = response.data.item;
       setEditMemberInfo(item);
 
@@ -186,14 +179,9 @@ export default function EditMember() {
     try {
       e.preventDefault();
 
-      const response = await axios.patch(
-        `https://localhost/api/users/${AUTH_ID()}`,
-        editMemberInfo,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
+      const response = await axiosInstance.patch(
+        `/users/${AUTH_ID()}`,
+        editMemberInfo
       );
       const item = response.data.item;
       setEditMemberInfo(item);

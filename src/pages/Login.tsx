@@ -1,7 +1,6 @@
 import debounce from './../utils/debounce';
 import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { emailReg } from '@/utils/loginReg';
 import { useLoginInfo } from '@/store/useLogin';
@@ -9,6 +8,7 @@ import { useUserInfo } from '@/store/useUserInfo';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
@@ -49,10 +49,7 @@ export default function Login() {
       });
     }
     try {
-      const response = await axios.post(
-        'https://localhost/api/users/login',
-        isLoginInfo
-      );
+      const response = await axiosBase.post('/users/login', isLoginInfo);
 
       const responseItem = response.data.item;
 
