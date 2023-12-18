@@ -1,8 +1,7 @@
 import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { writeDate } from '@/utils/writeDate';
-import axios from 'axios';
 import { FormEvent, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -39,20 +38,12 @@ function CommentInput({
         },
       };
 
-      const response = await axios.post(
-        'https://localhost/api/posts/7/replies',
-        {
-          content: commentRef.current.value,
-          extra: {
-            boardId: Number(id),
-          },
+      const response = await axiosInstance.post('/posts/7/replies', {
+        content: commentRef.current.value,
+        extra: {
+          boardId: Number(id),
         },
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      });
 
       commentRef.current.value = '';
 
@@ -86,20 +77,12 @@ function CommentInput({
         },
       };
 
-      const response = await axios.post(
-        `https://localhost/api/posts/${id}/replies`,
-        {
-          content: commentRef.current.value,
-          extra: {
-            boardId: Number(id),
-          },
+      const response = await axiosInstance.post(`/posts/${id}/replies`, {
+        content: commentRef.current.value,
+        extra: {
+          boardId: Number(id),
         },
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      });
 
       commentRef.current.value = '';
 

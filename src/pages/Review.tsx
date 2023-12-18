@@ -5,9 +5,8 @@ import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { dateSortQnaReviewData } from '@/utils/getProductsData';
-import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
@@ -40,11 +39,7 @@ export default function Review() {
   // 데이터 집어넣기
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/replies/all', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/replies/all');
 
       const sortReview = dateSortQnaReviewData(res.data.item);
       const filterReview = sortReview.filter(

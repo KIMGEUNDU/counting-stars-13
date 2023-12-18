@@ -6,8 +6,7 @@ import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -54,15 +53,7 @@ export default function EditQna() {
         },
       };
 
-      const response = await axios.patch(
-        `https://localhost/api/posts/${id}`,
-        editQna,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.patch(`/${id}`, editQna);
 
       if (response.data.ok === 1) {
         toast('수정되었습니다 :)', {
@@ -91,11 +82,7 @@ export default function EditQna() {
   // 데이터 가져오기
   useEffect(() => {
     const getCurrentQnaData = async () => {
-      const res = await axios.get(`https://localhost/api/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/posts/${id}`);
 
       const currentQna = res.data.item;
 

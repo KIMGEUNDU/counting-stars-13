@@ -1,6 +1,6 @@
 import { useData } from '@/store/useData';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import { axiosBase } from '@/utils/axiosInstance';
 import { useEffect } from 'react';
 
 function ProductSelect({
@@ -21,22 +21,17 @@ function ProductSelect({
 
   useEffect(() => {
     async function getData() {
-      const response = await axios.get(
-        `https://localhost/api/products/${selectId}`
-      );
+      const response = await axiosBase.get(`/products/${selectId}`);
 
       setSelectData(response.data.item);
     }
 
     async function getOrderData() {
-      const response = await axios.get(
-        `https://localhost/api/products/${selectOrderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosBase.get(`/products/${selectOrderId}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
 
       setSelectData(response.data.item);
     }

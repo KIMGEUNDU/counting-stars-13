@@ -1,12 +1,12 @@
 import { useForm } from '@/store/useForm';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import axiosInstance, { axiosBase } from '@/utils/axiosInstance';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import '@toast-ui/editor/dist/i18n/ko-kr';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import 'tui-color-picker/dist/tui-color-picker.css';
@@ -38,11 +38,7 @@ function FormCkEditor({ type }: { type?: string }) {
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
 
       setUserInfo(res.data.item);
     }
@@ -79,7 +75,7 @@ function FormCkEditor({ type }: { type?: string }) {
                 ? '마크다운 문법으로 작성해주세요 : )'
                 : location.href.includes('review')
                 ? '⚠️ 리뷰 작성 후 수정 및 삭제가 불가능합니다'
-                : '내용을 적어주세요 : )'
+                : '내용을 적어주세요 ☺️'
             }
             initialValue=" "
             height="600px"
@@ -100,14 +96,12 @@ function FormCkEditor({ type }: { type?: string }) {
                     const formData = new FormData();
                     formData.append('attach', blob);
 
-                    const res = await axios.post(
-                      `https://localhost/api/files`,
-                      formData
-                    );
+                    const res = await axiosBase.post(`/files`, formData);
 
                     const imageName = res.data.file.name;
                     const imagePath = res.data.file.path;
-                    const imageUrl = `https://localhost/api/${imagePath}`;
+
+                    const imageUrl = `https://snack-for-your-pet-counting-stars.koyeb.app/api/${imagePath}`;
 
                     callback(imageUrl, imageName);
                     setAttachFile(imageUrl);
@@ -140,14 +134,12 @@ function FormCkEditor({ type }: { type?: string }) {
                     const formData = new FormData();
                     formData.append('attach', blob);
 
-                    const res = await axios.post(
-                      `https://localhost/api/files`,
-                      formData
-                    );
+                    const res = await axiosBase.post(`/files`, formData);
 
                     const imageName = res.data.file.name;
                     const imagePath = res.data.file.path;
-                    const imageUrl = `https://localhost:443${imagePath}`;
+                    // TODO: 이건 확인해봐야함
+                    const imageUrl = `https://snack-for-your-pet-counting-stars.koyeb.app/${imagePath}`;
 
                     callback(imageUrl, imageName);
                     setAttachFile(imageUrl);

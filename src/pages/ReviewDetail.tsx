@@ -8,9 +8,9 @@ import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { sortQnaReviewData } from '@/utils/getProductsData';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -43,14 +43,7 @@ function ReviewDetail() {
     const result = confirm('삭제하시겠습니까?');
 
     if (result) {
-      const res = await axios.delete(
-        `https://localhost/api/posts/7/replies/${commentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const res = await axiosInstance.delete(`/posts/7/replies/${commentId}`);
 
       if (res.data.ok === 1) {
         toast('삭제하였습니다 :)', {
@@ -67,11 +60,7 @@ function ReviewDetail() {
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
 
       setUserInfo(res.data.item);
     }
@@ -84,22 +73,14 @@ function ReviewDetail() {
   useEffect(() => {
     // 현재 데이터
     const repliesCurrentData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/replies/${id}`);
 
       setCurrentData(res.data.item[0]);
     };
 
     // 전체 데이터
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/replies/all`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/replies/all`);
 
       const review = res.data.item;
       const filterReview = review.filter(
@@ -126,11 +107,7 @@ function ReviewDetail() {
   // 댓글 데이터
   useEffect(() => {
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/posts/7`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/posts/7`);
 
       const commentData = res.data.item.replies;
 

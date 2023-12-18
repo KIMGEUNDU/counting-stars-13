@@ -3,8 +3,7 @@ import FormCkEditor from '@/components/QnA,Review/FormCkEditor';
 import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import { useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -35,15 +34,7 @@ function WriteNotice() {
         },
       };
 
-      const response = await axios.post(
-        'https://localhost/api/posts',
-        newNotice,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.post('/posts', newNotice);
 
       if (response.data.ok === 1) {
         toast('업로드하였습니다 :)', {

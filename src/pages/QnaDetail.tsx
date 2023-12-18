@@ -9,9 +9,9 @@ import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
 import { useForm } from '@/store/useForm';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { sortQnaReviewData } from '@/utils/getProductsData';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -37,11 +37,7 @@ function QnaDetail() {
     const result = confirm('삭제하시겠습니까?');
 
     if (result) {
-      await axios.delete(`https://localhost/api/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      await axiosInstance.delete(`/posts/${id}`);
 
       toast('삭제되었습니다', {
         icon: '⭐',
@@ -57,13 +53,8 @@ function QnaDetail() {
     const result = confirm('삭제하시겠습니까?');
 
     if (result) {
-      const res = await axios.delete(
-        `https://localhost/api/posts/${id}/replies/${commentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
+      const res = await axiosInstance.delete(
+        `/posts/${id}/replies/${commentId}`
       );
 
       if (res.data.ok === 1) {
@@ -81,11 +72,7 @@ function QnaDetail() {
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
 
       setUserInfo(res.data.item);
     }
@@ -98,24 +85,16 @@ function QnaDetail() {
   useEffect(() => {
     // 현재 데이터
     const repliesCurrentData = async () => {
-      const res = await axios.get(`https://localhost/api/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/posts/${id}`);
 
       setCurrentData(res.data.item);
     };
 
     // 전체 데이터
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/posts?type=qna`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/posts?type=qna`);
 
-      const qna = res.data.item;
+      const qna = res.data.item.item;
       const currentQna = qna.filter((v: Replies) => v._id === Number(id));
       qna.forEach((v: Replies, i: number) => {
         if (v._id === Number(id)) {
@@ -136,11 +115,7 @@ function QnaDetail() {
   // 댓글 데이터
   useEffect(() => {
     const repliesData = async () => {
-      const res = await axios.get(`https://localhost/api/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/posts/${id}`);
 
       const commentData = res.data.item.replies;
 

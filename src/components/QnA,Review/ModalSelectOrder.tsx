@@ -1,9 +1,8 @@
+import { useData } from '@/store/useData';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect } from 'react';
 import PaginationNumber from '../PaginationNumber';
 import ModalSelectOrderResult from './ModalSelectOrderResult';
-import axios from 'axios';
-import { useData } from '@/store/useData';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
 
 function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
   const {
@@ -18,11 +17,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
   // 주문목록 조회
   useEffect(() => {
     async function getOrderData() {
-      const response = await axios.get(`https://localhost/api/orders`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const response = await axiosInstance.get(`/orders`);
 
       const productsArray = response.data.item.map(
         (v: UserOrderData) => v.products

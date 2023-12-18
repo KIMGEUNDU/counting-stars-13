@@ -6,8 +6,7 @@ import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -17,8 +16,15 @@ export default function WriteQna() {
   const navigate = useNavigate();
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { content, attachFile } = useForm();
-  const { modal, setModal, selectId, selectData, setAllData, setPageData } =
-    useData();
+  const {
+    modal,
+    setModal,
+    selectId,
+    selectData,
+    setAllData,
+    setPageData,
+    setDataLength,
+  } = useData();
 
   // Qna 등록하기 (Axios)
   const handleRegistQna = async (e: React.FormEvent) => {
@@ -47,15 +53,7 @@ export default function WriteQna() {
         },
       };
 
-      const response = await axios.post(
-        'https://localhost/api/posts/',
-        newQna,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.post('/posts', newQna);
 
       if (response.data.ok === 1) {
         toast('업로드하였습니다 :)', {
@@ -85,6 +83,7 @@ export default function WriteQna() {
   useEffect(() => {
     setAllData([]);
     setPageData([]);
+    setDataLength(0);
   }, []);
 
   return (

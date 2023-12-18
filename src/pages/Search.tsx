@@ -3,7 +3,7 @@ import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import ProductItem from '@/components/Shop/ProductItem';
 import { useData } from '@/store/useData';
-import axios from 'axios';
+import { axiosBase } from '@/utils/axiosInstance';
 import { FormEvent, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -27,7 +27,7 @@ export default function Search() {
     e.preventDefault();
 
     async function getData() {
-      const getData = await axios.get('https://localhost/api/products');
+      const getData = await axiosBase.get('/products');
       const allData = getData?.data.item;
       const result = allData.filter(
         (v: Data) =>
@@ -55,7 +55,7 @@ export default function Search() {
   // 데이터 가져오기
   useEffect(() => {
     const getProducts = async () => {
-      const res = await axios.get(`https://localhost/api/products`);
+      const res = await axiosBase.get(`/products`);
 
       if (res.data.ok === 1) {
         setAllData(res.data.item);

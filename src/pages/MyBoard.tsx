@@ -5,9 +5,9 @@ import PaginationNumber from '@/components/PaginationNumber';
 import Thead from '@/components/QnA,Review/Thead';
 import { useData } from '@/store/useData';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { sortQnaReviewData } from '@/utils/getProductsData';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -29,11 +29,7 @@ function MyBoard() {
   useEffect(() => {
     // 리뷰데이터 가지고오기
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/replies/all', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/replies/all');
 
       const sortBoard = sortQnaReviewData(res.data.item);
 
@@ -47,11 +43,7 @@ function MyBoard() {
 
     // QNA 데이터 가지고오기
     const getQna = async () => {
-      const res = await axios.get('https://localhost/api/posts?type=qna', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/posts?type=qna');
 
       const allQna = res.data.item;
       const myQna = allQna.filter(
@@ -63,11 +55,7 @@ function MyBoard() {
 
     // Notice 데이터 가지고오기
     const getNotice = async () => {
-      const res = await axios.get('https://localhost/api/posts?type=notice', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/posts?type=notice');
 
       const allNotice = res.data.item;
       const myNotice = allNotice.filter(
@@ -112,11 +100,7 @@ function MyBoard() {
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
 
       setUserInfo(res.data.item);
     }
