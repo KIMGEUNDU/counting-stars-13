@@ -6,8 +6,7 @@ import ProductSelect from '@/components/QnA,Review/ProductSelect';
 import WriteButton from '@/components/QnA,Review/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -56,15 +55,7 @@ export default function WriteReview() {
         },
       };
 
-      const response = await axios.post(
-        'https://localhost/api/replies',
-        newReview,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.post('/replies', newReview);
 
       if (response.data.ok === 1) {
         toast('업로드하였습니다 :)', {

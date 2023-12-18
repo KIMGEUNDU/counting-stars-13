@@ -1,5 +1,5 @@
 import { useData } from '@/store/useData';
-import axios from 'axios';
+import { axiosBase } from '@/utils/axiosInstance';
 import { useEffect } from 'react';
 import PaginationNumber from '../PaginationNumber';
 import ModalSearch from './ModalSearch';
@@ -23,7 +23,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
 
   useEffect(() => {
     const getProducts = async () => {
-      const res = await axios.get(`https://localhost/api/products`);
+      const res = await axiosBase.get(`/products`);
       setAllData(res.data.item);
       setDataLength(res.data.item.length);
       setPageData(res.data.item.slice(0, 10));
@@ -49,7 +49,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
           </button>
         </div>
         <ModalSearch />
-        {allData && (
+        {dataLength !== 0 && allData && (
           <p className="px-10 pb-2">
             총
             <span className="font-bold text-amber-900 pl-1">{dataLength}</span>

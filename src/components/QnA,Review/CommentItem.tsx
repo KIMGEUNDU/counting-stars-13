@@ -1,7 +1,6 @@
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { setAnonymousName } from '@/utils/setAnonymousName';
-import axios from 'axios';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -41,16 +40,9 @@ function CommentItem({
 
   // 댓글 수정 이벤트
   const handleEditCompleteComment = async () => {
-    const res = await axios.patch(
-      `https://localhost/api/posts/${
-        type === 'review' ? 7 : id
-      }/replies/${commentId}`,
-      { content: inputContent },
-      {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      }
+    const res = await axiosInstance.patch(
+      `/posts/${type === 'review' ? 7 : id}/replies/${commentId}`,
+      { content: inputContent }
     );
 
     if (res.data.ok === 1) {

@@ -1,6 +1,5 @@
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { sortQnaReviewData } from '@/utils/getProductsData';
-import axios from 'axios';
 import EachPost from 'components/EachPost';
 import { useEffect, useState } from 'react';
 
@@ -10,13 +9,9 @@ export default function Notice({ collection }: { collection: string }) {
   // 공지 데이터
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/posts?type=notice', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/posts?type=notice');
 
-      const sortNotice = sortQnaReviewData(res.data.item);
+      const sortNotice = sortQnaReviewData(res.data.item.item);
 
       setNotice(sortNotice);
     };

@@ -5,10 +5,9 @@ import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
 import { dateSortQnaReviewData } from '@/utils/getProductsData';
 import { setAnonymousName } from '@/utils/setAnonymousName';
-import axios from 'axios';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
@@ -40,13 +39,9 @@ export default function Qna() {
 
   useEffect(() => {
     const getReplies = async () => {
-      const res = await axios.get('https://localhost/api/posts?type=qna', {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get('/posts?type=qna');
 
-      const sortQna = dateSortQnaReviewData(res.data.item);
+      const sortQna = dateSortQnaReviewData(res.data.item.item);
 
       setAllData(sortQna);
       setDataLength(sortQna.length);

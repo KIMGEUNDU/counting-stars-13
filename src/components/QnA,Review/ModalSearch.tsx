@@ -1,5 +1,5 @@
 import { useData } from '@/store/useData';
-import axios from 'axios';
+import { axiosBase } from '@/utils/axiosInstance';
 import { useRef } from 'react';
 
 function ModalSearch() {
@@ -8,7 +8,7 @@ function ModalSearch() {
 
   const handleSearch = () => {
     async function getData() {
-      const getData = await axios.get('https://localhost/api/products');
+      const getData = await axiosBase.get('/products');
       const allData = getData?.data.item;
       const result = allData.filter(
         (v: Data) =>
