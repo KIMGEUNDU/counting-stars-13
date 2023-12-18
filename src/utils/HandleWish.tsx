@@ -59,5 +59,5 @@ export const fetchFirstOption = async (id: number) => {
   });
   const item = await response.data.item;
 
-  return await item[0]?._id;
+  return await item.sort((a: Data, b: Data) => a._id - b._id)[0]?._id;
 };
