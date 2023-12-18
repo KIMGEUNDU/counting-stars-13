@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function OrderItemDetail({
   link,
+  num,
   img,
   name,
   number,
@@ -55,7 +56,7 @@ export default function OrderItemDetail({
         </Link>
       </div>
       <div className="w-[40.5%]">
-        <Link to={`/MyOrderDetail`}>
+        <Link to={`/MyOrderDetail/${num}`}>
           <span>{name}</span>
         </Link>
       </div>

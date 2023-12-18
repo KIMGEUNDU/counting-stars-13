@@ -1,9 +1,11 @@
 import OrderItemDetail from './OrderItemDetail';
 
 export default function OrderItem({
+  num,
   orderDate,
   productList,
 }: {
+  num: number;
   orderDate: string;
   productList: object;
 }) {
@@ -23,6 +25,7 @@ export default function OrderItem({
           <div key={i} className="flex items-center">
             <OrderItemDetail
               key={i}
+              num={num}
               link={item._id ? item._id : ''}
               img={item.image}
               name={item.name}
