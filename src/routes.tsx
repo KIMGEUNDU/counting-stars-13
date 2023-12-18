@@ -62,7 +62,7 @@ const router = createHashRouter(
       <Route path="myCart" element={<MyCart />} />
       <Route path="myShopping" element={<MyShopping />} />
       <Route path="myOrder" element={<MyOrder />} />
-      <Route path="myOrderDetail" element={<MyOrderDetail />} />
+      <Route path="myOrderDetail/:id" element={<MyOrderDetail />} />
       <Route path="wish" element={<Wish />} />
       <Route path="order" element={<Order />} />
       <Route path="myBoard" element={<MyBoard />} />

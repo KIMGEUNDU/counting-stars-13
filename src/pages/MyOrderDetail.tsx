@@ -1,10 +1,31 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
+import axiosInstance from '@/utils/axiosInstance';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function MyOrderDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [orderInfo, setOrderInfo] = useState<UserOrderData>({});
+  const orderProductList = orderInfo.products;
+  console.log(orderInfo);
+
+  useEffect(() => {
+    const handleGetOrderInfo = async () => {
+      try {
+        const response = await axiosInstance.get(`/orders`);
+
+        setOrderInfo(response.data.item[id as string]);
+      } catch (e) {
+        console.log('에러');
+      }
+    };
+    handleGetOrderInfo();
+  }, []);
+
   const handleGoBack = () => {
     navigate(-1); // 바로 이전 페이지로 이동, '/main' 등 직접 지정도 당연히 가능
   };
@@ -21,188 +42,80 @@ export default function MyOrderDetail() {
         <div className="w-4/5 mx-auto mb-28">
           <section className="my-10 ">
             <div>
-              <h3 className="text-base border-t bg-gray-100 font-bold py-2 block border-b-2 px-6">
-                주문 상품 ()
+              <h3 className=" border-t bg-gray-100 font-bold py-1 block border-b px-4">
+                주문 상품 ({orderProductList?.length})
               </h3>
               <table className="table-fixed text-center w-full">
                 <thead>
                   <tr className="bg-gray-50 h-10 w-full border-b text-sm">
-                    <th className="w-[20%]">이미지</th>
-                    <th className="w-[30%]">상품 정보</th>
-                    <th className="w-[20%]">판매가</th>
-                    <th className="w-[10%]">수량</th>
-                    <th className="w-[20%]">합계</th>
+                    <th className="w-1/12">번호</th>
+                    <th className="w-2/12">이미지</th>
+                    <th className="w-4/12">상품 정보</th>
+                    <th className="w-2/12">판매가</th>
+                    <th className="w-2/12">수량</th>
+                    <th className="w-2/12">합계</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {cartData &&
-                    cartData.map((item: CartItem) => {
+                  {orderProductList &&
+                    orderProductList.map((item, i) => {
                       return (
-                        <tr className="h-28 border-b" key={item._id}>
-                          <td>
-                            <label htmlFor="cartCheck">
-                              <input
-                                id="cartCheck"
-                                type="checkbox"
-                                checked={
-                                  checkControl ||
-                                  checkProduct.includes(item._id)
-                                }
-                                className="w-5 h-5 cursor-pointer"
-                                onChange={(e) =>
-                                  handleCheckProduct(e, item._id)
-                                }
-                              />
-                            </label>
-                          </td>
+                        <tr className=" border-b" key={i}>
+                          <td className="text-sm font-medium">{++i}</td>
                           <td className="p-2">
-                            <Link
-                              to={`/detail/${
-                                item.product.extra.parent
-                                  ? item.product.extra.parent
-                                  : item.product_id
-                              }`}
-                            >
-                              <img src={item.product.image} />
+                            <Link to={`/detail/${item._id}`}>
+                              <img src={item.image} className="h-24 mx-auto" />
                             </Link>
                           </td>
                           <td>
-                            <Link
-                              to={`/detail/${
-                                item.product.extra.parent
-                                  ? item.product.extra.parent
-                                  : item.product_id
-                              }`}
-                            >
-                              {item.product.name}
-                              {item.product.option && (
-                                <>
-                                  <br />
-                                  <span className="text-sm">
-                                    - {item.product.option} -
-                                  </span>
-                                </>
-                              )}
-                            </Link>
+                            <Link to={`/detail/${item._id}`}>{item.name}</Link>
                           </td>
+                          <td className="font-semibold">
+                            {item.price.toLocaleString()}원
+                          </td>
+                          <td className="font-semibold">{item.quantity}</td>
                           <td className="font-bold">
-                            {item.product.price.toLocaleString()}원
-                          </td>
-                          <td className="pr-3">
-                            <div className="flex border-2 h-9 rounded-lg justify-around mb-2">
-                              <input
-                                type="text"
-                                className="w-3/4 pl-2"
-                                value={quantity[item._id] || 0}
-                                onChange={(e) => handleInputChange(e, item._id)}
-                              />
-                              <div className="flex flex-col gap-2 justify-center">
-                                <button
-                                  type="button"
-                                  onClick={() => handleUpClick(`${item._id}`)}
-                                >
-                                  <img src="/cartArrowUp.png" className="w-3" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDownClick(`${item._id}`)}
-                                >
-                                  <img
-                                    src="/cartArrowDown.png"
-                                    className="w-3"
-                                  />
-                                </button>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              className="w-full text-sm border-gray-300 border-2 rounded-sm"
-                              onClick={() => handleChangeQuantity(item._id)}
-                            >
-                              변경
-                            </button>
-                          </td>
-                          <td className="font-bold">
-                            {(
-                              item.quantity * item.product.price
-                            ).toLocaleString()}
-                            원
-                          </td>
-                          <td className="h-28">
-                            <button
-                              type="button"
-                              className="my-1 w-[90%] h-1/5 text-sm bg-gray-700 rounded-sm border text-white"
-                              onClick={() => {
-                                handleEachOrder(item._id, item.product_id);
-                                navigate('/order');
-                              }}
-                            >
-                              주문하기
-                            </button>
-                            <button
-                              className="my-1 w-[90%] h-1/5 text-sm border-gray-300 border rounded-sm"
-                              onClick={
-                                item.product.extra.parent
-                                  ? () => putWish(item.product.extra.parent)
-                                  : () => putWish(item.product_id)
-                              }
-                            >
-                              찜하기
-                            </button>
-                            <button
-                              onClick={() => deleteEachProduct(item._id)}
-                              className="my-1 w-[90%] h-1/5 text-sm border-gray-300 border rounded-sm"
-                            >
-                              삭제
-                            </button>
+                            {(item.quantity * item.price).toLocaleString()}원
                           </td>
                         </tr>
                       );
-                    })} */}
+                    })}
 
-                  {/* {cartData.length === 0 && ( */}
                   <tr>
                     <td colSpan={7}>
                       <p className="my-10"></p>
                     </td>
                   </tr>
-                  {/* )} */}
                 </tbody>
               </table>
             </div>
-            <h3 className="text-base border-t bg-gray-100 font-bold py-1 block border-b-2 px-6">
-              주문 상품 ()
+            <h3 className="border-t bg-gray-100 font-bold py-1 block px-6">
+              주문 금액
             </h3>
             <table className="text-center w-full mb-10">
               <thead>
-                <tr className="bg-gray-50 h-16 font-bold text-sm border-t-2 border-b">
-                  <td className="w-1/4 ">총 상품 금액</td>
-                  <td className="w-1/4 ">총 배송비</td>
-                  <td className="w-1/2 ">결제 금액</td>
+                <tr className="bg-gray-50 h-16 font-bold text-sm border-t border-b">
+                  <td className="w-1/4">총 상품 금액</td>
+                  <td className="w-1/4">총 배송비</td>
+                  <td className="w-1/2">결제 금액</td>
                 </tr>
               </thead>
               <thead>
                 <tr className="h-24 font-extrabold border-b-2">
                   <td className="font-bold">
-                    <span className="text-2xl">
-                      {/* {cartData
-                        .reduce((acc, cur) => {
-                          return acc + cur.product.price * cur.quantity;
-                        }, 0)
-                        .toLocaleString()} */}
+                    <span className="text-xl">
+                      {orderInfo.cost?.products.toLocaleString()}
                     </span>
                     원
                   </td>
                   <td className="font-bold">
-                    <span className="text-2xl"></span>원
+                    <span className="text-xl">
+                      {orderInfo.cost?.shippingFees.toLocaleString()}
+                    </span>
+                    원
                   </td>
                   <td className="font-bold text-2xl text-starRed">
-                    {/* {cartData
-                      .reduce((acc, cur) => {
-                        return acc + cur.product.price * cur.quantity;
-                      }, 0)
-                      .toLocaleString()} */}
-                    원
+                    {orderInfo.cost?.total.toLocaleString()}원
                   </td>
                 </tr>
               </thead>

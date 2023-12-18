@@ -148,7 +148,6 @@ export default function MyOrder() {
   };
 
   const orderList = getOrderList();
-
   return (
     <>
       <Helmet>
@@ -245,7 +244,8 @@ export default function MyOrder() {
                     orderList.map((order, i) => (
                       <OrderItem
                         key={i}
-                        orderDate={String(order.createdAt).slice(1, 11)}
+                        num={i}
+                        orderDate={String(order.createdAt).slice(0, 10)}
                         productList={order.products}
                       />
                     ))

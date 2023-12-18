@@ -9,9 +9,9 @@ import { Helmet } from 'react-helmet-async';
 import { useEffect, useRef, useState } from 'react';
 import { emailReg, phoneReg } from '@/utils/loginReg';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function Join() {
   const emailInput = useRef<HTMLInputElement>(null);
@@ -201,14 +201,10 @@ export default function Join() {
       });
     }
     try {
-      const response = await axios.post(
-        'https://localhost/api/users',
-        joinInfo
-      );
-      // const responseItem = response.data.item;
+      const response = await axiosBase.post('/users', joinInfo);
 
       if (response.data.ok === 1) {
-        navigate('/login');
+        navigate('/');
         toast(`회원가입이 완료 되었습니다.`, {
           icon: '🎉',
           duration: 2500,
