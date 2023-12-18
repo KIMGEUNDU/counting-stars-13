@@ -236,11 +236,11 @@ export default function Order() {
                               target="_blank"
                             >
                               {item.name}
-                              {item.option && (
+                              {item.extra.option && (
                                 <>
                                   <br />
                                   <span className="text-sm">
-                                    - {item.option} -
+                                    - {item.extra.option} -
                                   </span>
                                 </>
                               )}
