@@ -1,12 +1,11 @@
 import toast from 'react-hot-toast';
-import axiosInstance from '@/utils/axiosInstance';
+import axiosInstance, { axiosBase } from '@/utils/axiosInstance';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { putWish } from '@/utils/HandleWish';
-import axios from 'axios';
 
 const fetchData = async (id: number) => {
-  const response = await axios.get(`/products`, {
+  const response = await axiosBase.get(`/products`, {
     params: {
       custom: JSON.stringify({
         'extra.depth': 2,
@@ -38,9 +37,9 @@ function DetailProductSelect({
       try {
         const data = await fetchData(id);
         data.map((item: ProductData) => {
-          info[item.option] = item.price;
-          optionId[item.option] = item._id;
-          count[item.option] = 0;
+          info[item.extra.option] = item.price;
+          optionId[item.extra.option] = item._id;
+          count[item.extra.option] = 0;
         });
       } catch (error) {
         toast.error(`${error}가 발생했습니다. 잠시 후 시도해주세요.`);
