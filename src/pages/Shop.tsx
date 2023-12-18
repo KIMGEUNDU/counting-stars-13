@@ -2,17 +2,15 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import ProductItem from '@/components/Shop/ProductItem';
+import { axiosBase } from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 
-axios.defaults.baseURL = 'https://localhost/api';
-
 const fetchData = (id: string) => {
   if (id === 'all') {
-    const response = axios.get(`/products?`, {
+    const response = axiosBase.get(`/products?`, {
       params: {
         extra: JSON.stringify({
           'extra.category.0': `PC-shop`,
@@ -21,7 +19,7 @@ const fetchData = (id: string) => {
     });
     return response;
   } else {
-    const response = axios.get(`/products?`, {
+    const response = axiosBase.get(`/products?`, {
       params: {
         custom: JSON.stringify({
           'extra.category.1': `PC-${id}`,

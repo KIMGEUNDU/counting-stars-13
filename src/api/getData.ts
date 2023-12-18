@@ -1,12 +1,5 @@
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 
 export default async function getData(collection: string) {
-  await axios
-    .get(`https://localhost/api/${collection}`, {
-      headers: {
-        Authorization: `Bearer ${AUTH_TOKEN()}`,
-      },
-    })
-    .then((res) => res.data.item);
+  await axiosInstance.get(`/${collection}`).then((res) => res.data.item);
 }

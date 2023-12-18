@@ -2,9 +2,9 @@ import banner from '/eventBanner.png';
 import { Link } from 'react-router-dom';
 import MainTitle from '../MainTitle';
 import ProductItem from '../Shop/ProductItem';
-import axios from 'axios';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { axiosBase } from '@/utils/axiosInstance';
 
 function BestItem() {
   const [category, setCategory] = useState('party');
@@ -12,7 +12,7 @@ function BestItem() {
   const { data } = useQuery({
     queryKey: ['products', category],
     queryFn: () =>
-      axios.get(`/products?`, {
+      axiosBase.get(`/products?`, {
         params: {
           custom: JSON.stringify({
             'extra.category.0': `PC-shop`,

@@ -15,7 +15,7 @@ export default function MyCart() {
   const navigate = useNavigate();
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
-  const [checkControl, setCheckControl] = useState<boolean>(false);
+  const [checkControl, setCheckControl] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
   const { setProduct } = useOrderSet();
 
@@ -23,6 +23,7 @@ export default function MyCart() {
     async function getCartData() {
       const res = await axiosInstance.get(`/carts`);
       setCartData(res.data.item);
+      setCheckProduct(res.data.item.map((item: CartItem) => item._id));
     }
     getCartData();
   }, []);
@@ -253,11 +254,11 @@ export default function MyCart() {
                               }`}
                             >
                               {item.product.name}
-                              {item.product.option && (
+                              {item.product.extra.option && (
                                 <>
                                   <br />
                                   <span className="text-sm">
-                                    - {item.product.option} -
+                                    - {item.product.extra.option} -
                                   </span>
                                 </>
                               )}

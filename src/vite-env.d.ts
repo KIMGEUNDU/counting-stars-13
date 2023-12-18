@@ -78,12 +78,12 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string };
-  cost: { products: number; shippingFees: number; total: number };
-  createdAt: string;
-  products: OrderData[];
-  user_id: number;
-  _id: number;
+  address?: { name: string; value: string };
+  cost?: { products: number; shippingFees: number; total: number };
+  createdAt?: string;
+  products?: OrderData[];
+  user_id?: number;
+  _id?: number;
 }
 
 interface ProductData {
@@ -109,8 +109,8 @@ interface ProductData {
     isBest: boolean;
     category: string[];
     sort: number;
+    option: string;
   };
-  option: string;
 }
 
 interface Item {
@@ -145,6 +145,13 @@ interface CartItem {
   createdAt: Date;
   updatedAt: Date;
   product: Product;
+  extra: {
+    isNew: boolean;
+    isBest: boolean;
+    category: string[];
+    sort: number;
+    option: string;
+  };
 }
 
 interface Product {
@@ -160,6 +167,7 @@ interface Product {
 }
 
 interface Extra {
+  option: ReactNode;
   parent: number;
 }
 
@@ -226,6 +234,7 @@ interface Review {
 
 interface OrderItemDetail {
   link: string;
+  num?: number;
   img: string;
   name: string;
   number: number;
@@ -269,6 +278,7 @@ interface CommentData {
 interface OrderExtra {
   sort: number;
   parent: number;
+  option: string;
 }
 
 interface OrderProduct {
@@ -276,7 +286,6 @@ interface OrderProduct {
   quantity: number;
   seller_id: number;
   name: string;
-  option: string;
   image: string;
   price: number;
   extra: OrderExtra;
