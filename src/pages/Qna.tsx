@@ -41,7 +41,7 @@ export default function Qna() {
     const getReplies = async () => {
       const res = await axiosInstance.get('/posts?type=qna');
 
-      const sortQna = dateSortQnaReviewData(res.data.item.item);
+      const sortQna = dateSortQnaReviewData(res.data.item);
 
       setAllData(sortQna);
       setDataLength(sortQna.length);

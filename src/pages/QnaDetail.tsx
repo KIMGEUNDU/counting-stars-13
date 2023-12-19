@@ -94,7 +94,7 @@ function QnaDetail() {
     const repliesData = async () => {
       const res = await axiosInstance.get(`/posts?type=qna`);
 
-      const qna = res.data.item.item;
+      const qna = res.data.item;
       const currentQna = qna.filter((v: Replies) => v._id === Number(id));
       qna.forEach((v: Replies, i: number) => {
         if (v._id === Number(id)) {
