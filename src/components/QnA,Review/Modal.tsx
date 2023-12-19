@@ -1,7 +1,8 @@
 import { useData } from '@/store/useData';
 import { axiosBase } from '@/utils/axiosInstance';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import PaginationNumber from '../PaginationNumber';
+import QueryPagination from '../QueryPagination';
 import ModalSearch from './ModalSearch';
 import ModalSearchResult from './ModalSearchResult';
 
@@ -13,28 +14,28 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setDataLength,
     dataLengthPage,
     setDataLengthPage,
-    pageData,
-    setPageData,
-    setPageNumber,
     pageNumber,
     setSelectId,
     setSelectData,
+    currentPage,
   } = useData();
 
-  useEffect(() => {
-    const getProducts = async () => {
-      const res = await axiosBase.get(`/products`);
-      setAllData(res.data.item);
-      setDataLength(res.data.item.length);
-      setPageData(res.data.item.slice(0, 10));
-      setDataLengthPage(Math.ceil(res.data.item.length / 10));
-      setPageNumber(1);
-      setSelectId(null);
-      setSelectData(null);
-    };
+  const getProducts = (pageNum: number) => {
+    return axiosBase.get(`/products?page=${pageNum}&limit=10`);
+  };
 
-    getProducts();
-  }, [setAllData]);
+  const { isLoading, data } = useQuery({
+    queryKey: ['products', currentPage],
+    queryFn: () => getProducts(currentPage),
+  });
+
+  useEffect(() => {
+    setDataLength(data?.data.pagination.total);
+    setDataLengthPage(Math.ceil(data?.data.pagination.total / 10));
+    setAllData(data?.data.item);
+    setSelectId(null);
+    setSelectData(null);
+  }, [data?.data.item, setAllData]);
 
   return (
     <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
@@ -49,7 +50,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
           </button>
         </div>
         <ModalSearch />
-        {dataLength !== 0 && allData && (
+        {allData && (
           <p className="px-10 pb-2">
             총
             <span className="font-bold text-amber-900 pl-1">{dataLength}</span>
@@ -66,8 +67,7 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
           </thead>
           <tbody>
             {allData &&
-              pageData &&
-              pageData.map((v, i) => (
+              allData.map((v, i) => (
                 <ModalSearchResult
                   key={i}
                   src={(v as Data).detailImages[0]}
@@ -78,8 +78,11 @@ function Modal({ onClick }: Pick<ContainerTitle, 'onClick'>) {
               ))}
           </tbody>
         </table>
-        {pageNumber > 0 && (
-          <PaginationNumber length={allData ? dataLengthPage : 1} />
+        {isLoading && (
+          <p className="text-center pb-5">데이터를 불러오는 중입니다</p>
+        )}
+        {pageNumber > 0 && dataLengthPage > 0 && (
+          <QueryPagination length={allData ? dataLengthPage : 1} />
         )}
       </div>
     </div>
