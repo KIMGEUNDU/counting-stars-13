@@ -8,19 +8,22 @@ export default function OrderItemDetail({
   name,
   number,
   price,
-  deliveryStateNum,
+  orderState,
 }: OrderItemDetail) {
   const [isDeliveryState, setDeliveryState] = useState('');
 
   useEffect(() => {
-    setDeliveryState(deliveryStateNum);
-  }, []);
+    setDeliveryState(orderState);
+  }, [orderState]);
 
   useEffect(() => {
     function deliveryState() {
-      switch (deliveryStateNum) {
+      switch (orderState) {
         case 'OS010':
           setDeliveryState('주문 완료');
+          break;
+        case 'OS020':
+          setDeliveryState('결제 완료');
           break;
         case 'OS030':
           setDeliveryState('배송 준비 중');
@@ -46,7 +49,7 @@ export default function OrderItemDetail({
       }
     }
     deliveryState();
-  }, [deliveryStateNum]);
+  }, [orderState]);
 
   return (
     <>
