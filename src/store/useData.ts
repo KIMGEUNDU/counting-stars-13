@@ -35,6 +35,9 @@ interface useData {
   combineData: Replies[];
   setAddCombineData: (combineData: Replies) => void;
   setCombineData: (data: Replies[]) => void;
+  // useQuery 페이지네이션
+  currentPage: number;
+  setCurrentPage: (currentPage: number) => void;
 }
 
 export const useData = create<useData>((set) => ({
@@ -61,4 +64,6 @@ export const useData = create<useData>((set) => ({
   combineData: [],
   setAddCombineData: (combineData) => set((state) => ({ combineData: [...state.combineData, combineData] })),
   setCombineData: (combineData) => set({ combineData }),
+  currentPage: 1,
+  setCurrentPage: (currentPage) => set({ currentPage }),
 }));
