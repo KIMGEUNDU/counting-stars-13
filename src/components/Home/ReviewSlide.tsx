@@ -7,15 +7,15 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import MainTitle from '../MainTitle';
 import ReviewItem from './ReviewItem';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function ReviewSlide() {
   const [replyData, setReplyData] = useState([]);
 
   const { data } = useQuery({
     queryKey: ['reply'],
-    queryFn: () => axios.get(`/replies/all`),
+    queryFn: () => axiosBase.get(`/replies/all`),
     select: (data) => data.data.item,
     staleTime: 1000 * 2,
     refetchOnWindowFocus: false,
