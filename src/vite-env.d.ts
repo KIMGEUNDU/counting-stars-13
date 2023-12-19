@@ -78,7 +78,13 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address?: { name: string; value: string };
+  address?: {
+    name?: string;
+    value?: string;
+    address?: string;
+    addressDetail?: string;
+    zonecode?: string;
+  };
   cost?: { products: number; shippingFees: number; total: number };
   createdAt?: string;
   products?: OrderData[];
@@ -239,10 +245,10 @@ interface OrderItemDetail {
   name: string;
   number: number;
   price: number;
-  deliveryStateNum: string;
   _id?: string;
   quantity?: number;
   state?: string;
+  orderState: string;
 }
 
 interface CommentInput {
@@ -289,6 +295,7 @@ interface OrderProduct {
   image: string;
   price: number;
   extra: OrderExtra;
+  state: string;
 }
 
 interface Order {
