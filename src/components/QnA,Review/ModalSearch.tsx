@@ -1,36 +1,54 @@
 import { useData } from '@/store/useData';
 import { axiosBase } from '@/utils/axiosInstance';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
+import toast from 'react-hot-toast';
 
 function ModalSearch() {
-  const { setPageData, setPageNumber, setDataLength } = useData();
+  const { setAllData, setPageNumber, setDataLength } = useData();
   const searchRef = useRef<HTMLInputElement | null>(null);
 
+  const searchData = () => {
+    return axiosBase.get(
+      `/products?keyword=${searchRef.current && searchRef.current.value}`
+    );
+  };
+
+  const getProducts = () => {
+    return axiosBase.get(`/products`);
+  };
+
+  const { mutate: totalRefetch } = useMutation(getProducts, {
+    onMutate: () => {
+      toast('초기화중..', {
+        icon: '⭐',
+        duration: 5000,
+      });
+    },
+    onSuccess: (total) => {
+      setAllData(total?.data.item.slice(0, 10));
+      setDataLength(total?.data.item.length);
+      setPageNumber(1);
+    },
+  });
+
+  const { refetch } = useQuery({
+    queryKey: ['products'],
+    queryFn: searchData,
+    enabled: false,
+    onSuccess: (data) => {
+      setAllData(data?.data.item);
+      setDataLength(data?.data.item.length);
+      setPageNumber(0);
+    },
+  });
+
   const handleSearch = () => {
-    async function getData() {
-      const getData = await axiosBase.get('/products');
-      const allData = getData?.data.item;
-      const result = allData.filter(
-        (v: Data) =>
-          searchRef.current && v.name.includes(searchRef.current.value)
-      );
-
-      if (searchRef.current && searchRef.current.value === '') {
-        setPageNumber(1);
-        setPageData(allData.slice(0, 10));
-        setDataLength(allData.length);
-      } else if (result.length === 0) {
-        setPageData(result);
-        setPageNumber(0);
-        setDataLength(result.length);
-      } else {
-        setPageData(result);
-        setPageNumber(0);
-        setDataLength(result.length);
-      }
+    if (searchRef.current && searchRef.current.value === '') {
+      totalRefetch();
+    } else {
+      refetch();
     }
-
-    getData();
   };
 
   return (
