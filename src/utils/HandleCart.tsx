@@ -1,8 +1,13 @@
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import axiosInstance from './axiosInstance';
+import { AUTH_ID } from './AUTH_TOKEN';
 
 export const putCart = async (id: number, quantity: number) => {
+  if (!AUTH_ID()) {
+    toast.error('로그인이 필요한 서비스입니다.');
+    return;
+  }
+
   const cart = {
     product_id: id,
     quantity,
@@ -15,9 +20,7 @@ export const putCart = async (id: number, quantity: number) => {
       toast.success('장바구니에 담았습니다.');
     }
   } catch (error: unknown) {
-    if (axios.isAxiosError(error) && error.response?.request.status === 401) {
-      toast.error('로그인이 필요한 서비스입니다.');
-    }
+    toast.error(`${error}가 발생했습니다. 잠시 후 다시 시도해주세요.`);
   }
 };
 
