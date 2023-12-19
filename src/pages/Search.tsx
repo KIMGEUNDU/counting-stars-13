@@ -111,7 +111,7 @@ export default function Search() {
             {allData &&
               pageData &&
               pageData.map((v, i) => (
-                <li key={i} className="text-center">
+                <li key={i} className="text-center w-1/4">
                   <ProductItem
                     link={String(v._id)}
                     src={(v as Data).mainImages[0]}
@@ -120,6 +120,9 @@ export default function Search() {
                   />
                 </li>
               ))}
+            {dataLength === 0 && !allData && !pageData && (
+              <li>데이터를 불러오는 중입니다.</li>
+            )}
           </ul>
           {pageNumber > 0 && (
             <PaginationNumber length={allData ? dataLengthPage : 1} />
