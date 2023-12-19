@@ -8,7 +8,8 @@ import { useData } from '@/store/useData';
 export default function Header() {
   const { setLogin } = useLogin();
   const { setUserInfo } = useUserInfo();
-  const { setAllData, setPageData } = useData();
+  const { setAllData, setPageData, setDataLength, setDataLengthPage } =
+    useData();
   const navigate = useNavigate();
 
   const isLoginState = localStorage.getItem('id');
@@ -32,6 +33,8 @@ export default function Header() {
   const moveSearch = () => {
     setAllData([]);
     setPageData([]);
+    setDataLength(0);
+    setDataLengthPage(0);
 
     navigate('/search');
   };
