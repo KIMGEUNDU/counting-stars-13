@@ -1,8 +1,3 @@
-//TODO: phone input에 숫자만 찍히게
-//✔️TODO: 회원가입되면 토스트되게
-// ✔️TODO: 회원가입 전화번호 오류 중간자리(3~4자리) 끝자리(4자리)
-// ✔️TODO: phone input 4자리 적으면 다음으로 넘어가게
-
 import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';

@@ -5,42 +5,62 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDeliveryState } from '@/utils/useDeliveryState';
+import toast from 'react-hot-toast';
 
 export default function MyOrderDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
   const [orderInfo, setOrderInfo] = useState<UserOrderData>({});
+  const [orderUserName, setOrderUserName] = useState('');
+  const [orderState, setOrderState] = useState('');
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const deliveryState = useDeliveryState(orderState);
   const orderProductList = orderInfo.products;
-  console.log(orderInfo);
 
   useEffect(() => {
     const handleGetOrderInfo = async () => {
       try {
         const response = await axiosInstance.get(`/orders`);
-
-        setOrderInfo(response.data.item[id as string]);
-      } catch (e) {
-        console.log('에러');
+        const dataItem = response.data.item[id as string];
+        setOrderInfo(dataItem);
+        setOrderState(dataItem.state);
+      } catch (error) {
+        toast.error('주문 정보가 없습니다.');
       }
     };
     handleGetOrderInfo();
   }, []);
 
+  useEffect(() => {
+    const handleGetUserName = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/users/${orderInfo.user_id}/name`
+        );
+        setOrderUserName(response.data.item.name);
+      } catch (e) {
+        console.error('주문자 이름 정보가 없습니다.');
+      }
+    };
+    handleGetUserName();
+  }, [orderInfo.user_id]);
+
   const handleGoBack = () => {
     navigate(-1); // 바로 이전 페이지로 이동, '/main' 등 직접 지정도 당연히 가능
   };
+
   return (
     <>
       <Helmet>
-        <title>주문상세조회</title>
+        <title>주문 상세 조회</title>
       </Helmet>
 
       <main className="">
-        <PageMap route="주문조회" category="주문상세조회" />
-        <PageMainTitle title="주문상세조회" />
+        <PageMap route="주문 조회" category="주문 상세 조회" />
+        <PageMainTitle title="주문 상세 조회" />
 
         <div className="w-4/5 mx-auto mb-28">
-          <section className="my-10 ">
+          <section className="my-10">
             <div>
               <h3 className=" border-t bg-gray-100 font-bold py-1 block border-b px-4">
                 주문 상품 ({orderProductList?.length})
@@ -130,7 +150,7 @@ export default function MyOrderDetail() {
                   </td>
                   <td className="p-3">
                     <span className="" id="inputName">
-                      dd
+                      {orderUserName}
                     </span>
                   </td>
                 </tr>
@@ -155,7 +175,7 @@ export default function MyOrderDetail() {
 
                 <td className="p-3">
                   <span className="" id="inputName">
-                    dd
+                    {orderUserName}
                   </span>
                 </td>
               </tr>
@@ -183,8 +203,17 @@ export default function MyOrderDetail() {
                   <div className="mb-2"></div>
 
                   <div className="mb-2">
-                    <span>111-111</span>
-                    <span className="block">테헤란로 멋쟁이 사자처럼 2층</span>
+                    <span>
+                      {orderInfo.address?.zonecode
+                        ? orderInfo.address?.zonecode
+                        : orderInfo.address?.name}
+                    </span>
+                    <span className="block">
+                      {orderInfo.address?.address
+                        ? orderInfo.address?.address
+                        : orderInfo.address?.value}
+                      {orderInfo.address?.addressDetail}
+                    </span>
                   </div>
                   <div></div>
                 </td>
@@ -203,7 +232,7 @@ export default function MyOrderDetail() {
                   <label htmlFor="inputId">배송 상태</label>
                 </td>
                 <td className="p-3 ">
-                  <p className="text-starRed font-medium">배송중</p>
+                  <p className="text-starRed font-medium">{deliveryState}</p>
                 </td>
               </tr>
             </tbody>
