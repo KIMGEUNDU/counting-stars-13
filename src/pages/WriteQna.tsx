@@ -24,6 +24,7 @@ export default function WriteQna() {
     setAllData,
     setPageData,
     setDataLength,
+    setPageNumber,
   } = useData();
 
   // Qna 등록하기 (Axios)
@@ -84,6 +85,7 @@ export default function WriteQna() {
     setAllData([]);
     setPageData([]);
     setDataLength(0);
+    setPageNumber(1);
   }, []);
 
   return (
