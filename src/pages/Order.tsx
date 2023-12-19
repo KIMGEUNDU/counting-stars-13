@@ -12,13 +12,42 @@ import toast from 'react-hot-toast';
 import axiosInstance from '@/utils/axiosInstance';
 import { Link, useNavigate } from 'react-router-dom';
 import { useOrderSet } from '@/store/useOrderSet';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosResponse, AxiosError } from 'axios';
+
+interface OrderRes {
+  ok: 0 | 1;
+  item?: Product;
+  message?: string;
+}
+
+// interface OrderProduct {
+//   _id: number;
+//   quantity: number;
+//   state: string;
+// }
+
+interface OrderInfo {
+  products: OrderProduct[];
+  address: {
+    name: string;
+    value: string;
+  };
+  payment: object;
+}
+
+interface IamportRes {
+  success: boolean;
+  error_msg: string;
+  [attr: string]: string | boolean;
+}
 
 export default function Order() {
   const navigate = useNavigate();
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
-  const { orderUserInfo, setOrderUserInfo } = useOrderUserInfo();
+  const { orderUserInfo, setOrderUserInfo, isAddress } = useOrderUserInfo();
   const { order, removeProduct } = useOrderSet();
-  const [orderData, setOrderData] = useState([]);
+  const [orderData, setOrderData] = useState<OrderProduct[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
   const [checkControl, setCheckControl] = useState<boolean>(false);
@@ -124,43 +153,117 @@ export default function Order() {
     }
   };
 
-  const handlePayment = async () => {
+  function requestPay(): Promise<IamportRes> {
+    return new Promise((resolve, reject) => {
+      const { IMP } = window;
+      IMP.init('imp14397622');
+
+      const payInfo = {
+        pg: 'html5_inicis',
+        pay_method: 'card',
+        merchant_uid: `mid_${new Date().getTime()}`, // 주문 id
+        name:
+          orderData.length > 1
+            ? `${orderData[0]!.name} 외 ${orderData.length - 1}개`
+            : `${orderData[0]!.name}`,
+        amount: totalPrice,
+        buyer_name: orderUserInfo.name,
+        buyer_tel: orderUserInfo!.phone,
+        buyer_email: orderUserInfo!.email,
+        buyer_address: orderUserInfo!.address,
+      };
+
+      IMP.request_pay(payInfo, (res: IamportRes) => {
+        if (res.success) {
+          resolve(res);
+        } else {
+          const error = new Error(`결제 실패\n${res.error_msg}`);
+          error.name = 'checkout';
+          reject(error);
+        }
+      });
+    });
+  }
+
+  const createOrder = useMutation<
+    AxiosResponse<OrderRes>,
+    AxiosError<OrderRes>,
+    OrderInfo
+  >({
+    mutationFn: (order: OrderInfo) => {
+      return axiosInstance.post('/orders', order);
+    },
+    retry: false,
+    onSuccess: (res) => {
+      if (res?.data.item) {
+        toast.success('주문이 완료되었습니다❤');
+        navigate('/myOrder');
+      }
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || '주문 실패');
+    },
+  });
+
+  const handlePayment = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     if (!finalAgreement) {
       toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
       return;
     }
-    if (!orderUserInfo.address.address) {
+    if (!isAddress.address) {
       toast.error('주소를 입력해주세요.');
       return;
     }
 
-    const checkConfirm = confirm(
-      `당신은 당신의 반려견을 무척 사랑하며,\n앞으로도 좋은 간식 많이 먹이며 심히 예뻐할 것을 다짐합니까?`
-    );
+    try {
+      // 결제
+      const res = await requestPay();
 
-    if (checkConfirm) {
-      try {
-        const payOrder: payProduct = {
-          products: [],
-          address: { address: '', addressDetail: '', zonecode: '' },
-        };
-        payOrder.products = order.products;
-        payOrder.address = {
-          ...orderUserInfo.address,
-          address: orderUserInfo.address.addressDetail || '',
-          addressDetail: orderUserInfo.address.addressDetail || '',
-          zonecode: orderUserInfo.address.addressDetail || '',
-        };
-
-        const payComplete = await axiosInstance.post('/orders', payOrder);
-        if (payComplete.status === 200) {
-          toast.success('주문이 완료되었습니다❤');
-          navigate('/myOrder');
-        }
-      } catch (error) {
-        toast.error(`${error}가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+      createOrder.mutate({
+        products: orderData,
+        address: {
+          name: orderUserInfo.name,
+          value: isAddress.address,
+        },
+        payment: res,
+      });
+    } catch (err) {
+      console.log(err);
+      if (err instanceof Error && err.name === 'checkout') {
+        toast.error(err.message);
       }
     }
+
+    // const checkConfirm = confirm(
+    //   `당신은 당신의 반려견을 무척 사랑하며,\n앞으로도 좋은 간식 많이 먹이며 심히 예뻐할 것을 다짐합니까?`
+    // );
+
+    // if (checkConfirm) {
+    //   try {
+    //     const payOrder: payProduct = {
+    //       products: [],
+    //       address: { address: '', addressDetail: '', zonecode: '' },
+    //     };
+
+    //     payOrder.products = order.products;
+    //     payOrder.address = {
+    //       ...orderUserInfo.address,
+    //       address: isAddress.address || '',
+    //       addressDetail: isAddress.addressDetail || '',
+    //       zonecode: isAddress.zonecode || '',
+    //     };
+
+    //     const payComplete = await axiosInstance.post('/orders', payOrder);
+    //     if (payComplete.status === 200) {
+    //       toast.success('주문이 완료되었습니다❤');
+    //       navigate('/myOrder');
+    //     }
+    //   } catch (error) {
+    //     toast.error(`${error}가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+    //   }
+    // }
   };
 
   return (

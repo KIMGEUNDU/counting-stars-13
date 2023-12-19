@@ -15,6 +15,17 @@ function DetailProductOption({ data }: { data: ProductData }) {
     setQuantity((prevCount) => prevCount - 1);
   };
 
+  const getInventory = () => {
+    if (data?.options.item.length === 0) {
+      const inventory = data?.quantity - data?.buyQuantity;
+      return inventory;
+    }
+    if (data?.options.item.length > 0) {
+      const inventory = data?.quantity - data?.buyQuantity;
+      return inventory;
+    }
+  };
+
   if (data) {
     return (
       <section className="w-full text-left max-w-[500px] ml-auto">
@@ -34,9 +45,13 @@ function DetailProductOption({ data }: { data: ProductData }) {
               <th className="detailTableHead">배송</th>
               <td>국내 배송</td>
             </tr>
-            <tr className="pb-5">
+            <tr>
               <th className="detailTableHead">배송비</th>
               <td>0원</td>
+            </tr>
+            <tr className="pb-5">
+              <th className="detailTableHead">재고</th>
+              <td>{getInventory()}개</td>
             </tr>
           </tbody>
         </table>

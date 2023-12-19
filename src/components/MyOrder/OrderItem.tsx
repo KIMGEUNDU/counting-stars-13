@@ -4,13 +4,13 @@ export default function OrderItem({
   num,
   orderDate,
   productList,
+  orderState,
 }: {
   num: number;
   orderDate: string;
   productList: object;
+  orderState: string;
 }) {
-  // const { myOrderInfo, setMyOrderInfo } = useMyOrderInfo();
-
   orderDate = orderDate?.slice(0, 10);
 
   return (
@@ -31,7 +31,7 @@ export default function OrderItem({
               name={item.name}
               number={item.quantity ? item.quantity : 0}
               price={item.price}
-              deliveryStateNum={item.state ? item.state : ''}
+              orderState={orderState}
             />
           </div>
         ))}

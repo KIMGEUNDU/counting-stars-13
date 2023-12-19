@@ -39,6 +39,7 @@ export default function MyOrder() {
 
   const myOrderProductList: object[] = [];
   const myOrderProductDate: object[] = [];
+  const myOrderState: string[] = [];
 
   useEffect(() => {
     let dateToThreeMonth;
@@ -89,6 +90,7 @@ export default function MyOrder() {
     orders.forEach((order) => {
       myOrderProductDate.push(order.createdAt);
       myOrderProductList.push(order.products);
+      myOrderState.push(order.state);
     });
   }
 
@@ -96,8 +98,11 @@ export default function MyOrder() {
     case '주문 완료':
       addOrdersByState('OS010');
       break;
-    case '배송 준비 중':
+    case '결제 완료':
       addOrdersByState('OS020');
+      break;
+    case '배송 준비 중':
+      addOrdersByState('OS030');
       break;
     case '배송 중':
       addOrdersByState('OS035');
@@ -105,7 +110,7 @@ export default function MyOrder() {
     case '배송 완료':
       addOrdersByState('OS040');
       break;
-    case '취소/반품':
+    case '취소/교환/반품':
       ['OS110', 'OS130', 'OS330', 'OS310'].forEach((stateCode) => {
         addOrdersByState(stateCode);
       });
@@ -142,6 +147,7 @@ export default function MyOrder() {
       return myOrderProductDate.map((date, i) => ({
         createdAt: date,
         products: myOrderProductList[i],
+        state: myOrderState[i],
       }));
     }
     return [];
@@ -166,11 +172,11 @@ export default function MyOrder() {
           <section className="flex items-center gap-5 border-4 p-6 mb-2">
             <select className="border-2 h-7" onChange={handleFindOrderState}>
               <option>전체 주문 처리 상태</option>
-              <option>주문 완료</option>
+              <option>결제 완료</option>
               <option>배송 준비 중</option>
               <option>배송 중</option>
               <option>배송 완료</option>
-              <option>취소/반품</option>
+              <option>취소/반품/환불</option>
             </select>
             <div>
               <input
@@ -241,14 +247,17 @@ export default function MyOrder() {
                 </thead>
                 <tbody>
                   {orderList.length > 0 ? (
-                    orderList.map((order, i) => (
-                      <OrderItem
-                        key={i}
-                        num={i}
-                        orderDate={String(order.createdAt).slice(0, 10)}
-                        productList={order.products}
-                      />
-                    ))
+                    orderList.map((order, i) => {
+                      return (
+                        <OrderItem
+                          key={i}
+                          num={i}
+                          orderDate={String(order.createdAt).slice(0, 10)}
+                          productList={order.products}
+                          orderState={order.state}
+                        />
+                      );
+                    })
                   ) : (
                     <tr>
                       <td className="h-28" colSpan={7}>
