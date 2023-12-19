@@ -16,7 +16,7 @@ interface ProductItem {
 }
 
 interface ReviewItem {
-  link: string;
+  link: number;
   productSrc: string;
   productName: string;
   content: string;
@@ -32,31 +32,14 @@ interface DetailProductSelect {
 }
 
 interface DetailProductResult {
+  id: number;
   name: string;
-  option: string;
   quantity: number;
   price: string;
   required: boolean;
   handleClickUp: () => void;
   handleClickDown: () => void;
-}
-
-interface QnaReviewData {
-  _id?: number;
-  title?: string;
-  writer: string;
-  writerId?: string;
-  date?: string | undefined;
-  attachFile?: string;
-  content?: string;
-  tag?: string;
-  grade?: number;
-  attachFile?: string;
-  productId?: number;
-  productName?: string;
-  productPrice?: number;
-  productImg?: string;
-  qnaId?: number;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface Data {
@@ -95,12 +78,18 @@ interface OrderData {
 }
 
 interface UserOrderData {
-  address: { name: string; value: string };
-  cost: { products: number; shippingFees: number; total: number };
-  createdAt: string;
-  products: OrderData[];
-  user_id: number;
-  _id: number;
+  address?: {
+    name?: string;
+    value?: string;
+    address?: string;
+    addressDetail?: string;
+    zonecode?: string;
+  };
+  cost?: { products: number; shippingFees: number; total: number };
+  createdAt?: string;
+  products?: OrderData[];
+  user_id?: number;
+  _id?: number;
 }
 
 interface ProductData {
@@ -111,7 +100,8 @@ interface ProductData {
   show: boolean;
   active: boolean;
   name: string;
-  options: { [key: string]: string }[];
+  options: Item;
+  productOptions: { [key: string]: string }[];
   mainImages: string[];
   detailImages: string[];
   descriptImages: string[];
@@ -125,9 +115,206 @@ interface ProductData {
     isBest: boolean;
     category: string[];
     sort: number;
+    option: string;
   };
+}
+
+interface Item {
+  item: Product[];
 }
 
 interface optionObject {
   [key: string]: string;
+}
+
+interface address {
+  zonecode: string | undefined;
+  address: string | undefined;
+  addressDetail: string | undefined;
+}
+
+interface editMemberInfo {
+  email: string;
+  name: string;
+  phone: string;
+  address: address;
+  type: string;
+  emailAgree: boolean;
+  birthday: string;
+}
+
+interface CartItem {
+  _id: number;
+  user_id: number;
+  product_id: number;
+  quantity: number;
+  createdAt: Date;
+  updatedAt: Date;
+  product: Product;
+  extra: {
+    isNew: boolean;
+    isBest: boolean;
+    category: string[];
+    sort: number;
+    option: string;
+  };
+}
+
+interface Product {
+  price: number;
+  name: string;
+  image: string;
+  quantity: number;
+  buyQuantity: number;
+  option: string;
+  extra: Extra;
+  options: string | [];
+  productOptions: string | [];
+}
+
+interface Extra {
+  option: ReactNode;
+  parent: number;
+}
+
+interface Replies {
+  _id?: number;
+  type?: string;
+  title?: string | undefined;
+  content: string;
+  rating?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  product_id?: number;
+  product?: {
+    _id: number;
+    name: string;
+    image: string;
+  };
+  writer?: string;
+  user_id?: number;
+  user?: {
+    _id: number;
+    name: string;
+  };
+  replies?: CommentData[];
+  extra?: {
+    type?: string;
+    attachFile?: string;
+    title?: string;
+    tag?: string;
+    boardId?: number;
+    user?: {
+      _id: number;
+      name: string;
+    };
+    product_name?: string;
+    product_image?: string;
+  };
+}
+
+interface Review {
+  _id: number;
+  content: string;
+  rating: number;
+  createdAt: string;
+  product_id: number;
+  product: {
+    _id: number;
+    name: string;
+    image: string;
+  };
+  writer?: string;
+  user: {
+    _id: number;
+    name: string;
+  };
+  extra: {
+    type: string;
+    attachFile?: string;
+    title: string;
+    tag?: string;
+    boardId?: number;
+  };
+}
+
+interface OrderItemDetail {
+  link: string;
+  num?: number;
+  img: string;
+  name: string;
+  number: number;
+  price: number;
+  _id?: string;
+  quantity?: number;
+  state?: string;
+  orderState: string;
+}
+
+interface CommentInput {
+  rating: number;
+  product_id: number;
+  content: string;
+  extra: {
+    type: string;
+    boardId: number;
+  };
+}
+
+interface myOrderInfoType {
+  createdAt: Date;
+  state: string;
+  products: OrderProduct[];
+}
+
+interface CommentData {
+  _id: number;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+  user: {
+    _id: number;
+    name: string;
+  };
+  extra: {
+    boardId: number;
+  };
+}
+
+interface OrderExtra {
+  sort: number;
+  parent: number;
+  option: string;
+}
+
+interface OrderProduct {
+  _id: number;
+  quantity: number;
+  seller_id: number;
+  name: string;
+  image: string;
+  price: number;
+  extra: OrderExtra;
+  state: string;
+}
+
+interface Order {
+  _id: number;
+  quantity: number;
+}
+
+interface Address {
+  address: string;
+  addressDetail: string;
+  zonecode: string;
+}
+
+interface payProduct {
+  products: Order[];
+  address: Address;
+}
+
+interface dateThreeMonthRange {
+  dateToThreeMonth: Date | undefined;
+  dateFromThreeMonth: Date | undefined;
 }

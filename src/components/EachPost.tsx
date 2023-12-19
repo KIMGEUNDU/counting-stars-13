@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 type board = {
-  tag: string | number;
+  tag: string | number | undefined;
   title: string | undefined;
-  writer: string;
+  writer: string | undefined;
   link?: string;
   date: string | undefined;
   item?: string;
-  grade?: number;
+  grade?: number | string;
   itemImg?: string;
   attachFile?: string | undefined;
   collection?: string;
+  itemLink?: number | undefined;
 };
 
 export default function EachPost({
@@ -25,39 +26,47 @@ export default function EachPost({
   itemImg,
   attachFile,
   collection,
+  itemLink,
 }: board) {
   const [view, setView] = useState(false);
-
-  const writerPrivate = (writer: string) => {
-    if (writer !== '별해달') {
-      return writer.substring(0, 1) + '*'.repeat(`${writer}`.length - 1);
-    } else {
-      return '별해달';
-    }
-  };
+  const navigate = useNavigate();
 
   const starGrade = (grade: number) => {
     return '⭐'.repeat(grade);
   };
 
+  const moveDetail = (link: string) => {
+    navigate(link);
+  };
+
   return (
     <>
       <tr className="border-b border-gray-200">
-        <td className={`py-4 w-1/12 ${tag === '공지' ? 'font-bold' : ''}`}>
+        <td className={`py-4 ${typeof tag === 'string' ? 'font-bold' : ''}`}>
           {tag}
         </td>
+
         {item && (
-          <td className="w-[13%] whitespace-nowrap h-10">
-            <div className="flex justify-left items-center">
+          <td className="whitespace-nowrap h-10 px-2">
+            <Link
+              to={`/detail/${itemLink}`}
+              className="flex justify-left items-center px-2"
+            >
               <img className="w-10 h-full pr-1" src={itemImg} alt={item} />
               <span className="">{item}</span>
-            </div>
+            </Link>
           </td>
         )}
-        {grade && <td className="truncate w-1/12 pl-6">{starGrade(grade)}</td>}
+
+        {grade && (
+          <td className="truncate pl-6 text-left">
+            {starGrade(Number(grade))}
+          </td>
+        )}
+
         {link && (
           <td
-            className={`text-left w-1/3 px-5 ${
+            className={`text-left px-5 ${
               tag === '공지' && collection === 'qna'
                 ? 'col-span-2'
                 : tag === '공지' && collection === 'review'
@@ -65,15 +74,18 @@ export default function EachPost({
                 : ''
             }`}
           >
-            <Link
-              to={link}
+            <button
+              type="button"
+              onClick={() => moveDetail(link)}
               onMouseOver={() => setView(true)}
               onMouseLeave={() => setView(false)}
             >
-              <div className="flex relative max-w-fit">
+              <div className="flex relative">
                 <span
-                  className={`line-clamp-1 ${
-                    tag === '공지' ? 'font-bold' : ''
+                  className={`${
+                    tag === '공지'
+                      ? 'font-bold whitespace-nowrap'
+                      : 'line-clamp-1'
                   }`}
                 >
                   {title}
@@ -86,7 +98,7 @@ export default function EachPost({
                       alt="첨부파일 있음"
                     />
                     <img
-                      className={`absolute top-0 -right-16 ${
+                      className={`absolute top-0 -right-12 ${
                         view ? 'w-14' : 'w-0'
                       }`}
                       src={attachFile}
@@ -96,18 +108,22 @@ export default function EachPost({
                   </>
                 )}
               </div>
-            </Link>
+            </button>
           </td>
         )}
+
         {tag === '공지' && collection === 'qna' && <td></td>}
+
         {tag === '공지' && collection === 'review' && (
           <>
             <td></td>
             <td></td>
           </>
         )}
-        {writer && <td className="w-[10%]">{writerPrivate(writer)}</td>}
-        <td className="font-extralight w-[12%]">{date}</td>
+
+        {writer && <td className="w-[10%]">{writer}</td>}
+
+        <td className="font-extralight w-[8%]">{date}</td>
       </tr>
     </>
   );

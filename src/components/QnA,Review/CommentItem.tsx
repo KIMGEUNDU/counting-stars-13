@@ -1,53 +1,107 @@
-import { useComment } from '@/store/useComment';
-import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import { useUserInfo } from '@/store/useUserInfo';
+import axiosInstance from '@/utils/axiosInstance';
+import { setAnonymousName } from '@/utils/setAnonymousName';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 
 function CommentItem({
-  _id,
   writer,
-  date,
+  createdAt,
   content,
+  onDelete,
   writerId,
-  collection,
-}: QnaReviewData & {
-  collection: string;
+  commentId,
+  status,
+  setStatus,
+  type,
+}: Replies & {
+  onDelete?: () => void;
+  status?: boolean | undefined;
+  setStatus?: (status: boolean) => void;
+  writerId?: number;
+  commentId?: number;
+  type?: string;
 }) {
-  const { qna, setDeleteQna, review, setDeleteReview } = useComment();
-  const userId = AUTH_ID();
+  const [edit, setEdit] = useState(true);
+  const { userInfo } = useUserInfo();
+  const [inputContent, setInputContent] = useState('');
+  const { id } = useParams();
 
-  // 댓글삭제하기
-  const deleteComment = () => {
-    const resultQna = qna.filter((v) => v._id !== _id);
-    const resultReview = review.filter((v) => v._id !== _id);
+  // 댓글 수정하기 active 이벤트
+  const handleEditComment = () => setEdit(false);
 
-    const answer = confirm('정말 삭제하시겠습니까?');
+  // 댓글 내용 바꾸기
+  const handleChangeContent = (
+    e: ChangeEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>
+  ) => {
+    setInputContent((e as ChangeEvent<HTMLInputElement>).target.value);
+  };
 
-    if (answer) {
-      toast('삭제되었습니다', {
-        icon: '⭐',
+  // 댓글 수정 이벤트
+  const handleEditCompleteComment = async () => {
+    const res = await axiosInstance.patch(
+      `/posts/${type === 'review' ? 7 : id}/replies/${commentId}`,
+      { content: inputContent }
+    );
+
+    if (res.data.ok === 1) {
+      toast('수정되었습니다 :)', {
+        icon: '✏️',
         duration: 2000,
       });
 
-      if (collection === 'qna') {
-        setDeleteQna(resultQna);
-      } else {
-        setDeleteReview(resultReview);
+      setEdit(true);
+      if (setStatus) {
+        setStatus(!status);
       }
     }
   };
 
   return (
     <div className="center border border-gray-300 text-sm my-3">
-      <div className="flex gap-4 border-b border-b-gray-300 p-3">
-        <span className="font-semibold">{writer}</span>
-        <span>{date}</span>
-        {writerId === userId && (
-          <button type="button" onClick={deleteComment}>
-            <img src="/deleteIcon.png" alt="삭제하기" className="w-5 h-5" />
+      <div className="flex justify-between border-b border-b-gray-300 p-3">
+        <div className="flex gap-4">
+          <span className="font-semibold">{setAnonymousName(writer)}</span>
+          <span>{createdAt}</span>
+        </div>
+        {writerId === userInfo?._id && edit && (
+          <div className="flex gap-2">
+            <button type="button" onClick={handleEditComment}>
+              <img className="w-4" src="/editIcon.png" alt="댓글 수정" />
+            </button>
+            <button type="button" onClick={onDelete}>
+              <img className="w-5" src="/deleteIcon.png" alt="댓글 삭제" />
+            </button>
+          </div>
+        )}
+        {userInfo?.type === 'admin' && writerId !== userInfo?._id && edit && (
+          <div className="flex gap-2">
+            <button type="button" onClick={onDelete}>
+              <img className="w-5" src="/deleteIcon.png" alt="댓글 삭제" />
+            </button>
+          </div>
+        )}
+        {writerId === userInfo?._id && !edit && (
+          <button type="button" onClick={handleEditCompleteComment}>
+            <img className="w-5" src="/completeIcon.png" alt="수정 완료" />
           </button>
         )}
       </div>
-      <p className="p-3">{content}</p>
+      {!edit && (
+        <input
+          className={`p-3 w-full ${!edit ? 'bg-amber-50' : ''}`}
+          defaultValue={content}
+          disabled={edit}
+          onChange={handleChangeContent}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleEditCompleteComment();
+            }
+          }}
+        />
+      )}
+      {edit && <p className="p-3 w-full">{content}</p>}
     </div>
   );
 }

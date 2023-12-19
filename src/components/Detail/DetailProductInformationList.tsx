@@ -8,7 +8,7 @@ function DetailProductInformationList({ select }: { select: number }) {
       >
         <HashLink to="#infoLink">
           <button type="button" className="w-full h-full">
-            상품상세정보
+            상품 상세 정보
           </button>
         </HashLink>
       </li>
@@ -17,7 +17,7 @@ function DetailProductInformationList({ select }: { select: number }) {
       >
         <HashLink to="#shippingGuideLink">
           <button type="button" className="w-full h-full">
-            배송안내
+            배송 안내
           </button>
         </HashLink>
       </li>
@@ -26,7 +26,7 @@ function DetailProductInformationList({ select }: { select: number }) {
       >
         <HashLink to="#exchangeLink">
           <button type="button" className="w-full h-full">
-            교환 및 반품안내
+            교환 및 반품 안내
           </button>
         </HashLink>
       </li>
@@ -35,7 +35,7 @@ function DetailProductInformationList({ select }: { select: number }) {
       >
         <HashLink to="#reviewLink">
           <button type="button" className="w-full h-full">
-            상품후기
+            상품 후기
           </button>
         </HashLink>
       </li>
@@ -44,7 +44,7 @@ function DetailProductInformationList({ select }: { select: number }) {
       >
         <HashLink to="#inquiryLink">
           <button type="button" className="w-full h-full">
-            상품문의
+            상품 문의
           </button>
         </HashLink>
       </li>

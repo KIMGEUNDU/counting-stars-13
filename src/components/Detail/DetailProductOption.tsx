@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import DetailButton from './DetailButton';
 import DetailProductResult from './DetailProductResult';
 import DetailProductSelect from './DetailProductSelect';
 
@@ -15,6 +14,18 @@ function DetailProductOption({ data }: { data: ProductData }) {
     if (quantity < 2) return;
     setQuantity((prevCount) => prevCount - 1);
   };
+
+  const getInventory = () => {
+    if (data?.options.item.length === 0) {
+      const inventory = data?.quantity - data?.buyQuantity;
+      return inventory;
+    }
+    if (data?.options.item.length > 0) {
+      const inventory = data?.quantity - data?.buyQuantity;
+      return inventory;
+    }
+  };
+
   if (data) {
     return (
       <section className="w-full text-left max-w-[500px] ml-auto">
@@ -34,37 +45,37 @@ function DetailProductOption({ data }: { data: ProductData }) {
               <th className="detailTableHead">배송</th>
               <td>국내 배송</td>
             </tr>
-            <tr className="pb-5">
+            <tr>
               <th className="detailTableHead">배송비</th>
               <td>0원</td>
+            </tr>
+            <tr className="pb-5">
+              <th className="detailTableHead">재고</th>
+              <td>{getInventory()}개</td>
             </tr>
           </tbody>
         </table>
         <form>
-          {data?.options.length > 0 && (
-            <DetailProductSelect data={data} option={data.options} />
-          )}
-          {data?.options.length === 0 && (
-            <DetailProductResult
-              name={data?.name}
-              price={`${data?.price}`}
-              option=""
-              quantity={quantity}
-              required={data?.options.length > 0}
-              handleClickUp={handleClickUp}
-              handleClickDown={handleClickDown}
+          {data?.options.item.length > 0 && (
+            <DetailProductSelect
+              id={data._id}
+              name={data.name}
+              price={data.price}
+              option={data.productOptions}
             />
           )}
-
-          <DetailButton
-            btn1="장바구니 담기"
-            btn2="찜하기"
-            btn3="바로 구매하기"
-            onClick1={() => console.log('확인')}
-            onClick2={() => console.log('확인')}
-            onClick3={() => console.log('확인')}
-            style="detailButton"
-          />
+          {data?.options.item.length === 0 && (
+            <DetailProductResult
+              id={data._id}
+              name={data?.name}
+              price={`${data?.price}`}
+              quantity={quantity}
+              required={data?.options.item.length > 0}
+              handleClickUp={handleClickUp}
+              handleClickDown={handleClickDown}
+              setQuantity={setQuantity}
+            />
+          )}
         </form>
       </section>
     );

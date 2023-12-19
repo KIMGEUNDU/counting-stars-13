@@ -2,9 +2,9 @@ import banner from '/eventBanner.png';
 import { Link } from 'react-router-dom';
 import MainTitle from '../MainTitle';
 import ProductItem from '../Shop/ProductItem';
-import axios from 'axios';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { axiosBase } from '@/utils/axiosInstance';
 
 function BestItem() {
   const [category, setCategory] = useState('party');
@@ -12,9 +12,9 @@ function BestItem() {
   const { data } = useQuery({
     queryKey: ['products', category],
     queryFn: () =>
-      axios.get(`/products?`, {
+      axiosBase.get(`/products?`, {
         params: {
-          extra: JSON.stringify({
+          custom: JSON.stringify({
             'extra.category.0': `PC-shop`,
             'extra.category.1': `PC-${category}`,
           }),
@@ -72,14 +72,14 @@ function BestItem() {
         </button>
       </article>
 
-      <article className="flex gap-1">
-        <ul className="flex gap-5 flex-wrap min-w-[500px]">
+      <article className="flex gap-1 items-center">
+        <ul className="flex flex-wrap min-w-[500px] w-full">
           {data &&
-            data.slice(0, 8).map((item: any) => {
+            data.slice(0, 9).map((item: ProductData) => {
               return (
-                <li key={item._id}>
+                <li key={item._id} className="w-1/3">
                   <ProductItem
-                    link={item._id}
+                    link={`${item._id}`}
                     src={item.mainImages[0]}
                     title={item.name}
                     price={item.price}

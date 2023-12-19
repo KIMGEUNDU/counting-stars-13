@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 interface useData {
   // 전체 데이터
-  data: Data[] | QnaReviewData[];
-  setData: (data: Data[] | QnaReviewData[]) => void;
+  allData: Data[] | Replies[] | null;
+  setAllData: (data: Data[] | Replies[] | null) => void;
   // 페이지네이션 데이터
-  pageData: Data[] | QnaReviewData[];
-  setPageData: (pageData: Data[] | QnaReviewData[]) => void;
+  pageData: Data[] | OrderData[] | Replies[] | null;
+  setPageData: (pageData: Data[] | OrderData[] | Replies[] | null) => void;
   // 전체 데이터 페이지 길이
   dataLengthPage: number;
   setDataLengthPage: (dataLengthPage: number | undefined) => void;
@@ -31,12 +31,19 @@ interface useData {
   // 선택한 주문데이터 아이디
   selectOrderId: number | null;
   setSelectOrderId: (selectOrderId: number | null) => void;
+  // 데이터 합치기
+  combineData: Replies[];
+  setAddCombineData: (combineData: Replies) => void;
+  setCombineData: (data: Replies[]) => void;
+  // useQuery 페이지네이션
+  currentPage: number;
+  setCurrentPage: (currentPage: number) => void;
 }
 
 export const useData = create<useData>((set) => ({
-  data: [],
-  setData: (data) => set({ data }),
-  pageData: [],
+  allData: null,
+  setAllData: (allData) => set({ allData }),
+  pageData: null,
   setPageData: (pageData) => set({ pageData }),
   dataLengthPage: 0,
   setDataLengthPage: (dataLengthPage) => set({ dataLengthPage }),
@@ -54,4 +61,9 @@ export const useData = create<useData>((set) => ({
   setOrderData: (orderData) => set({ orderData }),
   selectOrderId: null,
   setSelectOrderId: (selectOrderId) => set({ selectOrderId }),
+  combineData: [],
+  setAddCombineData: (combineData) => set((state) => ({ combineData: [...state.combineData, combineData] })),
+  setCombineData: (combineData) => set({ combineData }),
+  currentPage: 1,
+  setCurrentPage: (currentPage) => set({ currentPage }),
 }));

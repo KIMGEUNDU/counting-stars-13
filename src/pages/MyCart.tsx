@@ -1,129 +1,405 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { putWish } from '@/utils/HandleWish';
+import CartGuide from 'components/Cart/CartGuide';
+import axiosInstance from '@/utils/axiosInstance';
+import { clearCart } from '@/utils/HandleCart';
+import toast from 'react-hot-toast';
+import { useOrderSet } from '@/store/useOrderSet';
+import { Helmet } from 'react-helmet-async';
 
 export default function MyCart() {
-  const deliveryNum = 0;
   const deliveryPrice = 0;
-  const ProductNum = 0;
-  const allProductNum = 0;
+  const navigate = useNavigate();
+  const [cartData, setCartData] = useState<CartItem[]>([]);
+  const [checkProduct, setCheckProduct] = useState<number[]>([]);
+  const [checkControl, setCheckControl] = useState<boolean>(true);
+  const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
+  const { setProduct } = useOrderSet();
+
+  useEffect(() => {
+    async function getCartData() {
+      const res = await axiosInstance.get(`/carts`);
+      setCartData(res.data.item);
+      setCheckProduct(res.data.item.map((item: CartItem) => item._id));
+    }
+    getCartData();
+  }, []);
+
+  useEffect(() => {
+    const initialQuantity = cartData.reduce((acc, item) => {
+      acc[item._id] = item.quantity;
+      return acc;
+    }, {} as { [id: string]: number });
+    setQuantity(initialQuantity);
+  }, [cartData]);
+
+  const handleCheckProduct = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    if (e.target.checked) {
+      setCheckProduct([...checkProduct, id]);
+      if (checkProduct.length + 1 === cartData.length) {
+        setCheckControl(true);
+      }
+    } else {
+      setCheckProduct(checkProduct.filter((item) => item !== id));
+      setCheckControl(false);
+    }
+  };
+
+  const deleteEachProduct = async (id: number) => {
+    const response = await axiosInstance.delete(`/carts/${id}`);
+    if (response.status === 200)
+      setCartData(cartData.filter((item) => item._id !== id));
+    toast.success('삭제되었습니다.');
+  };
+
+  const deleteCheckProduct = async () => {
+    if (checkProduct.length === 0) {
+      toast.error('선택 상품이 없습니다.');
+      return;
+    }
+
+    await Promise.all(
+      checkProduct.map((id) => axiosInstance.delete(`/carts/${id}`))
+    );
+
+    setCartData(cartData.filter((item) => !checkProduct.includes(item._id)));
+    setCheckProduct([]);
+    toast.success('삭제되었습니다.');
+    setCheckControl(false);
+  };
+
+  const controlCheck = () => {
+    setCheckControl(!checkControl);
+
+    if (checkControl) {
+      setCheckProduct([]);
+    } else {
+      setCheckProduct(cartData.map((item) => item._id));
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    const inputValue = e.target.value;
+
+    if (inputValue === '') {
+      setQuantity((prev) => ({ ...prev, [id]: '' }));
+    } else {
+      let finalValue = Number(inputValue);
+
+      if (finalValue < 1) {
+        finalValue = 1;
+      } else if (finalValue > 99) {
+        finalValue = 99;
+      }
+
+      setQuantity((prev) => ({ ...prev, [id]: finalValue }));
+    }
+  };
+
+  const handleUpClick = (id: string) => {
+    setQuantity((prev) => ({ ...prev, [id]: Math.min(prev[id] + 1, 99) }));
+  };
+
+  const handleDownClick = (id: string) => {
+    setQuantity((prev) => ({ ...prev, [id]: Math.max(prev[id] - 1, 1) }));
+  };
+
+  const handleEachOrder = async (id: number, product_id: number) => {
+    setProduct([{ _id: product_id, quantity: quantity[id] }]);
+  };
+
+  const handleChangeQuantity = async (id: number) => {
+    const changeCheck = cartData.some((item) => {
+      if (item._id === id) {
+        if (item['quantity'] === quantity[id]) return true;
+      }
+    });
+
+    if (changeCheck) {
+      toast.error('장바구니 상품 개수가 변경되지 않았습니다.');
+      return;
+    }
+
+    const cart = {
+      quantity: quantity[id],
+    };
+
+    try {
+      const res = await axiosInstance.patch(`/carts/${id}`, cart);
+
+      if (res.status === 200) {
+        setCartData((prev) =>
+          prev.map((item) => {
+            if (item._id === id) {
+              return { ...item, quantity: quantity[id] };
+            } else {
+              return item;
+            }
+          })
+        );
+      }
+      toast.success('장바구니 상품 주문 개수가 변경되었습니다.');
+    } catch (error) {
+      toast.error('문제가 발생했습니다. 잠시 후 시도해주세요.');
+    }
+  };
+
+  const handleOrderAll = () => {
+    const orderProduct: Order[] = [];
+    cartData.map((item) => {
+      orderProduct.push({ _id: item.product_id, quantity: item.quantity });
+    });
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
+  const handleOrderSelect = () => {
+    if (checkProduct.length === 0) {
+      toast.error('선택한 상품이 없습니다.');
+      return;
+    }
+
+    const orderProduct: Order[] = [];
+    cartData.map((item) => {
+      if (checkProduct.includes(item._id)) {
+        orderProduct.push({ _id: item.product_id, quantity: item.quantity });
+      }
+    });
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
   return (
     <>
+      <Helmet>
+        <title>장바구니</title>
+      </Helmet>
+
       <main className="">
         <PageMap route="장바구니" />
         <PageMainTitle title="장바구니" />
 
-        <div className="w-[80%] mx-auto my-5">
+        <div className="w-4/5 mx-auto mb-5">
           <section className="my-10 ">
-            <div className="w-full flex justify-center border-b-[1px] mb-8">
-              <h3 className="text-[19px] font-bold border-b-[2px] border-gray-900 inline py-3 px-4 ">
-                배송상품 ({deliveryNum})
+            <div>
+              <h3 className="text-base border-t bg-gray-100 font-bold py-2 block border-b-2 px-6">
+                일반 상품 ({cartData.length})
               </h3>
-            </div>
-            <div className="">
-              <h3 className="text-[13px] border-t-[1px] bg-gray-100 font-bold py-1 block border-b-2 px-4 ">
-                일반상품 ({deliveryNum})
-              </h3>
-              <table className="table-fixed text-center">
+              <table className="table-fixed text-center w-full">
                 <thead>
-                  <tr className="bg-gray-50 h-[40px] border-b-[1px] text-sm">
-                    <td className="w-[5%]">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="w-[10%]">이미지</td>
-                    <td className="w-[30%]">상품정보</td>
-                    <td className="w-[10%]">판매가</td>
-                    <td className="w-[7%]">수량</td>
-                    <td className="w-[10%]">합계</td>
-                    <td className="w-[10%]">선택</td>
+                  <tr className="bg-gray-50 h-10 border-b text-sm">
+                    <th className="w-[5%]">
+                      <input
+                        type="checkbox"
+                        onChange={controlCheck}
+                        checked={checkControl}
+                        disabled={cartData.length === 0}
+                      />
+                    </th>
+                    <th className="w-[10%]">이미지</th>
+                    <th className="w-[30%]">상품 정보</th>
+                    <th className="w-[10%]">판매가</th>
+                    <th className="w-[7%]">수량</th>
+                    <th className="w-[10%]">합계</th>
+                    <th className="w-[10%]">선택</th>
                   </tr>
                 </thead>
-                <thead>
-                  <tr className="h-[110px] border-b-[1px]">
-                    <td>
-                      <input type="checkbox" />
-                    </td>
-                    <td className="p-2">
-                      <img src="/logoChar.png" className="100%" />
-                    </td>
-                    <td>
-                      별도넛 <span>[옵션:자색고구마/보라색]</span>
-                    </td>
-                    <td className="font-bold">3,500원</td>
-                    <td className="pr-3">
-                      <div className="flex border-2 h-9 rounded-lg justify-around mb-2">
-                        <input type="text" className="w-9" value={ProductNum} />
-                        <div className="flex flex-col gap-2 justify-center">
-                          <button>
-                            <img src="/cartArrowUp.png" className="w-3" />
-                          </button>
-                          <button>
-                            <img src="/cartArrowDown.png" className="w-3" />
-                          </button>
-                        </div>
-                      </div>
-                      <button className="w-[100%] text-sm border-gray-300 border-2 rounded-sm">
-                        변경
-                      </button>
-                    </td>
-                    <td className="font-bold">2,500원</td>
-                    <td className="h-[110px]">
-                      <button className="my-1 w-[90%] h-[20%] text-sm bg-gray-700 rounded-sm border  text-white">
-                        주문하기
-                      </button>
-                      <button className="my-1 w-[90%] h-[20%] text-sm border-gray-300 border rounded-sm">
-                        관심상품등록
-                      </button>
-                      <button className="my-1 w-[90%] h-[20%] text-sm border-gray-300 border rounded-sm">
-                        삭제
-                      </button>
-                    </td>
-                  </tr>
-                </thead>
+                <tbody>
+                  {cartData &&
+                    cartData.map((item: CartItem) => {
+                      return (
+                        <tr className="h-28 border-b" key={item._id}>
+                          <td>
+                            <label htmlFor="cartCheck">
+                              <input
+                                id="cartCheck"
+                                type="checkbox"
+                                checked={
+                                  checkControl ||
+                                  checkProduct.includes(item._id)
+                                }
+                                className="w-5 h-5 cursor-pointer"
+                                onChange={(e) =>
+                                  handleCheckProduct(e, item._id)
+                                }
+                              />
+                            </label>
+                          </td>
+                          <td className="p-2">
+                            <Link
+                              to={`/detail/${
+                                item.product.extra.parent
+                                  ? item.product.extra.parent
+                                  : item.product_id
+                              }`}
+                            >
+                              <img src={item.product.image} />
+                            </Link>
+                          </td>
+                          <td>
+                            <Link
+                              to={`/detail/${
+                                item.product.extra.parent
+                                  ? item.product.extra.parent
+                                  : item.product_id
+                              }`}
+                            >
+                              {item.product.name}
+                              {item.product.extra.option && (
+                                <>
+                                  <br />
+                                  <span className="text-sm">
+                                    - {item.product.extra.option} -
+                                  </span>
+                                </>
+                              )}
+                            </Link>
+                          </td>
+                          <td className="font-bold">
+                            {item.product.price.toLocaleString()}원
+                          </td>
+                          <td className="pr-3">
+                            <div className="flex border-2 h-9 rounded-lg justify-around mb-2">
+                              <input
+                                type="text"
+                                className="w-3/4 pl-2"
+                                value={quantity[item._id] || 0}
+                                onChange={(e) => handleInputChange(e, item._id)}
+                              />
+                              <div className="flex flex-col gap-2 justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpClick(`${item._id}`)}
+                                >
+                                  <img src="/cartArrowUp.png" className="w-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownClick(`${item._id}`)}
+                                >
+                                  <img
+                                    src="/cartArrowDown.png"
+                                    className="w-3"
+                                  />
+                                </button>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="w-full text-sm border-gray-300 border-2 rounded-sm"
+                              onClick={() => handleChangeQuantity(item._id)}
+                            >
+                              변경
+                            </button>
+                          </td>
+                          <td className="font-bold">
+                            {(
+                              item.quantity * item.product.price
+                            ).toLocaleString()}
+                            원
+                          </td>
+                          <td className="h-28">
+                            <button
+                              type="button"
+                              className="my-1 w-[90%] h-1/5 text-sm bg-gray-700 rounded-sm border text-white"
+                              onClick={() => {
+                                handleEachOrder(item._id, item.product_id);
+                                navigate('/order');
+                              }}
+                            >
+                              주문하기
+                            </button>
+                            <button
+                              className="my-1 w-[90%] h-1/5 text-sm border-gray-300 border rounded-sm"
+                              onClick={
+                                item.product.extra.parent
+                                  ? () => putWish(item.product.extra.parent)
+                                  : () => putWish(item.product_id)
+                              }
+                            >
+                              찜하기
+                            </button>
+                            <button
+                              onClick={() => deleteEachProduct(item._id)}
+                              className="my-1 w-[90%] h-1/5 text-sm border-gray-300 border rounded-sm"
+                            >
+                              삭제
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                  {cartData.length === 0 && (
+                    <tr>
+                      <td colSpan={7}>
+                        <p className="my-10">장바구니가 비어있습니다.</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
-              <div className="h-20 text-[15px] font-medium flex justify-between items-center bg-gray-50 py-1 border-b-2 px-4 ">
-                <span className="block">[기본배송]</span>
-                <p className="block text-[15px]">
-                  상품구매금액 <strong>{allProductNum}</strong> + 배송비{' '}
-                  {deliveryPrice} = 합계:
-                  <span className="text-[22px] font-extrabold  text-starRed mx-10">
-                    {allProductNum + deliveryPrice}원
-                  </span>
-                </p>
-              </div>
-              <div className="flex justify-between h-15 mb-20">
-                <div>
-                  <span className="font-medium text-sm">선택상품을</span>
-                  <button className="m-1 py-1 px-3 text-sm bg-gray-700 rounded-sm border-2  text-white">
-                    삭제하기
-                  </button>
+              {cartData.length !== 0 && (
+                <div className="h-20 text-sm font-medium flex justify-between items-center bg-gray-50 py-1 border-b-2 px-4 ">
+                  <div>
+                    <span className="font-medium text-sm">선택 상품</span>
+                    <button
+                      className="m-1 py-1 px-3 text-sm bg-gray-700 rounded-sm border-2 text-white"
+                      onClick={deleteCheckProduct}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm"
+                      onClick={() => clearCart(setCartData, setCheckControl)}
+                    >
+                      장바구니 비우기
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <button className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm">
-                    장바구니비우기
-                  </button>
-                  <button className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm">
-                    견적서출력
-                  </button>
-                </div>
-              </div>
-              <table className="text-center w-full mb-10">
+              )}
+
+              <table className="text-center w-full my-10">
                 <thead>
-                  <tr className="bg-gray-50 h-[60px] font-bold text-sm border-t-2 border-b-[1px]">
-                    <td className="w-[25%] ">총 상품금액</td>
-                    <td className="w-[25%] ">총 배송비</td>
-                    <td className="w-[50%] ">결제예정금액</td>
+                  <tr className="bg-gray-50 h-16 font-bold text-sm border-t-2 border-b">
+                    <td className="w-1/4 ">총 상품 금액</td>
+                    <td className="w-1/4 ">총 배송비</td>
+                    <td className="w-1/2 ">결제 예정 금액</td>
                   </tr>
                 </thead>
                 <thead>
-                  <tr className="h-[100px] font-extrabold border-b-[2px]">
+                  <tr className="h-24 font-extrabold border-b-2">
                     <td className="font-bold">
-                      <span className="text-[27px]">{allProductNum}</span>원
+                      <span className="text-2xl">
+                        {cartData
+                          .reduce((acc, cur) => {
+                            return acc + cur.product.price * cur.quantity;
+                          }, 0)
+                          .toLocaleString()}
+                      </span>
+                      원
                     </td>
                     <td className="font-bold">
-                      <span className="text-[27px]">+{deliveryPrice}</span>원
+                      <span className="text-2xl">{deliveryPrice}</span>원
                     </td>
-                    <td className="font-bold text-[27px] text-starRed">
-                      = {allProductNum + deliveryPrice}원
+                    <td className="font-bold text-2xl text-starRed">
+                      {cartData
+                        .reduce((acc, cur) => {
+                          return acc + cur.product.price * cur.quantity;
+                        }, 0)
+                        .toLocaleString()}
+                      원
                     </td>
                   </tr>
                 </thead>
@@ -131,108 +407,36 @@ export default function MyCart() {
             </div>
             <ul className="flex gap-2 justify-center relative">
               <li>
-                <button className="w-[120px] h-[40px] text-[17px] text-white bg-gray-700">
-                  전체상품주문
+                <button
+                  type="button"
+                  className="w-32 h-10 text-base text-white bg-gray-700"
+                  onClick={handleOrderAll}
+                >
+                  전체 상품 주문
                 </button>
               </li>
               <li>
-                <button className="w-[120px] h-[40px] text-[17px] text-white bg-gray-700">
-                  선택상품주문
+                <button
+                  type="button"
+                  className="w-32 h-10 text-base text-white bg-gray-700"
+                  onClick={handleOrderSelect}
+                >
+                  선택 상품 주문
                 </button>
               </li>
               <li>
-                <button className="absolute right-0 w-[120px] h-[40px] text-[17px] text-gray-600 border-2">
-                  쇼핑계속하기
-                </button>
+                <Link to="/shop/all">
+                  <button
+                    type="button"
+                    className="absolute right-0 w-32 h-10 text-base text-gray-600 border-2"
+                  >
+                    쇼핑 계속하기
+                  </button>
+                </Link>
               </li>
             </ul>
           </section>
-          <section className="border-2 ">
-            <h3 className="text-[12px] bg-gray-100 font-bold py-1 block border-b-2 px-4 ">
-              이용안내
-            </h3>
-            <div className="px-4">
-              <h4 className="text-gray-500 text-[12px] font-medium my-3 ">
-                장바구니 이용안내
-              </h4>
-              <ol className="flex flex-col gap-2 text-[12px] text-gray-500 mb-5 ml-6">
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    1
-                  </span>
-                  해외배송 상품과 국내배송 상품은 함께 결제하실 수 없으니
-                  장바구니 별로 따로 결제해주시기 바랍니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    2
-                  </span>
-                  해외배송 가능 상품의 경우 국내배송 장바구니에 담았다가
-                  해외배송 장바구니로 이동하여 결제하실 수 있습니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    3
-                  </span>
-                  선택하신 상품의 수량을 변경하시려면 수량변경 후 [변경] 버튼을
-                  누르시면 됩니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    4
-                  </span>
-                  [쇼핑계속하기] 버튼을 누르시면 쇼핑을 계속 하실 수 있습니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    5
-                  </span>
-                  장바구니와 관심상품을 이용하여 원하시는 상품만 주문하거나
-                  관심상품으로 등록하실 수 있습니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    6
-                  </span>
-                  파일첨부 옵션은 동일상품을 장바구니에 추가할 경우 마지막에
-                  업로드 한 파일로 교체됩니다.
-                </li>
-              </ol>
-              <h4 className="text-gray-500 text-[12px] font-medium my-3">
-                무이자할부 이용안내
-              </h4>
-              <ol className="flex flex-col gap-2 text-[12px] text-gray-500 mb-5 ml-6">
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    1
-                  </span>
-                  상품별 무이자할부 혜택을 받으시려면 무이자할부 상품만 선택하여
-                  [주문하기] 버튼을 눌러 주문/결제 하시면 됩니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    2
-                  </span>
-                  [전체 상품 주문] 버튼을 누르시면 장바구니의 구분없이 선택된
-                  모든 상품에 대한 주문/결제가 이루어집니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    3
-                  </span>
-                  단, 전체 상품을 주문/결제하실 경우, 상품별 무이자할부 혜택을
-                  받으실 수 없습니다.
-                </li>
-                <li>
-                  <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                    4
-                  </span>
-                  무이자할부 상품은 장바구니에서 별도 무이자할부 상품 영역에
-                  표시되어, 무이자할부 상품 기준으로 배송비가 표시됩니다.
-                </li>
-              </ol>
-            </div>
-          </section>
+          <CartGuide />
         </div>
       </main>
     </>

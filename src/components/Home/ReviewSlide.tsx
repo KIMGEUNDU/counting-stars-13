@@ -6,8 +6,25 @@ import { A11y, Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MainTitle from '../MainTitle';
 import ReviewItem from './ReviewItem';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function ReviewSlide() {
+  const [replyData, setReplyData] = useState([]);
+
+  const { data } = useQuery({
+    queryKey: ['reply'],
+    queryFn: () => axiosBase.get(`/replies/all`),
+    select: (data) => data.data.item,
+    staleTime: 1000 * 2,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    setReplyData(data?.filter((item: Review) => item.rating >= 4).slice(0, 10));
+  }, [data]);
+
   return (
     <div className="reviewSlide pb-32 m-auto">
       <MainTitle title="Review" />
@@ -17,19 +34,18 @@ export default function ReviewSlide() {
         navigation={true}
         loop={true}
         autoplay={{ delay: 4000 }}
-        className="w-[60%]"
+        className="w-2/3 s:w-11/12 flex justify-center"
       >
-        {Array(10)
-          .fill('')
-          .map((_, i) => (
-            <SwiperSlide key={i}>
+        {replyData &&
+          replyData.map((item: Review) => (
+            <SwiperSlide key={item._id}>
               <ReviewItem
-                link="/"
-                productSrc="https://ggaggamukja.com/web/product/medium/202308/b0cd6c5690a05d68e1aa5e940fbc7642.png"
-                productName="멍와플"
-                content="너무 귀여워요!"
-                score={4}
-                nickName="윤동주의서시"
+                link={item._id}
+                productSrc={item.product.image}
+                productName={item.product.name}
+                content={item.extra.title}
+                score={item.rating}
+                nickName={item.user.name}
               />
             </SwiperSlide>
           ))}

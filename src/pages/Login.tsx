@@ -1,14 +1,14 @@
 import debounce from './../utils/debounce';
 import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { emailReg, pwReg } from '@/utils/loginReg';
+import { emailReg } from '@/utils/loginReg';
 import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
@@ -36,12 +36,12 @@ export default function Login() {
         duration: 2000,
       });
     }
-    if (!pwReg(isLoginInfo.password)) {
-      return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
-        icon: '✏️',
-        duration: 2000,
-      });
-    }
+    // if (!pwReg(isLoginInfo.password)) {
+    //   return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
+    //     icon: '✏️',
+    //     duration: 2000,
+    //   });
+    // }
     if (!isLoginInfo.password) {
       return toast('비밀번호를 입력해주세요.', {
         icon: '✏️',
@@ -49,23 +49,19 @@ export default function Login() {
       });
     }
     try {
-      const response = await axios.post(
-        'https://localhost/api/users/login',
-        isLoginInfo
-      );
-      console.log(response);
+      const response = await axiosBase.post('/users/login', isLoginInfo);
+
       const responseItem = response.data.item;
-      console.log(responseItem.token.accessToken);
 
       localStorage.clear();
       localStorage.setItem('id', responseItem._id);
       localStorage.setItem('accessToken', responseItem.token.accessToken);
       localStorage.setItem('refreshToken', responseItem.token.refreshToken);
-      //TODO: 로그인시 가져오는 유저 인포 변경(타입오류)
+
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
-        navigate('/');
-        toast(`로그인 되었습니다. ${responseItem.name}님`, {
+        navigate(-1);
+        toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,
         });
@@ -81,7 +77,12 @@ export default function Login() {
   const handleLoginInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInfo({ ...isLoginInfo, [e.target.name]: e.target.value });
   };
-
+  const handleFindModal = () => {
+    toast(`해당 기능은 구현 중입니다.`, {
+      icon: '✏️',
+      duration: 2500,
+    });
+  };
   return (
     <>
       <Helmet>
@@ -131,12 +132,22 @@ export default function Login() {
           <hr className="my-5 mx-auto w-1/2" />
           <article>
             <ul className="flex justify-center mb-10 text-sm">
-              <Link to="/findid">
-                <li className="border-r border-gray-200 px-2">이메일 찾기</li>
-              </Link>
-              <Link to="/findpw">
-                <li className="border-r border-gray-200 px-2">비밀번호 찾기</li>
-              </Link>
+              {/* <Link to="/findid"> */}
+              <li
+                className="border-r border-gray-200 px-2 cursor-pointer"
+                onClick={handleFindModal}
+              >
+                이메일 찾기
+              </li>
+              {/* </Link> */}
+              {/* <Link to="/findpw"> */}
+              <li
+                className="border-r border-gray-200 px-2 cursor-pointer"
+                onClick={handleFindModal}
+              >
+                비밀번호 찾기
+              </li>
+              {/* </Link> */}
               <Link to="/join">
                 <li className="px-2">회원가입</li>
               </Link>

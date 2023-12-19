@@ -1,9 +1,15 @@
 import { useData } from '@/store/useData';
 import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import { axiosBase } from '@/utils/axiosInstance';
 import { useEffect } from 'react';
 
-function ProductSelect({ title, onClick }: ContainerTitle) {
+function ProductSelect({
+  title,
+  onClick,
+}: {
+  title?: string;
+  onClick?: () => void;
+}) {
   const {
     selectId,
     setSelectId,
@@ -15,22 +21,17 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
 
   useEffect(() => {
     async function getData() {
-      const response = await axios.get(
-        `https://localhost/api/products/${selectId}`
-      );
+      const response = await axiosBase.get(`/products/${selectId}`);
 
       setSelectData(response.data.item);
     }
 
     async function getOrderData() {
-      const response = await axios.get(
-        `https://localhost/api/products/${selectOrderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosBase.get(`/products/${selectOrderId}`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN()}`,
+        },
+      });
 
       setSelectData(response.data.item);
     }
@@ -49,7 +50,7 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
   return (
     <article className="border border-gray-300 mb-4 flex items-center p-4">
       <img
-        src={selectData ? selectData.detailImages[0] : '/noImage.gif'}
+        src={selectData ? selectData.mainImages[0] : '/noImage.gif'}
         alt={selectData ? selectData.name : '상품 기본 이미지'}
         className="border-r border-gray-200 pr-4 w-28 h-28"
       />
@@ -57,11 +58,15 @@ function ProductSelect({ title, onClick }: ContainerTitle) {
         <>
           <div className="py-3 px-2 flex flex-col">
             <p className="font-bold">{selectData.name}</p>
-            <span className="text-starRed font-bold">{selectData.price}원</span>
+            <span className="text-starRed font-bold">
+              {selectData.price.toLocaleString()}원
+            </span>
           </div>
           <button
             type="button"
-            className="border py-2 px-2 bg-starBlack text-white ml-4"
+            className={`border py-2 px-2 bg-starBlack text-white ml-4 ${
+              title === '수정' ? 'hidden' : ''
+            }`}
             onClick={onClick}
           >
             상품 변경

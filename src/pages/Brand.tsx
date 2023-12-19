@@ -3,12 +3,16 @@ import Logo from '@/components/Brand/Logo';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import Slogan from '@/components/Brand/Slogan';
+import { Helmet } from 'react-helmet-async';
 
 export default function Brand() {
   return (
     <>
+      <Helmet>
+        <title>Brand - 별,해달</title>
+      </Helmet>
       <PageMap route="brand" />
-      <PageMainTitle title="BRAND" />
+      <PageMainTitle title="Brand" />
       <div className="center flex flex-col text-center gap-28 mb-40">
         <Logo width="w-40" />
         <BrandIntroduce title="브랜드 소개" />

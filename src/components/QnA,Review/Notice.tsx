@@ -1,22 +1,34 @@
-import { dummyData } from '@/store/dummyData';
+import axiosInstance from '@/utils/axiosInstance';
 import { sortQnaReviewData } from '@/utils/getProductsData';
 import EachPost from 'components/EachPost';
+import { useEffect, useState } from 'react';
 
 export default function Notice({ collection }: { collection: string }) {
-  // 공지사항
-  const { notice } = dummyData();
+  const [notice, setNotice] = useState<Replies[]>([]);
 
-  // id순으로 정렬
-  const sortNotice = sortQnaReviewData(notice);
+  // 공지 데이터
+  useEffect(() => {
+    const getReplies = async () => {
+      const res = await axiosInstance.get('/posts?type=notice');
 
-  return sortNotice.map((v, i) => (
+      const sortNotice = sortQnaReviewData(res.data.item);
+
+      setNotice(sortNotice);
+    };
+
+    getReplies();
+  }, []);
+
+  return notice.map((v, i) => (
     <EachPost
       key={i}
-      link={`/notice/${v._id}`}
-      tag={v.tag ? v.tag : ''}
-      title={v.title}
-      writer={v.writer}
-      date={v.date}
+      link={
+        collection === 'qna' ? `/qnaNotice/${v._id}` : `/reviewNotice/${v._id}`
+      }
+      tag={(v as Replies).extra?.tag}
+      title={(v as Replies).title}
+      writer="별해달"
+      date={(v as Replies).updatedAt?.split(' ')[0]}
       collection={collection}
     />
   ));

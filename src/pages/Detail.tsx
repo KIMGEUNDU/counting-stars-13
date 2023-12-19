@@ -4,16 +4,14 @@ import DetailProductOption from '@/components/Detail/DetailProductOption';
 import PageMap from '@/components/PageMap';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://localhost/api';
+import { axiosBase } from '@/utils/axiosInstance';
 
 function Detail() {
   const { id } = useParams();
 
   const { data } = useQuery({
     queryKey: ['products', id],
-    queryFn: () => axios.get(`/products/${id}`),
+    queryFn: () => axiosBase.get(`/products/${id}`),
     select: (data) => data.data.item,
     staleTime: 1000 * 2,
     refetchOnWindowFocus: false,
@@ -30,7 +28,10 @@ function Detail() {
         />
         <DetailProductOption data={data} />
       </article>
-      <DetailProductInformation imgArray={data?.descriptImages} />
+      <DetailProductInformation
+        imgArray={data?.descriptImages}
+        reply={data?.replies}
+      />
     </section>
   );
 }

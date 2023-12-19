@@ -1,16 +1,12 @@
-//TODO: phone input에 숫자만 찍히게
-//✔️TODO: 회원가입되면 토스트되게
-// ✔️TODO: 회원가입 전화번호 오류 중간자리(3~4자리) 끝자리(4자리)
-// ✔️TODO: phone input 4자리 적으면 다음으로 넘어가게
-
 import { terms } from 'components/terms';
 import PageMainTitle from 'components/PageMainTitle';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useRef, useState } from 'react';
-import { emailReg, pwReg, phoneReg } from '@/utils/loginReg';
+import { emailReg, phoneReg } from '@/utils/loginReg';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
+import { axiosBase } from '@/utils/axiosInstance';
 
 export default function Join() {
   const emailInput = useRef<HTMLInputElement>(null);
@@ -81,7 +77,7 @@ export default function Join() {
           ...validationInfo,
           password: '😀완료 되었습니다',
         });
-  }, [checkPassword]);
+  }, [checkPassword, password]);
 
   // 이름 유효성 검사
   useEffect(() => {
@@ -138,35 +134,7 @@ export default function Join() {
     if (phoneNumberList.phoneMiddle.length > 3) {
       (LastPhoneInput.current as HTMLInputElement).focus();
     }
-    console.log(phoneNumberList);
   }, [phoneNumberList]);
-
-  //이메일 중복체크
-  const handleCheckEmail = async () => {
-    if (!emailReg(email) || !email) {
-      return toast('이메일 형식을 확인해주세요.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
-    try {
-      const response = await axios.get(
-        `https://localhost/api/users/email?email=${joinInfo.email}`
-      );
-      setCheckEmail(true);
-      if (response.data.ok === 1) {
-        toast('이용 가능한 이메일입니다.', {
-          icon: '😃',
-          duration: 2000,
-        });
-      }
-    } catch (e) {
-      return toast('이미 사용중인 이메일입니다.', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
-  };
 
   //회원가입 버튼 눌렀을 때
   const handleJoin = async (
@@ -188,14 +156,14 @@ export default function Join() {
       });
     }
 
-    if (!pwReg(password) || !password) {
-      (passwordInput.current as HTMLInputElement).focus();
+    // if (!pwReg(password) || !password) {
+    //   (passwordInput.current as HTMLInputElement).focus();
 
-      return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
-        icon: '😢',
-        duration: 2000,
-      });
-    }
+    //   return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
+    //     icon: '😢',
+    //     duration: 2000,
+    //   });
+    // }
     if (password !== checkPassword) {
       (checkPasswordInput.current as HTMLInputElement).focus();
 
@@ -228,11 +196,7 @@ export default function Join() {
       });
     }
     try {
-      const response = await axios.post(
-        'https://localhost/api/users',
-        joinInfo
-      );
-      // const responseItem = response.data.item;
+      const response = await axiosBase.post('/users', joinInfo);
 
       if (response.data.ok === 1) {
         navigate('/');
@@ -253,7 +217,6 @@ export default function Join() {
     e.target.checked
       ? setAgree({ ...isAgree, allAgree: true })
       : setAgree({ ...isAgree, allAgree: false });
-    console.log(isAllAgree);
   };
   //각자 동의 체크박스 기능
   useEffect(() => {
@@ -306,9 +269,7 @@ export default function Join() {
       return setAllAgree(true);
     }
   }, [isAgree.allAgree]);
-  console.log(isAgree);
-  console.log(isAllAgree);
-  console.log(joinInfo.emailAgree);
+
   return (
     <>
       <Helmet>
@@ -336,12 +297,12 @@ export default function Join() {
                     id="inputId"
                     required
                   />
-                  <button
-                    onClick={handleCheckEmail}
-                    className="border-2 text-sm font-bold bg-gray-50 text-gray-500 py-0.5 px-1 mx-1.5 hover:bg-gray-200 rounded-lg"
-                  >
-                    중복확인
-                  </button>
+
+                  <EmailCheckButton
+                    email={email}
+                    setCheckEmail={setCheckEmail}
+                    itemEmail={joinInfo.email}
+                  />
                 </td>
               </tr>
               <tr className="border-b border-gray-300">

@@ -1,6 +1,5 @@
 import { useData } from '@/store/useData';
-import { AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect } from 'react';
 
 function ModalSelectOrderResult({
@@ -16,14 +15,7 @@ function ModalSelectOrderResult({
   // 주문목록 선택시 데이터 가져오기
   useEffect(() => {
     async function getData() {
-      const response = await axios.get(
-        `https://localhost/api/products/${selectOrderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN()}`,
-          },
-        }
-      );
+      const response = await axiosInstance.get(`/products/${selectOrderId}`);
 
       setSelectData(response.data.item);
     }
@@ -50,7 +42,9 @@ function ModalSelectOrderResult({
       </td>
       <td className="flex flex-col h-20 py-2 justify-center">
         <span>{title}</span>
-        <span className="font-semibold text-amber-900">{price}원</span>
+        <span className="font-semibold text-amber-900">
+          {price.toLocaleString()}원
+        </span>
       </td>
       <td className="">{date}</td>
       <td className="text-center py-2">

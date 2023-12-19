@@ -1,7 +1,9 @@
 import { useComment } from '@/store/useComment';
-import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import { useUserInfo } from '@/store/useUserInfo';
+import axiosInstance from '@/utils/axiosInstance';
 import { writeDate } from '@/utils/writeDate';
 import { FormEvent, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 function CommentInput({
@@ -11,49 +13,99 @@ function CommentInput({
   writer: string;
   collection: string;
 }) {
-  const { qna, setQna, review, setReview } = useComment();
+  const { qnaComment, reviewComment, setReviewComment, setQnaComment } =
+    useComment();
+  const { userInfo } = useUserInfo();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { id } = useParams();
 
-  // 임시 댓글 달기
-  const uploadComment = (e: FormEvent) => {
+  // Review 댓글업로드
+  const uploadReviewComment = async (e: FormEvent) => {
     e.preventDefault();
 
     if (commentRef.current && commentRef.current.value) {
-      const comment = {
-        _id: collection === 'qna' ? qna.length + 1 : review.length + 1,
-        writer,
+      const commentData = {
+        _id: reviewComment.length + 1,
+        user: {
+          _id: userInfo!._id,
+          name: userInfo!.name,
+        },
         content: commentRef.current.value,
-        date: writeDate(),
-        writerId: String(AUTH_ID()),
-        qnaId: Number(id),
+        createdAt: writeDate(),
+        updatedAt: writeDate(),
+        extra: {
+          boardId: Number(id),
+        },
       };
 
-      if (collection === 'qna') {
-        setQna(comment);
-      } else {
-        setReview(comment);
-      }
+      const response = await axiosInstance.post('/posts/7/replies', {
+        content: commentRef.current.value,
+        extra: {
+          boardId: Number(id),
+        },
+      });
+
       commentRef.current.value = '';
+
+      if (response.data.ok === 1) {
+        setReviewComment(commentData);
+
+        toast('업로드하였습니다 :)', {
+          icon: '⭐',
+          duration: 2000,
+        });
+      }
+    }
+  };
+
+  // Qna 댓글업로드
+  const uploadQnaComment = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (commentRef.current && commentRef.current.value) {
+      const commentData = {
+        _id: qnaComment.length + 1,
+        user: {
+          _id: userInfo!._id,
+          name: userInfo!.name,
+        },
+        content: commentRef.current.value,
+        createdAt: writeDate(),
+        updatedAt: writeDate(),
+        extra: {
+          boardId: Number(id),
+        },
+      };
+
+      const response = await axiosInstance.post(`/posts/${id}/replies`, {
+        content: commentRef.current.value,
+        extra: {
+          boardId: Number(id),
+        },
+      });
+
+      commentRef.current.value = '';
+
+      if (response.data.ok === 1) {
+        setQnaComment(commentData);
+
+        toast('업로드하였습니다 :)', {
+          icon: '⭐',
+          duration: 2000,
+        });
+      }
     }
   };
 
   return (
     <form
-      className="center border border-gray-300 p-3 bg-gray-50 text-sm flex flex-col gap-3 my-7"
-      onSubmit={uploadComment}
+      className="center border border-gray-300 p-3 bg-amber-50 text-sm flex flex-col gap-3 my-7"
+      onSubmit={collection === 'qna' ? uploadQnaComment : uploadReviewComment}
     >
-      <h3 className="font-semibold">댓글달기</h3>
-      <fieldset>
-        <label htmlFor="name">이름 :</label>
-        <input
-          id="name"
-          type="text"
-          defaultValue={writer}
-          className="border border-gray-300 ml-3 px-1 w-1/6"
-          required
-        />
-      </fieldset>
+      <h3 className="font-semibold">댓글 달기</h3>
+      <div className="font-semibold">
+        {writer === '무지' ? '⭐ 별해달' : `🦦${writer}`}
+      </div>
       <fieldset className="flex">
         <label htmlFor="comment" className="hidden">
           댓글입력창
@@ -69,15 +121,19 @@ function CommentInput({
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              uploadComment(e);
+              if (collection === 'qna') {
+                uploadQnaComment(e);
+              } else {
+                uploadReviewComment(e);
+              }
             }
           }}
         />
         <button
           type="submit"
-          className="quaReviewDetailButton bg-starBlack text-white"
+          className="quaReviewDetailButton bg-starBlack text-white whitespace-nowrap"
         >
-          확인
+          등록
         </button>
       </fieldset>
     </form>

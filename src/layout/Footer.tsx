@@ -2,6 +2,13 @@ import Logo from 'components/Brand/Logo';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
+  const handleGoUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <footer className="w-full flex flex-col items-center">
       <div className="h-16 w-full bg-starPink my-8"></div>
@@ -27,11 +34,12 @@ export default function Footer() {
                 나이로비
               </address>
             </li>
-            <li>팀 : 멋쟁이사자처럼 플러스 1기 13조 윤동주</li>
+            <li>팀 : 멋쟁이사자처럼 프론트엔드 스쿨 플러스 1기 13조 윤동주</li>
           </ul>
         </div>
         <button
           aria-label="페이지 맨 위로 올라가기"
+          onClick={handleGoUp}
           className="w-20 h-20 bg-starPink text-white font-bold rounded-[20%]"
         >
           <img src="/footerArrow.png" className="mx-auto mb-2" />

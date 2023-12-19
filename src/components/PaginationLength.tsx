@@ -1,14 +1,16 @@
 import { useData } from '@/store/useData';
 
 function PaginationLength({ length }: { length: number }) {
-  const { data, pageNumber, setPageNumber, setPageData } = useData();
+  const { allData, pageNumber, setPageNumber, setPageData } = useData();
 
   const setPagination = (i: number) => {
     setPageNumber(i + 1);
     const startIdx = i * 10;
     const lastIdx = startIdx + 10;
 
-    setPageData(data.slice(startIdx, lastIdx));
+    if (allData) {
+      setPageData(allData.slice(startIdx, lastIdx));
+    }
   };
 
   return (

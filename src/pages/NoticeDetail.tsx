@@ -3,103 +3,146 @@ import PageMap from '@/components/PageMap';
 import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
 import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
-import { dummyData } from '@/store/dummyData';
 import { useUserInfo } from '@/store/useUserInfo';
-import { AUTH_ID, AUTH_TOKEN } from '@/utils/AUTH_TOKEN';
-import axios from 'axios';
-import { useEffect } from 'react';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
+import axiosInstance from '@/utils/axiosInstance';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 function NoticeDetail() {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { notice, deleteNoticeData } = dummyData();
+  const [prevData, setPrevData] = useState<Replies | null>(null);
+  const [currentData, setCurrentData] = useState<Replies | null>(null);
+  const [nextData, setNextData] = useState<Replies | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { id } = useParams();
-  const dataId = Number(id) - 1;
-  const length = notice.length;
-  const current = notice[dataId];
-  const prev = notice[dataId - 1];
-  const next = notice[dataId + 1];
 
   // 로그인유저정보
   const { setUserInfo } = useUserInfo();
 
   // 삭제이벤트
-  const handleDelete = () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    const deleteNotice = notice.filter((v) => v._id !== Number(id));
+  const handleDelete = async () => {
+    const result = confirm('삭제하시겠습니까?');
 
-    if (answer) {
-      deleteNoticeData(deleteNotice);
+    if (result) {
+      await axiosInstance.delete(`/posts/${id}`);
 
-      toast('삭제되었습니다.', {
+      toast('삭제되었습니다', {
         icon: '⭐',
         duration: 2000,
       });
 
-      navigate('/qna');
+      navigate(`${location.pathname.includes('qna') ? '/qna' : '/review'}`);
+    }
+  };
+
+  // 목록페이지로 이동
+  const handleListPage = () => {
+    if (location.pathname.includes('qna')) {
+      return navigate('/qna');
+    } else {
+      return navigate('/review');
     }
   };
 
   // 로그인유저정보 받아오기
   useEffect(() => {
     async function getUsers() {
-      const res = await axios.get(`https://localhost/api/users/${AUTH_ID()}`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN()}`,
-        },
-      });
+      const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
 
       setUserInfo(res.data.item);
     }
 
-    getUsers();
+    if (AUTH_ID()) {
+      getUsers();
+    }
   }, [setUserInfo]);
+
+  useEffect(() => {
+    // 현재 데이터
+    const repliesCurrentData = async () => {
+      const res = await axiosInstance.get(`/posts/${id}`);
+
+      setCurrentData(res.data.item);
+    };
+
+    // 전체 데이터
+    const repliesData = async () => {
+      const res = await axiosInstance.get(`/posts?type=notice`);
+
+      const notice = res.data.item;
+      const currentNotice = notice.filter((v: Replies) => v._id === Number(id));
+
+      notice.forEach((v: Replies, i: number) => {
+        if (v._id === Number(id)) {
+          setCurrentIndex(i);
+        }
+      });
+
+      setCurrentData(currentNotice[0]);
+      setPrevData(notice[currentIndex + 1]);
+      setNextData(notice[currentIndex - 1]);
+    };
+
+    repliesCurrentData();
+    repliesData();
+  }, [currentIndex, id, setCurrentData]);
 
   return (
     <>
-      <Helmet>
-        <title>{current.title}</title>
-      </Helmet>
+      <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
 
       <div>
         <PageMap route="notice" />
         <PageDetailTitle title="공지사항" explan="공지사항입니다." />
-        {current.productId && (
-          <ReviewProductItem
-            link={`/detail/${current.productId}`}
-            thumbnail={current.productImg}
-            name={current.productName}
-            price={current.productPrice}
+        {currentData && (
+          <PageDetailTable
+            title={currentData.title}
+            writer={currentData.user?.name}
+            createdAt={currentData.updatedAt}
+            attachFile={
+              currentData.extra?.attachFile ? currentData.extra?.attachFile : ''
+            }
+            content={currentData.content}
           />
         )}
-        <PageDetailTable
-          title={current.title}
-          writer={current.writer}
-          grade={current.grade}
-          date={current.date}
-          attachFile={current.attachFile}
-          content={current.content}
-          collection={true}
-        />
-        <DetailButton
-          btn1="목록"
-          btn3="삭제"
-          onClick1={() => navigate(-1)}
-          onClick3={handleDelete}
-          style="quaReviewDetailButton"
-          center="center"
-          writer={current.writer}
-        />
+        {currentData && (
+          <DetailButton
+            btn1="목록"
+            btn2="삭제"
+            btn3="수정"
+            onClick1={handleListPage}
+            onClick2={handleDelete}
+            onClick3={() => navigate(`/edit-notice/${id}`)}
+            style="quaReviewDetailButton"
+            center="center"
+            writer={currentData.user?._id}
+          />
+        )}
         <PageListOrder
-          prev={prev ? prev.title : ''}
-          next={next ? next.title : ''}
-          prevLink={prev ? `/notice/${prev._id}` : ''}
-          nextLink={next ? `/notice/${next._id}` : ''}
-          _id={Number(id)}
-          length={length}
+          prev={prevData}
+          next={nextData}
+          prevLink={
+            prevData
+              ? `${
+                  location.pathname.includes('qna')
+                    ? '/qnaNotice'
+                    : '/reviewNotice'
+                }/${prevData._id}`
+              : ''
+          }
+          nextLink={
+            nextData
+              ? `${
+                  location.pathname.includes('qna')
+                    ? '/qnaNotice'
+                    : '/reviewNotice'
+                }/${nextData._id}`
+              : ''
+          }
         />
       </div>
     </>

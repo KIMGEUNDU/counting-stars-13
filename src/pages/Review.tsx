@@ -1,21 +1,22 @@
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
+import Notice from '@/components/QnA,Review/Notice';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
-import { dummyData } from '@/store/dummyData';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
-import { sortQnaReviewData } from '@/utils/getProductsData';
+import axiosInstance from '@/utils/axiosInstance';
+import { dateSortQnaReviewData } from '@/utils/getProductsData';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Notice from '@/components/QnA,Review/Notice';
 
 export default function Review() {
+  const { setAttachFile } = useForm();
   const {
-    data,
-    setData,
+    allData,
+    setAllData,
     pageData,
     setPageData,
     setDataLength,
@@ -26,13 +27,6 @@ export default function Review() {
     setSelectData,
     setSelectOrderId,
   } = useData();
-  const { setAttachFile } = useForm();
-  // 현재 후기 조회안됨 -> 곧 API 구현 예정
-  // 더미데이터 가지고오기
-  const { reviewData } = dummyData();
-
-  // id순으로 정렬하기
-  const sortReviewData = sortQnaReviewData(reviewData);
 
   // 새로 Review 페이지 들어올때는 리셋
   useEffect(() => {
@@ -42,14 +36,25 @@ export default function Review() {
     setAttachFile('');
   }, []);
 
-  // 리뷰데이터로 페이지네이션
+  // 데이터 집어넣기
   useEffect(() => {
-    setData(sortReviewData);
-    setDataLength(sortReviewData.length);
-    setPageNumber(1);
-    setPageData(sortReviewData.slice(0, 10));
-    setDataLengthPage(Math.ceil(sortReviewData.length / 10));
-  }, [setData]);
+    const getReplies = async () => {
+      const res = await axiosInstance.get('/replies/all');
+
+      const sortReview = dateSortQnaReviewData(res.data.item);
+      const filterReview = sortReview.filter(
+        (v: Replies) => v.extra?.type === 'review'
+      );
+
+      setAllData(filterReview);
+      setDataLength(filterReview.length);
+      setPageData(filterReview.slice(0, 10));
+      setDataLengthPage(Math.ceil(filterReview.length / 10));
+      setPageNumber(1);
+    };
+
+    getReplies();
+  }, []);
 
   return (
     <>
@@ -65,29 +70,31 @@ export default function Review() {
             <Thead info="상품 정보" score="평점" />
             <tbody className="text-center">
               <Notice collection="review" />
-              {data &&
+              {allData &&
                 pageData &&
                 pageData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={v._id ? v._id : ''}
-                    title={(v as QnaReviewData).title}
-                    writer={(v as QnaReviewData).writer}
-                    date={(v as QnaReviewData).date}
-                    item={(v as QnaReviewData).productName}
-                    itemImg={(v as QnaReviewData).productImg}
-                    grade={(v as QnaReviewData).grade}
+                    tag={allData.length - i}
+                    title={(v as Replies).extra?.title}
+                    grade={(v as Replies).rating}
+                    writer={(v as Replies).user?.name}
+                    date={(v as Replies).createdAt?.split(' ')[0]}
+                    itemLink={(v as Replies).product?._id}
+                    item={(v as Replies).product?.name}
+                    itemImg={(v as Replies).product?.image}
                     link={`/review-detail/${v._id}`}
+                    collection="review"
                     attachFile={
-                      (v as QnaReviewData).attachFile
-                        ? (v as QnaReviewData).attachFile
+                      (v as Replies).extra?.attachFile
+                        ? (v as Replies).extra?.attachFile
                         : ''
                     }
                   />
                 ))}
             </tbody>
           </table>
-          <PaginationNumber length={data ? dataLengthPage : 1} />
+          <PaginationNumber length={allData ? dataLengthPage : 1} />
           <WriterButton link="/write-review" />
         </section>
       </main>

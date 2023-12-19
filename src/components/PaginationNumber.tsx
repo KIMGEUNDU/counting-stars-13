@@ -2,7 +2,7 @@ import { useData } from '@/store/useData';
 import PaginationLength from './PaginationLength';
 
 function PaginationNumber({ length }: { length: number }) {
-  const { data, pageNumber, setPageNumber, setPageData } = useData();
+  const { allData, pageNumber, setPageNumber, setPageData } = useData();
 
   // 마지막으로 이동
   const setLastPage = () => {
@@ -10,7 +10,9 @@ function PaginationNumber({ length }: { length: number }) {
     const startIdx = (length - 1) * 10;
     const lastIdx = startIdx + 10;
 
-    setPageData(data.slice(startIdx, lastIdx));
+    if (allData) {
+      setPageData(allData.slice(startIdx, lastIdx));
+    }
   };
 
   // 다음으로 이동
@@ -19,7 +21,9 @@ function PaginationNumber({ length }: { length: number }) {
     const startIdx = pageNumber * 10;
     const lastIdx = startIdx + 10;
 
-    setPageData(data.slice(startIdx, lastIdx));
+    if (allData) {
+      setPageData(allData.slice(startIdx, lastIdx));
+    }
   };
 
   // 이전으로 이동
@@ -28,7 +32,9 @@ function PaginationNumber({ length }: { length: number }) {
     const startIdx = (pageNumber - 2) * 10;
     const lastIdx = startIdx + 10;
 
-    setPageData(data.slice(startIdx, lastIdx));
+    if (allData) {
+      setPageData(allData.slice(startIdx, lastIdx));
+    }
   };
 
   return (
@@ -37,7 +43,9 @@ function PaginationNumber({ length }: { length: number }) {
         type="button"
         onClick={() => {
           setPageNumber(1);
-          setPageData(data.slice(0, 10));
+          if (allData) {
+            setPageData(allData.slice(0, 10));
+          }
         }}
         disabled={pageNumber === 1 ? true : false}
       >

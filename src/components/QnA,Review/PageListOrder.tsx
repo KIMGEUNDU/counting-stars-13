@@ -1,26 +1,35 @@
-import { Link } from 'react-router-dom';
+import { useComment } from '@/store/useComment';
+import { useNavigate } from 'react-router-dom';
 
 interface PageListOrder {
-  prev: string | undefined;
-  next: string | undefined;
+  prev: Replies | null;
+  next: Replies | null;
   prevLink: string;
   nextLink: string;
-  _id: number;
-  length: number;
 }
 
-function PageListOrder({
-  prev,
-  next,
-  prevLink,
-  nextLink,
-  _id,
-  length,
-}: PageListOrder) {
+function PageListOrder({ prev, next, prevLink, nextLink }: PageListOrder) {
+  const { setDeleteReviewComment, setDeleteQnaComment } = useComment();
+  const navigate = useNavigate();
+
+  const moveNextData = () => {
+    setDeleteReviewComment([]);
+    setDeleteQnaComment([]);
+
+    navigate(nextLink);
+  };
+
+  const movePrevData = () => {
+    setDeleteReviewComment([]);
+    setDeleteQnaComment([]);
+
+    navigate(prevLink);
+  };
+
   return (
     <table className="pageListOrder center text-left text-sm mb-10">
       <tbody>
-        {_id !== length && (
+        {next && (
           <tr>
             <th className="whitespace-nowrap">
               <img
@@ -32,13 +41,15 @@ function PageListOrder({
               다음글
             </th>
             <td>
-              <p className="w-1/3 truncate">
-                <Link to={nextLink}>{next}</Link>
+              <p className="w-1/4 truncate">
+                <button type="button" onClick={moveNextData}>
+                  {next.extra?.title ? next.extra?.title : next.title}
+                </button>
               </p>
             </td>
           </tr>
         )}
-        {_id !== 1 && (
+        {prev && (
           <tr>
             <th className="whitespace-nowrap">
               <img
@@ -50,8 +61,10 @@ function PageListOrder({
               이전글
             </th>
             <td>
-              <p className="w-1/3 truncate">
-                <Link to={prevLink}>{prev}</Link>
+              <p className="w-1/4 truncate">
+                <button type="button" onClick={movePrevData}>
+                  {prev.extra?.title ? prev.extra?.title : prev.title}
+                </button>
               </p>
             </td>
           </tr>
