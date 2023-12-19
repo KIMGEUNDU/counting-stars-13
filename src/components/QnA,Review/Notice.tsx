@@ -11,7 +11,7 @@ export default function Notice({ collection }: { collection: string }) {
     const getReplies = async () => {
       const res = await axiosInstance.get('/posts?type=notice');
 
-      const sortNotice = sortQnaReviewData(res.data.item.item);
+      const sortNotice = sortQnaReviewData(res.data.item);
 
       setNotice(sortNotice);
     };

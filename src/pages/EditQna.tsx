@@ -53,7 +53,7 @@ export default function EditQna() {
         },
       };
 
-      const response = await axiosInstance.patch(`/${id}`, editQna);
+      const response = await axiosInstance.patch(`/posts/${id}`, editQna);
 
       if (response.data.ok === 1) {
         toast('수정되었습니다 :)', {
