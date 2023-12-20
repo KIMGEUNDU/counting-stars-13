@@ -138,7 +138,7 @@ function QnaDetail() {
       <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
 
       <div>
-        <PageMap route="qna" category="상품 Q&A" />
+        <PageMap route="qna" routeName="Qna" category="상품 Q&A" />
         <PageDetailTitle title="상품 Q&A" explan="상품 Q&A입니다." />
         {currentData && (
           <ReviewProductItem

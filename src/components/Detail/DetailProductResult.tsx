@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import ProductQuantity from './ProductQuantity';
 import { putCart } from '@/utils/HandleCart';
 import { putWish } from '@/utils/HandleWish';
+import { useNavigate } from 'react-router-dom';
+import { useOrderSet } from '@/store/useOrderSet';
 
 function DetailProductResult({
   id,
@@ -13,6 +15,21 @@ function DetailProductResult({
   handleClickDown,
   setQuantity,
 }: DetailProductResult) {
+  const navigate = useNavigate();
+  const { setProduct } = useOrderSet();
+
+  const orderProduct = [
+    {
+      _id: id,
+      quantity,
+    },
+  ];
+
+  const handleOrderDetail = (orderProduct: Order[]) => {
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
   return (
     <>
       <Helmet>
@@ -65,6 +82,7 @@ function DetailProductResult({
         <button
           type="button"
           className={`detailButton bg-starBlack text-white`}
+          onClick={() => handleOrderDetail(orderProduct)}
         >
           바로 구매하기
         </button>

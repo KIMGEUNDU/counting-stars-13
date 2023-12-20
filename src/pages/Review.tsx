@@ -63,7 +63,7 @@ export default function Review() {
       </Helmet>
 
       <main className="min-h-[60vh]">
-        <PageMap route="review" />
+        <PageMap route="review" routeName="Review" />
         <PageMainTitle title="상품 후기" />
         <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">

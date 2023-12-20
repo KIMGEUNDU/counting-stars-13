@@ -56,7 +56,11 @@ export default function MyOrderDetail() {
       </Helmet>
 
       <main className="">
-        <PageMap route="주문 조회" category="주문 상세 조회" />
+        <PageMap
+          route="myOrder"
+          routeName="주문 조회"
+          category="주문 상세 조회"
+        />
         <PageMainTitle title="주문 상세 조회" />
 
         <div className="w-4/5 mx-auto mb-28">

@@ -96,7 +96,7 @@ function NoticeDetail() {
       <Helmet>{currentData && <title>{currentData.title}</title>}</Helmet>
 
       <div>
-        <PageMap route="notice" />
+        <PageMap route="notice" routeName="공지사항" />
         <PageDetailTitle title="공지사항" explan="공지사항입니다." />
         {currentData && (
           <PageDetailTable

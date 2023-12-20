@@ -135,7 +135,7 @@ function ReviewDetail() {
       </Helmet>
 
       <div>
-        <PageMap route="review" category="상품 사용후기" />
+        <PageMap route="review" routeName="Review" category="상품 사용후기" />
         <PageDetailTitle title="상품 사용후기" explan="상품 사용후기입니다." />
         {currentData && currentData.product && (
           <ReviewProductItem

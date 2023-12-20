@@ -117,7 +117,7 @@ function MyBoard() {
       </Helmet>
 
       <main className="min-h-[60vh]">
-        <PageMap route="myShopping" category="myBoard" />
+        <PageMap route="myShopping" routeName="내 페이지" category="myBoard" />
         <PageMainTitle title="나의 게시물" />
         <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">

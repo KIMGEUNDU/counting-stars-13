@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 
 function PageMap({
   route,
+  routeName,
   category = '',
 }: {
   route: string;
+  routeName: string;
   category?: string;
 }) {
   return (
@@ -14,7 +16,7 @@ function PageMap({
       </Link>
       <Link to={`/${route}`}>
         <span className={category ? '' : 'font-bold text-black'}>
-          {route.toUpperCase()} {category ? '＞' : ''}
+          {routeName} {category ? '＞' : ''}
         </span>
       </Link>
       {category && (
