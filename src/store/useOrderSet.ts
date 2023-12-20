@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { produce } from 'immer';
 
 interface Product {
   _id: number;
@@ -25,25 +26,19 @@ export const useOrderSet = create(
         products: [],
       },
       setProduct: (orderProducts: Product[]) =>
-        set((state) => {
-          return {
-            ...state,
-            order: {
-              ...state.order,
-              products: orderProducts,
-            },
-          };
-        }),
+        set(
+          produce((draft) => {
+            draft.order.products = orderProducts;
+          })
+        ),
       removeProduct: (id) =>
-        set((state) => ({
-          ...state,
-          order: {
-            ...state.order,
-            products: state.order.products.filter(
-              (product) => product._id !== id
-            ),
-          },
-        })),
+        set(
+          produce((draft) => {
+            draft.order.products = draft.order.products.filter(
+              (product: Product) => product._id !== id
+            );
+          })
+        ),
     }),
     { name: 'order-storage' }
   )
