@@ -273,7 +273,7 @@ export default function Order() {
       </Helmet>
 
       <main className="w-full">
-        <PageMap route="myShopping" category="주문하기" />
+        <PageMap route="myShopping" routeName="내 페이지" category="주문하기" />
         <PageMainTitle title="주문하기" />
 
         <section className="w-4/5 mx-auto my-5">

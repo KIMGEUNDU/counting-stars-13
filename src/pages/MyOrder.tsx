@@ -160,7 +160,7 @@ export default function MyOrder() {
         <title>주문 조회</title>
       </Helmet>
       <main>
-        <PageMap route="주문 조회" />
+        <PageMap route="myOrder" routeName="주문 조회" />
         <PageMainTitle title="주문 조회" />
 
         <div className="w-4/5 mx-auto mt-5">

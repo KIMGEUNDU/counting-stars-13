@@ -185,7 +185,7 @@ export default function MyCart() {
       </Helmet>
 
       <main className="">
-        <PageMap route="장바구니" />
+        <PageMap route="myCart" routeName="장바구니" />
         <PageMainTitle title="장바구니" />
 
         <div className="w-4/5 mx-auto mb-5">
