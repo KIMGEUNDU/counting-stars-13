@@ -11,7 +11,7 @@ import {
 } from '@/utils/HandleWish';
 import axiosInstance from '@/utils/axiosInstance';
 import toast from 'react-hot-toast';
-import { useHandleOrder } from '@/utils/usehandleOrder';
+import { useHandleOrder } from '@/utils/useHandleOrder';
 
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
