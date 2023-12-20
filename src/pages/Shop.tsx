@@ -107,7 +107,7 @@ export default function Shop() {
       <Helmet>
         <title>{category} - 별,해달</title>
       </Helmet>
-      <PageMap route="Shop" category={category} />
+      <PageMap route="shop/all" routeName="Shop" category={category} />
       <PageMainTitle title={category} />
       <div className="center pb-10">
         <p className="py-4 text-gray-600">

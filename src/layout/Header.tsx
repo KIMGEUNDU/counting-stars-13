@@ -1,15 +1,22 @@
 import { useLogin } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useData } from '@/store/useData';
 
 export default function Header() {
+  const location = useLocation();
+  const currentPath = location.pathname;
   const { setLogin } = useLogin();
   const { setUserInfo } = useUserInfo();
-  const { setAllData, setPageData, setDataLength, setDataLengthPage } =
-    useData();
+  const {
+    setAllData,
+    setDataLength,
+    setDataLengthPage,
+    setCurrentPage,
+    setPageNumber,
+  } = useData();
   const navigate = useNavigate();
 
   const isLoginState = localStorage.getItem('id');
@@ -30,13 +37,30 @@ export default function Header() {
     navigate('/');
   };
 
-  const moveSearch = () => {
-    setAllData([]);
-    setPageData([]);
-    setDataLength(0);
-    setDataLengthPage(0);
+  const moveQna = () => {
+    if (currentPath === '/qna') {
+      navigate(1);
+    } else {
+      setAllData([]);
+      setPageNumber(1);
+      setCurrentPage(1);
 
-    navigate('/search');
+      navigate('/qna');
+    }
+  };
+
+  const moveSearch = () => {
+    if (currentPath === '/search') {
+      navigate(1);
+    } else {
+      setAllData([]);
+      setDataLength(0);
+      setDataLengthPage(0);
+      setCurrentPage(1);
+      setPageNumber(1);
+
+      navigate('/search');
+    }
   };
 
   return (
@@ -73,9 +97,13 @@ export default function Header() {
                 <li className="group/item px-2 py-5 relative">
                   Community
                   <div className=" group/edit group-hover/item:visible invisible absolute bg-white rounded-md py-1 border w-32 text-center text-sm font-medium -left-3 mt-2">
-                    <Link to="/qna" className="block py-1">
+                    <button
+                      type="button"
+                      className="w-full py-1"
+                      onClick={moveQna}
+                    >
                       Q&A
-                    </Link>
+                    </button>
                     <Link to="/review" className="block py-1">
                       Review
                     </Link>

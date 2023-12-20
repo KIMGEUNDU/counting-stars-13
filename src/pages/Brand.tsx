@@ -11,7 +11,7 @@ export default function Brand() {
       <Helmet>
         <title>Brand - 별,해달</title>
       </Helmet>
-      <PageMap route="brand" />
+      <PageMap route="brand" routeName="Brand" />
       <PageMainTitle title="Brand" />
       <div className="center flex flex-col text-center gap-28 mb-40">
         <Logo width="w-40" />

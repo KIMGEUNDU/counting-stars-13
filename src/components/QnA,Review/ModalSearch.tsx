@@ -15,19 +15,19 @@ function ModalSearch() {
   };
 
   const getProducts = () => {
-    return axiosBase.get(`/products`);
+    return axiosBase.get(`/products?page=1&limit=10`);
   };
 
   const { mutate: totalRefetch } = useMutation(getProducts, {
     onMutate: () => {
       toast('초기화중..', {
         icon: '⭐',
-        duration: 5000,
+        duration: 500,
       });
     },
     onSuccess: (total) => {
-      setAllData(total?.data.item.slice(0, 10));
-      setDataLength(total?.data.item.length);
+      setAllData(total?.data.item);
+      setDataLength(total?.data.pagination.total);
       setPageNumber(1);
     },
   });

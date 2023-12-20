@@ -28,7 +28,7 @@ export default function MyShopping() {
   return (
     <>
       <main>
-        <PageMap route="내 페이지" />
+        <PageMap route="myShopping" routeName="내 페이지" />
         <PageMainTitle title="내 페이지" />
         <div className="w-4/5 mx-auto mt-5">
           <section className="flex items-center gap-5 border-2 p-4 mb-8">

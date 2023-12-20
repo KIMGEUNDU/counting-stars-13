@@ -120,7 +120,7 @@ export default function Wish() {
       </Helmet>
 
       <main className="w-full">
-        <PageMap route="myShopping" category="찜" />
+        <PageMap route="myShopping" routeName="내 페이지" category="찜" />
 
         <PageMainTitle title="찜" />
 

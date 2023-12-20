@@ -1,13 +1,14 @@
 import PageMap from '@/components/PageMap';
-import PaginationNumber from '@/components/PaginationNumber';
 import Notice from '@/components/QnA,Review/Notice';
+import SearchBar from '@/components/QnA,Review/SearchBar';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
+import QueryPagination from '@/components/QueryPagination';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import axiosInstance from '@/utils/axiosInstance';
-import { dateSortQnaReviewData } from '@/utils/getProductsData';
 import { setAnonymousName } from '@/utils/setAnonymousName';
+import { useQuery } from '@tanstack/react-query';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
@@ -18,16 +19,26 @@ export default function Qna() {
   const {
     allData,
     setAllData,
-    pageData,
-    setPageData,
+    dataLength,
     setDataLength,
     dataLengthPage,
     setDataLengthPage,
-    setPageNumber,
     setSelectId,
     setSelectData,
     setSelectOrderId,
+    pageNumber,
+    currentPage,
   } = useData();
+
+  const getQna = (pageNum: number) => {
+    return axiosInstance.get(`/posts?type=qna&page=${pageNum}&limit=10`);
+  };
+
+  const { isLoading, data } = useQuery({
+    queryKey: ['posts', currentPage],
+    queryFn: () => getQna(currentPage),
+    staleTime: 5000,
+  });
 
   // 새로 Qna 페이지 들어올때는 리셋
   useEffect(() => {
@@ -38,20 +49,10 @@ export default function Qna() {
   }, []);
 
   useEffect(() => {
-    const getReplies = async () => {
-      const res = await axiosInstance.get('/posts?type=qna');
-
-      const sortQna = dateSortQnaReviewData(res.data.item);
-
-      setAllData(sortQna);
-      setDataLength(sortQna.length);
-      setPageNumber(1);
-      setPageData(sortQna.slice(0, 10));
-      setDataLengthPage(Math.ceil(sortQna.length / 10));
-    };
-
-    getReplies();
-  }, [setAllData]);
+    setAllData(data?.data.item);
+    setDataLength(data?.data.pagination.total);
+    setDataLengthPage(Math.ceil(data?.data.pagination.total / 10));
+  }, [data?.data.item, setAllData]);
 
   return (
     <>
@@ -60,19 +61,21 @@ export default function Qna() {
       </Helmet>
 
       <main className="min-h-[60vh]">
-        <PageMap route="qna" />
-        <PageMainTitle title="상품 Q&A" />
+        <PageMap route="qna" routeName="Qna" />
+        <div className="center flex justify-between">
+          <PageMainTitle title="상품 Q&A" />
+          <SearchBar />
+        </div>
         <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">
             <Thead info="상품 정보" />
             <tbody className="text-center">
               <Notice collection="qna" />
               {allData &&
-                pageData &&
-                pageData.map((v, i) => (
+                allData.map((v, i) => (
                   <EachPost
                     key={i}
-                    tag={allData.length - i}
+                    tag={dataLength - i}
                     title={(v as Replies).title}
                     writer={setAnonymousName((v as Replies).user?.name)}
                     date={(v as Replies).updatedAt?.split(' ')[0]}
@@ -89,7 +92,15 @@ export default function Qna() {
                 ))}
             </tbody>
           </table>
-          <PaginationNumber length={allData ? dataLengthPage : 1} />
+          {isLoading && (
+            <p className="text-center pb-5">데이터를 불러오는 중입니다</p>
+          )}
+          {allData && allData.length === 0 && (
+            <p className="text-center py-5">검색 결과가 없습니다 : ）</p>
+          )}
+          {pageNumber > 0 && dataLengthPage > 0 && (
+            <QueryPagination length={allData ? dataLengthPage : 1} />
+          )}
           <WriterButton link="/write-qna" />
         </section>
       </main>
