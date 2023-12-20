@@ -1,9 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DetailProductResult from './DetailProductResult';
 import DetailProductSelect from './DetailProductSelect';
 
 function DetailProductOption({ data }: { data: ProductData }) {
   const [quantity, setQuantity] = useState(1);
+  const [inventory, setInventory] = useState(0);
+
+  useEffect(() => {
+    const getInventory = () => {
+      if (data?.options.item.length === 0) {
+        const inventory = data?.quantity - data?.buyQuantity;
+        return setInventory(inventory);
+      }
+      if (data?.options.item.length > 0) {
+        const inventory =
+          data?.quantity -
+          data.options.item.reduce((acc, cur) => {
+            return acc + cur.buyQuantity;
+          }, 0);
+        return setInventory(inventory);
+      }
+    };
+    getInventory();
+  }, [inventory, data]);
 
   const handleClickUp = () => {
     if (quantity > 98) return;
@@ -13,17 +32,6 @@ function DetailProductOption({ data }: { data: ProductData }) {
   const handleClickDown = () => {
     if (quantity < 2) return;
     setQuantity((prevCount) => prevCount - 1);
-  };
-
-  const getInventory = () => {
-    if (data?.options.item.length === 0) {
-      const inventory = data?.quantity - data?.buyQuantity;
-      return inventory;
-    }
-    if (data?.options.item.length > 0) {
-      const inventory = data?.quantity - data?.buyQuantity;
-      return inventory;
-    }
   };
 
   if (data) {
@@ -51,12 +59,17 @@ function DetailProductOption({ data }: { data: ProductData }) {
             </tr>
             <tr className="pb-5">
               <th className="detailTableHead">재고</th>
-              <td>{getInventory()}개</td>
+              <td>{inventory}개</td>
             </tr>
           </tbody>
         </table>
         <form>
-          {data?.options.item.length > 0 && (
+          {inventory === 0 && (
+            <p className="font-semibold text-center mt-5 text-lg text-red-400">
+              현재 재고 부족으로 입고 대기 중입니다. 불편을 드려 죄송합니다.
+            </p>
+          )}
+          {data?.options.item.length > 0 && inventory !== 0 && (
             <DetailProductSelect
               id={data._id}
               name={data.name}
@@ -64,7 +77,7 @@ function DetailProductOption({ data }: { data: ProductData }) {
               option={data.productOptions}
             />
           )}
-          {data?.options.item.length === 0 && (
+          {data?.options.item.length === 0 && inventory !== 0 && (
             <DetailProductResult
               id={data._id}
               name={data?.name}

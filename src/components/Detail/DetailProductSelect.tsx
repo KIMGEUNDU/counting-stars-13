@@ -225,10 +225,7 @@ function DetailProductSelect({
           찜하기
         </button>
 
-        <button
-          type="button"
-          className={`detailButton bg-starBlack text-white`}
-        >
+        <button type="button" className="detailButton bg-starBlack text-white">
           바로 구매하기
         </button>
       </section>
