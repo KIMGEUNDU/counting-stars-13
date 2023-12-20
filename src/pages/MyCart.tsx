@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { clearCart } from '@/utils/HandleCart';
 import { putWish } from '@/utils/HandleWish';
-import { useHandleOrder } from '@/utils/usehandleOrder';
+import { useHandleOrder } from '@/utils/useHandleOrder';
 
 export default function MyCart() {
   const deliveryPrice = 0;
