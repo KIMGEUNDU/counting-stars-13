@@ -2,13 +2,13 @@ import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { putWish } from '@/utils/HandleWish';
 import CartGuide from 'components/Cart/CartGuide';
 import axiosInstance from '@/utils/axiosInstance';
-import { clearCart } from '@/utils/HandleCart';
 import toast from 'react-hot-toast';
-import { useOrderSet } from '@/store/useOrderSet';
 import { Helmet } from 'react-helmet-async';
+import { clearCart } from '@/utils/HandleCart';
+import { putWish } from '@/utils/HandleWish';
+import { useHandleOrder } from '@/utils/usehandleOrder';
 
 export default function MyCart() {
   const deliveryPrice = 0;
@@ -17,7 +17,8 @@ export default function MyCart() {
   const [checkProduct, setCheckProduct] = useState<number[]>([]);
   const [checkControl, setCheckControl] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
-  const { setProduct } = useOrderSet();
+  const { handleOrderAll, handleOrderSelect, handleEachOrder } =
+    useHandleOrder(cartData);
 
   useEffect(() => {
     async function getCartData() {
@@ -113,10 +114,6 @@ export default function MyCart() {
     setQuantity((prev) => ({ ...prev, [id]: Math.max(prev[id] - 1, 1) }));
   };
 
-  const handleEachOrder = async (id: number, product_id: number) => {
-    setProduct([{ _id: product_id, quantity: quantity[id] }]);
-  };
-
   const handleChangeQuantity = async (id: number) => {
     const changeCheck = cartData.some((item) => {
       if (item._id === id) {
@@ -151,31 +148,6 @@ export default function MyCart() {
     } catch (error) {
       toast.error('문제가 발생했습니다. 잠시 후 시도해주세요.');
     }
-  };
-
-  const handleOrderAll = () => {
-    const orderProduct: Order[] = [];
-    cartData.map((item) => {
-      orderProduct.push({ _id: item.product_id, quantity: item.quantity });
-    });
-    setProduct(orderProduct);
-    navigate('/order');
-  };
-
-  const handleOrderSelect = () => {
-    if (checkProduct.length === 0) {
-      toast.error('선택한 상품이 없습니다.');
-      return;
-    }
-
-    const orderProduct: Order[] = [];
-    cartData.map((item) => {
-      if (checkProduct.includes(item._id)) {
-        orderProduct.push({ _id: item.product_id, quantity: item.quantity });
-      }
-    });
-    setProduct(orderProduct);
-    navigate('/order');
   };
 
   return (
@@ -312,7 +284,11 @@ export default function MyCart() {
                               type="button"
                               className="my-1 w-[90%] h-1/5 text-sm bg-gray-700 rounded-sm border text-white"
                               onClick={() => {
-                                handleEachOrder(item._id, item.product_id);
+                                handleEachOrder(
+                                  item._id,
+                                  item.product_id,
+                                  quantity
+                                );
                                 navigate('/order');
                               }}
                             >
@@ -419,7 +395,7 @@ export default function MyCart() {
                 <button
                   type="button"
                   className="w-32 h-10 text-base text-white bg-gray-700"
-                  onClick={handleOrderSelect}
+                  onClick={() => handleOrderSelect(checkProduct)}
                 >
                   선택 상품 주문
                 </button>
