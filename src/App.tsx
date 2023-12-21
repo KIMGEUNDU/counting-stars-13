@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Loading from './pages/Loading';
+import TokenRefresher from '@/utils/TokenRefresher';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +21,7 @@ function App() {
     <>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
+          <TokenRefresher />
           <Suspense fallback={<Loading />}>
             <RouterProvider router={router} />
           </Suspense>
