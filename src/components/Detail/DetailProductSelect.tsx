@@ -1,42 +1,35 @@
 import toast from 'react-hot-toast';
-import axiosInstance, { axiosBase } from '@/utils/axiosInstance';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { putWish } from '@/utils/HandleWish';
-
-const fetchData = async (id: number) => {
-  const response = await axiosBase.get(`/products`, {
-    params: {
-      custom: JSON.stringify({
-        'extra.depth': 2,
-        'extra.parent': id,
-      }),
-    },
-  });
-  return response.data.item;
-};
+import { useOrderSet } from '@/store/useOrderSet';
+import { useNavigate } from 'react-router-dom';
+import { putOptionCart } from '@/utils/HandleCart';
 
 function DetailProductSelect({
   id,
   name,
   price,
-  option,
+  optionSelect,
+  optionInfo,
 }: {
   id: number;
   name: string;
   price: number;
-  option: { [key: string]: string }[] | string[];
+  optionSelect: { [key: string]: string }[] | string[];
+  optionInfo: Product[];
 }) {
+  const navigate = useNavigate();
+  const { setProduct } = useOrderSet();
   const [info] = useState<{ [key: string]: number }>({});
   const [optionId] = useState<{ [key: string]: number }>({});
   const [count, setCount] = useState<{ [key: string]: number }>({});
   const [selectOption, setSelectOption] = useState<string[]>([]);
 
   useEffect(() => {
-    const processOptionData = async (id: number) => {
+    const processOptionData = async () => {
       try {
-        const data = await fetchData(id);
-        data.map((item: ProductData) => {
+        optionInfo.map((item: Product) => {
           info[item.extra.option] = item.price;
           optionId[item.extra.option] = item._id;
           count[item.extra.option] = 0;
@@ -46,8 +39,8 @@ function DetailProductSelect({
       }
     };
 
-    processOptionData(id);
-  }, [option, price, info]);
+    processOptionData();
+  }, [optionId, id, info]);
 
   const handleClickUp = (item: string) => {
     if (count[item] > 98) return;
@@ -72,33 +65,14 @@ function DetailProductSelect({
     setCount((prevCount) => ({ ...prevCount, [item]: 0 }));
   };
 
-  const putCart = () => {
-    if (selectOption.length === 0) {
-      toast.error('옵션을 선택해주세요.');
-      return;
-    }
-
-    Promise.all(
-      selectOption.map(async (item) => {
-        const cart = {
-          product_id: optionId[item],
-          quantity: count[item],
-        };
-
-        await axiosInstance.post('/carts', cart);
-      })
-    );
-
-    toast.success('장바구니에 담았습니다.');
+  const handleOrderOption = () => {
+    const orderProduct = selectOption.map((item) => ({
+      _id: optionId[item],
+      quantity: count[item],
+    }));
+    setProduct(orderProduct);
+    navigate('/order');
   };
-
-  // const handleInputChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   id: number
-  // ) => {
-  // console.log(e.target.value);
-  // console.log(id, count[id]);
-  // };
 
   return (
     <>
@@ -121,21 +95,23 @@ function DetailProductSelect({
             ---
           </option>
 
-          {option[0] instanceof Object && (
-            <optgroup label={Object.keys(option[0])[0]}>
-              {(option as { [key: string]: string }[]).map((item, index) => {
-                const key = Object.keys(item)[0];
-                return (
-                  <option key={index} value={item[key]}>
-                    {item[key]}
-                  </option>
-                );
-              })}
+          {optionSelect[0] instanceof Object && (
+            <optgroup label={Object.keys(optionSelect[0])[0]}>
+              {(optionSelect as { [key: string]: string }[]).map(
+                (item, index) => {
+                  const key = Object.keys(item)[0];
+                  return (
+                    <option key={index} value={item[key]}>
+                      {item[key]}
+                    </option>
+                  );
+                }
+              )}
             </optgroup>
           )}
 
-          {typeof option[0] === 'string' &&
-            (option as string[]).map((item, index) => (
+          {typeof optionSelect[0] === 'string' &&
+            (optionSelect as string[]).map((item, index) => (
               <option key={index} value={item}>
                 {item}
               </option>
@@ -175,7 +151,7 @@ function DetailProductSelect({
                   </button>
                 </div>
               </div>
-              {option.length > 0 && (
+              {optionSelect.length > 0 && (
                 <button type="button" onClick={() => optionDelete(item)}>
                   <img
                     src="/cancel.png"
@@ -213,7 +189,11 @@ function DetailProductSelect({
       </p>
 
       <section className={`flex gap-4 justify-between py-5 mb-10`}>
-        <button type="button" className="detailButton" onClick={putCart}>
+        <button
+          type="button"
+          className="detailButton"
+          onClick={() => putOptionCart(selectOption, optionId, count)}
+        >
           장바구니 담기
         </button>
 
@@ -225,7 +205,11 @@ function DetailProductSelect({
           찜하기
         </button>
 
-        <button type="button" className="detailButton bg-starBlack text-white">
+        <button
+          type="button"
+          className="detailButton bg-starBlack text-white"
+          onClick={handleOrderOption}
+        >
           바로 구매하기
         </button>
       </section>
