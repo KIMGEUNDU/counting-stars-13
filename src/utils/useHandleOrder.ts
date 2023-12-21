@@ -15,6 +15,19 @@ export const useHandleOrder = (cartData: CartItem[]) => {
     navigate('/order');
   };
 
+  const handleOrderOption = (
+    selectOption: string[],
+    optionId: { [key: string]: number },
+    count: { [key: string]: number }
+  ) => {
+    const orderProduct = selectOption.map((item) => ({
+      _id: optionId[item],
+      quantity: count[item],
+    }));
+    setProduct(orderProduct);
+    navigate('/order');
+  };
+
   const handleOrderDetail = (orderProduct: Order[]) => {
     setProduct(orderProduct);
     navigate('/order');
@@ -75,5 +88,6 @@ export const useHandleOrder = (cartData: CartItem[]) => {
     handleEachOrder,
     handleOrder,
     handleOrderDetail,
+    handleOrderOption,
   };
 };
