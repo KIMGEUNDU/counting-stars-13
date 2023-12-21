@@ -1,46 +1,20 @@
+import toast from 'react-hot-toast';
 import EditAddress from '@/components/EditMember/EditAddress';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
+import debounce from '@/utils/debounce';
+import axiosInstance from '@/utils/axiosInstance';
+import { AxiosResponse, AxiosError } from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link, useNavigate } from 'react-router-dom';
 import { useOrderUserInfo } from '@/store/useOrderUserInfo';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
-import debounce from '@/utils/debounce';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
-import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import toast from 'react-hot-toast';
-import axiosInstance from '@/utils/axiosInstance';
-import { Link, useNavigate } from 'react-router-dom';
 import { useOrderSet } from '@/store/useOrderSet';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosResponse, AxiosError } from 'axios';
-
-interface OrderRes {
-  ok: 0 | 1;
-  item?: Product;
-  message?: string;
-}
-
-// interface OrderProduct {
-//   _id: number;
-//   quantity: number;
-//   state: string;
-// }
-
-interface OrderInfo {
-  products: OrderProduct[];
-  address: {
-    name: string;
-    value: string;
-  };
-  payment: object;
-}
-
-interface IamportRes {
-  success: boolean;
-  error_msg: string;
-  [attr: string]: string | boolean;
-}
+import { useCheckboxGroup } from '@/store/useCheckboxGroup';
 
 export default function Order() {
   const navigate = useNavigate();
@@ -49,10 +23,16 @@ export default function Order() {
   const { order, removeProduct } = useOrderSet();
   const [orderData, setOrderData] = useState<OrderProduct[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [checkProduct, setCheckProduct] = useState<number[]>([]);
-  const [checkControl, setCheckControl] = useState<boolean>(false);
   const [finalAgreement, setFinalAgreement] = useState<boolean>(false);
-
+  const {
+    checkedItems,
+    isAllChecked,
+    toggleItem,
+    toggleAll,
+    setCheckedItems,
+    setIsAllChecked,
+  } = useCheckboxGroup(orderData, false);
+  console.log(orderData, order, orderUserInfo);
   const handleGetUserInfo = async () => {
     try {
       const response = await axiosInstance.get(`/users/${AUTH_ID()}`);
@@ -66,7 +46,7 @@ export default function Order() {
     }
   };
 
-  const handleGetOrder = async () => {
+  const handleGetOrder = useCallback(async () => {
     try {
       const response = await axiosInstance.post(`/orders`, order);
       const item = await response.data.item.products;
@@ -85,7 +65,7 @@ export default function Order() {
         duration: 2000,
       });
     }
-  };
+  }, [order, navigate]);
 
   useEffect(() => {
     handleGetUserInfo();
@@ -94,7 +74,7 @@ export default function Order() {
 
   useEffect(() => {
     handleGetOrder();
-  }, [order]);
+  }, [order, handleGetOrder]);
 
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
@@ -114,43 +94,18 @@ export default function Order() {
   };
 
   const handleSelectDelete = () => {
-    if (checkProduct.length === 0) {
+    if (checkedItems.length === 0) {
       toast.error('선택 상품이 없습니다.');
       return;
     }
 
-    checkProduct.map((id: number) => {
+    checkedItems.map((id: number) => {
       removeProduct(id);
     });
 
-    setCheckProduct([]);
-    setCheckControl(false);
+    setCheckedItems([]);
+    setIsAllChecked(false);
     toast.success('삭제되었습니다.');
-  };
-
-  const handleCheckProduct = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    id: number
-  ) => {
-    if (e.target.checked) {
-      setCheckProduct([...checkProduct, id]);
-      if (checkProduct.length + 1 === orderData.length) {
-        setCheckControl(true);
-      }
-    } else {
-      setCheckProduct(checkProduct.filter((item) => item !== id));
-      setCheckControl(false);
-    }
-  };
-
-  const controlCheck = () => {
-    setCheckControl(!checkControl);
-
-    if (checkControl) {
-      setCheckProduct([]);
-    } else {
-      setCheckProduct(orderData.map((item: OrderProduct) => item._id));
-    }
   };
 
   function requestPay(): Promise<IamportRes> {
@@ -243,6 +198,7 @@ export default function Order() {
     // if (checkConfirm) {
     //   try {
     //     const payOrder: payProduct = {
+    //       type: 'cart',
     //       products: [],
     //       address: { address: '', addressDetail: '', zonecode: '' },
     //     };
@@ -288,8 +244,8 @@ export default function Order() {
                     <td className="w-[5%]">
                       <input
                         type="checkbox"
-                        onChange={controlCheck}
-                        checked={checkControl}
+                        onChange={toggleAll}
+                        checked={isAllChecked}
                         disabled={orderData.length === 0}
                       />
                     </td>
@@ -314,11 +270,9 @@ export default function Order() {
                           <td>
                             <input
                               type="checkbox"
-                              checked={
-                                checkControl || checkProduct.includes(item._id)
-                              }
+                              checked={checkedItems.includes(item._id)}
                               className="w-5 h-5 cursor-pointer"
-                              onChange={(e) => handleCheckProduct(e, item._id)}
+                              onChange={() => toggleItem(item._id)}
                             />
                           </td>
                           <td className="p-2">
