@@ -139,7 +139,7 @@ function FormCkEditor({ type }: { type?: string }) {
                     const imageName = res.data.file.name;
                     const imagePath = res.data.file.path;
                     // TODO: 이건 확인해봐야함
-                    const imageUrl = `https://snack-for-your-pet-counting-stars.koyeb.app/${imagePath}`;
+                    const imageUrl = `https://snack-for-your-pet-counting-stars.koyeb.app/api/${imagePath}`;
 
                     callback(imageUrl, imageName);
                     setAttachFile(imageUrl);

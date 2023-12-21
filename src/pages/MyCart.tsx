@@ -1,30 +1,37 @@
-import PageMainTitle from '@/components/PageMainTitle';
-import PageMap from '@/components/PageMap';
+import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CartGuide from 'components/Cart/CartGuide';
+import PageMainTitle from '@/components/PageMainTitle';
+import PageMap from '@/components/PageMap';
 import axiosInstance from '@/utils/axiosInstance';
-import toast from 'react-hot-toast';
+import CartGuide from 'components/Cart/CartGuide';
 import { Helmet } from 'react-helmet-async';
 import { clearCart } from '@/utils/HandleCart';
 import { putWish } from '@/utils/HandleWish';
 import { useHandleOrder } from '@/utils/useHandleOrder';
+import { useCheckboxGroup } from '@/store/useCheckboxGroup';
 
 export default function MyCart() {
   const deliveryPrice = 0;
   const navigate = useNavigate();
   const [cartData, setCartData] = useState<CartItem[]>([]);
-  const [checkProduct, setCheckProduct] = useState<number[]>([]);
-  const [checkControl, setCheckControl] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<{ [id: string]: number }>({});
   const { handleOrderAll, handleOrderSelect, handleEachOrder } =
     useHandleOrder(cartData);
+  const {
+    checkedItems,
+    isAllChecked,
+    toggleItem,
+    toggleAll,
+    setCheckedItems,
+    setIsAllChecked,
+  } = useCheckboxGroup(cartData, true);
 
   useEffect(() => {
     async function getCartData() {
       const res = await axiosInstance.get(`/carts`);
       setCartData(res.data.item);
-      setCheckProduct(res.data.item.map((item: CartItem) => item._id));
+      setCheckedItems(res.data.item.map((item: CartItem) => item._id));
     }
     getCartData();
   }, []);
@@ -37,21 +44,6 @@ export default function MyCart() {
     setQuantity(initialQuantity);
   }, [cartData]);
 
-  const handleCheckProduct = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    id: number
-  ) => {
-    if (e.target.checked) {
-      setCheckProduct([...checkProduct, id]);
-      if (checkProduct.length + 1 === cartData.length) {
-        setCheckControl(true);
-      }
-    } else {
-      setCheckProduct(checkProduct.filter((item) => item !== id));
-      setCheckControl(false);
-    }
-  };
-
   const deleteEachProduct = async (id: number) => {
     const response = await axiosInstance.delete(`/carts/${id}`);
     if (response.status === 200)
@@ -60,29 +52,19 @@ export default function MyCart() {
   };
 
   const deleteCheckProduct = async () => {
-    if (checkProduct.length === 0) {
-      toast.error('선택 상품이 없습니다.');
+    if (checkedItems.length === 0) {
+      toast.error('선택한 상품이 없습니다.');
       return;
     }
 
     await Promise.all(
-      checkProduct.map((id) => axiosInstance.delete(`/carts/${id}`))
+      checkedItems.map((id) => axiosInstance.delete(`/carts/${id}`))
     );
 
-    setCartData(cartData.filter((item) => !checkProduct.includes(item._id)));
-    setCheckProduct([]);
+    setCartData(cartData.filter((item) => !checkedItems.includes(item._id)));
+    setCheckedItems([]);
     toast.success('삭제되었습니다.');
-    setCheckControl(false);
-  };
-
-  const controlCheck = () => {
-    setCheckControl(!checkControl);
-
-    if (checkControl) {
-      setCheckProduct([]);
-    } else {
-      setCheckProduct(cartData.map((item) => item._id));
-    }
+    setIsAllChecked(false);
   };
 
   const handleInputChange = (
@@ -172,8 +154,8 @@ export default function MyCart() {
                     <th className="w-[5%]">
                       <input
                         type="checkbox"
-                        onChange={controlCheck}
-                        checked={checkControl}
+                        onChange={toggleAll}
+                        checked={isAllChecked}
                         disabled={cartData.length === 0}
                       />
                     </th>
@@ -193,16 +175,11 @@ export default function MyCart() {
                           <td>
                             <label htmlFor="cartCheck">
                               <input
-                                id="cartCheck"
+                                id={`cartCheck-${item._id}`}
                                 type="checkbox"
-                                checked={
-                                  checkControl ||
-                                  checkProduct.includes(item._id)
-                                }
+                                checked={checkedItems.includes(item._id)}
                                 className="w-5 h-5 cursor-pointer"
-                                onChange={(e) =>
-                                  handleCheckProduct(e, item._id)
-                                }
+                                onChange={() => toggleItem(item._id)}
                               />
                             </label>
                           </td>
@@ -338,7 +315,7 @@ export default function MyCart() {
                   <div>
                     <button
                       className="m-1 py-1 px-3 text-sm border-gray-300 border-2 rounded-sm"
-                      onClick={() => clearCart(setCartData, setCheckControl)}
+                      onClick={() => clearCart(setCartData, setIsAllChecked)}
                     >
                       장바구니 비우기
                     </button>
@@ -395,7 +372,7 @@ export default function MyCart() {
                 <button
                   type="button"
                   className="w-32 h-10 text-base text-white bg-gray-700"
-                  onClick={() => handleOrderSelect(checkProduct)}
+                  onClick={() => handleOrderSelect(checkedItems)}
                 >
                   선택 상품 주문
                 </button>

@@ -8,7 +8,7 @@ interface Product {
 }
 
 interface Products {
-  dryRun: boolean;
+  type: string;
   products: Product[];
 }
 
@@ -22,7 +22,7 @@ export const useOrderSet = create(
   persist<OrderSet>(
     (set) => ({
       order: {
-        dryRun: true,
+        type: 'cart',
         products: [],
       },
       setProduct: (orderProducts: Product[]) =>

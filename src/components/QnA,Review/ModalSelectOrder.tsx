@@ -19,15 +19,37 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     async function getOrderData() {
       const response = await axiosInstance.get(`/orders`);
 
+      const item = response.data.item;
+
+      const date = item.map((v: Data) => {
+        return v.createdAt;
+      });
+
+      const createdAtAddOrderProducts: {
+        createdAt: string;
+        image: string;
+        name: string;
+        price: number;
+        quantity: number;
+        _id: number;
+        extra: { depth: number; option: string; parent: number };
+      }[][] = [];
+
       const productsArray = response.data.item.map(
         (v: UserOrderData) => v.products
       );
 
+      productsArray.forEach((v: OrderData[], i: number) =>
+        createdAtAddOrderProducts.push(
+          v.map((v) => ({ ...v, createdAt: date[i] }))
+        )
+      );
+
       const orderProducts = [];
 
-      for (const i in productsArray) {
-        for (const j in productsArray[i]) {
-          orderProducts.push(productsArray[i][j]);
+      for (const i in createdAtAddOrderProducts) {
+        for (const j in createdAtAddOrderProducts[i]) {
+          orderProducts.push(createdAtAddOrderProducts[i][j]);
         }
       }
 
@@ -42,6 +64,8 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setDataLengthPage(Math.ceil(orderData.length / 10));
     setPageNumber(1);
   }, []);
+
+  // console.log(orderData);
 
   return (
     <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
@@ -71,9 +95,10 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
                   key={i}
                   src={v.image}
                   title={v.name}
-                  date="2023-10-10 08:24:33"
+                  date={v.createdAt}
                   price={v.price}
                   id={v._id}
+                  option={v.extra.option ? v.extra.option : ''}
                 />
               ))}
             {orderData.length === 0 && (

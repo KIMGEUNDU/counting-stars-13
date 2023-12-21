@@ -8,7 +8,10 @@ function ModalSelectOrderResult({
   date,
   price,
   id,
-}: Pick<ProductItem, 'src' | 'title' | 'date' | 'price' | 'id'>) {
+  option,
+}: Pick<ProductItem, 'src' | 'title' | 'date' | 'price' | 'id'> & {
+  option?: string;
+}) {
   const { selectOrderId, setSelectOrderId, setSelectData, setModal, modal } =
     useData();
 
@@ -42,6 +45,7 @@ function ModalSelectOrderResult({
       </td>
       <td className="flex flex-col h-20 py-2 justify-center">
         <span>{title}</span>
+        {option && <span className="text-sm">옵션: {option}</span>}
         <span className="font-semibold text-amber-900">
           {price.toLocaleString()}원
         </span>

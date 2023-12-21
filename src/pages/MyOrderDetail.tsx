@@ -62,10 +62,12 @@ export default function MyOrderDetail() {
           category="주문 상세 조회"
         />
         <PageMainTitle title="주문 상세 조회" />
-
-        <div className="w-4/5 mx-auto mb-28">
+        <div className="w-4/5 mx-auto mb-32">
           <section className="my-10">
             <div>
+              <span className="block text-lg font-bold pb-2 pl-1">
+                {orderInfo.createdAt?.split(' ')[0]}
+              </span>
               <h3 className=" border-t bg-gray-100 font-bold py-1 block border-b px-4">
                 주문 상품 ({orderProductList?.length})
               </h3>
@@ -93,6 +95,11 @@ export default function MyOrderDetail() {
                           </td>
                           <td>
                             <Link to={`/detail/${item._id}`}>{item.name}</Link>
+                            {item.extra?.option && (
+                              <span className="block text-sm">
+                                - {item.extra?.option} -
+                              </span>
+                            )}
                           </td>
                           <td className="font-semibold">
                             {item.price.toLocaleString()}원
@@ -113,7 +120,7 @@ export default function MyOrderDetail() {
                 </tbody>
               </table>
             </div>
-            <h3 className="border-t bg-gray-100 font-bold py-1 block px-6">
+            <h3 className="border-t bg-gray-100 font-bold py-1 block px-5">
               주문 금액
             </h3>
             <table className="text-center w-full mb-10">
@@ -121,6 +128,7 @@ export default function MyOrderDetail() {
                 <tr className="bg-gray-50 h-16 font-bold text-sm border-t border-b">
                   <td className="w-1/4">총 상품 금액</td>
                   <td className="w-1/4">총 배송비</td>
+
                   <td className="w-1/2">결제 금액</td>
                 </tr>
               </thead>
@@ -133,13 +141,11 @@ export default function MyOrderDetail() {
                     원
                   </td>
                   <td className="font-bold">
-                    <span className="text-xl">
-                      {orderInfo.cost?.shippingFees.toLocaleString()}
-                    </span>
-                    원
+                    <span className="text-xl">0</span>원
                   </td>
+
                   <td className="font-bold text-2xl text-starRed">
-                    {orderInfo.cost?.total.toLocaleString()}원
+                    {orderInfo.cost?.products.toLocaleString()}원
                   </td>
                 </tr>
               </thead>
@@ -149,8 +155,8 @@ export default function MyOrderDetail() {
             <table className="w-full border-t border-gray-300">
               <tbody className="border-b border-gray-300">
                 <tr className="border-b border-gray-300">
-                  <td className="bg-gray-50 p-3">
-                    <label htmlFor="inputName">구매자명</label>
+                  <td className="bg-gray-50 p-3 w-1/6">
+                    <span>구매자명</span>
                   </td>
                   <td className="p-3">
                     <span className="" id="inputName">
@@ -160,10 +166,10 @@ export default function MyOrderDetail() {
                 </tr>
                 <tr className="border-b border-gray-300">
                   <td className="bg-gray-50 p-3">
-                    <label htmlFor="inputName">입금 은행</label>
+                    <span>결제 방법</span>
                   </td>
                   <td className="p-3">
-                    <span className="">별해달은행 333-3333-33 김건주</span>
+                    <div className=""></div>
                   </td>
                 </tr>
               </tbody>
@@ -174,7 +180,7 @@ export default function MyOrderDetail() {
             <tbody>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputName">받는 분</label>
+                  <span>받는 분</span>
                 </td>
 
                 <td className="p-3">
@@ -183,22 +189,12 @@ export default function MyOrderDetail() {
                   </span>
                 </td>
               </tr>
-
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputPhone0" className="sr-only">
-                    휴대전화
-                  </label>
-                  <label htmlFor="inputPhone1">휴대전화</label>
-                  <label htmlFor="inputPhone2" className="sr-only">
-                    휴대전화
-                  </label>
+                  <span>휴대전화</span>
                 </td>
-
                 <td className="p-3">
-                  <span className="" id="inputName">
-                    010-0000-0000
-                  </span>
+                  <span>010-0000-0000</span>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -207,7 +203,7 @@ export default function MyOrderDetail() {
                   <div className="mb-2"></div>
 
                   <div className="mb-2">
-                    <span>
+                    <span className="font-semibold pb-1 block">
                       {orderInfo.address?.zonecode
                         ? orderInfo.address?.zonecode
                         : orderInfo.address?.name}
@@ -216,7 +212,9 @@ export default function MyOrderDetail() {
                       {orderInfo.address?.address
                         ? orderInfo.address?.address
                         : orderInfo.address?.value}
-                      {orderInfo.address?.addressDetail}
+                      <span className="block">
+                        {orderInfo.address?.addressDetail}
+                      </span>
                     </span>
                   </div>
                   <div></div>
@@ -224,7 +222,7 @@ export default function MyOrderDetail() {
               </tr>
 
               <tr className="border-b">
-                <td className="bg-gray-50 w-40 p-3 ">
+                <td className="bg-gray-50 w-40 p-3">
                   <label htmlFor="inputId">배송 메시지</label>
                 </td>
                 <td className="p-3 ">
