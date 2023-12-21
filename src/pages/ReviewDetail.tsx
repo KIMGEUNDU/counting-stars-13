@@ -142,6 +142,7 @@ function ReviewDetail() {
             link={`/detail/${currentData.product._id}`}
             thumbnail={currentData.product.image}
             name={currentData.product.name}
+            option={currentData.extra?.productOption}
           />
         )}
         {currentData && (
