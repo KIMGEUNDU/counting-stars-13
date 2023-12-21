@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import moment from 'moment';
 import axiosInstance from '@/utils/axiosInstance';
+// import { useQuery } from '@tanstack/react-query';
 
 export default function MyOrder() {
   const [, setOrder] = useState(false);
@@ -116,6 +117,16 @@ export default function MyOrder() {
       });
       break;
   }
+
+  //페이지 네이션
+  // const getProducts = (pageNum: number) => {
+  //   return axiosBase.get(`/orders?page=${pageNum}&limit=10`);
+  // };
+
+  // const { isLoading, data } = useQuery({
+  //   queryKey: ['products', currentPage],
+  //   queryFn: () => getProducts(currentPage),
+  // });
 
   useEffect(() => {
     const handleGetUserInfo = async () => {
