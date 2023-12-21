@@ -1,5 +1,5 @@
-import { putCart } from '@/utils/HandleCart';
-import { fetchFirstOption, putWish } from '@/utils/HandleWish';
+import { handleModalPutCart } from '@/utils/HandleCart';
+import { putWish } from '@/utils/HandleWish';
 
 function ProductOption({ link }: { link: string }) {
   return (
@@ -7,14 +7,7 @@ function ProductOption({ link }: { link: string }) {
       <button
         type="button"
         className="pr-3 flex text-sm"
-        onClick={async (e) => {
-          e.preventDefault();
-          const id = await fetchFirstOption(+link);
-          if (id) {
-            return putCart(id, 1);
-          }
-          return putCart(+link, 1);
-        }}
+        onClick={(e) => handleModalPutCart(e, link)}
       >
         <img src="/cart.png" alt="장바구니" className="w-5 h-5" />
         카트
