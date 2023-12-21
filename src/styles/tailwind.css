@@ -44,6 +44,12 @@
   }
 }
 
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
   box-shadow: 0 0 0 1000px #ffffff inset;

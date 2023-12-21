@@ -6,7 +6,12 @@ interface ReviewProductItem {
   name: string | undefined;
 }
 
-function ReviewProductItem({ link, thumbnail, name }: ReviewProductItem) {
+function ReviewProductItem({
+  link,
+  thumbnail,
+  name,
+  option,
+}: ReviewProductItem & { option?: string }) {
   const navigator = useNavigate();
 
   return (
@@ -16,6 +21,7 @@ function ReviewProductItem({ link, thumbnail, name }: ReviewProductItem) {
           <Link to={link}>
             <h3 className="font-semibold text-xl">{name}</h3>
           </Link>
+          {option && <span className="text-base">옵션 : {option}</span>}
         </div>
         <button
           type="button"

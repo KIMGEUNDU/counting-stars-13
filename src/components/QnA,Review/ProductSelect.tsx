@@ -58,6 +58,9 @@ function ProductSelect({
         <>
           <div className="py-3 px-2 flex flex-col">
             <p className="font-bold">{selectData.name}</p>
+            {selectData.extra?.option && (
+              <span>옵션: {selectData.extra.option}</span>
+            )}
             <span className="text-starRed font-bold">
               {selectData.price.toLocaleString()}원
             </span>

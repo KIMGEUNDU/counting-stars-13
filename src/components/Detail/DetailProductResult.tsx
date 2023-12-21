@@ -4,6 +4,7 @@ import { putCart } from '@/utils/HandleCart';
 import { putWish } from '@/utils/HandleWish';
 import { useNavigate } from 'react-router-dom';
 import { useOrderSet } from '@/store/useOrderSet';
+import toast from 'react-hot-toast';
 
 function DetailProductResult({
   id,
@@ -11,8 +12,6 @@ function DetailProductResult({
   quantity,
   price,
   required,
-  handleClickUp,
-  handleClickDown,
   setQuantity,
 }: DetailProductResult) {
   const navigate = useNavigate();
@@ -28,6 +27,23 @@ function DetailProductResult({
   const handleOrderDetail = (orderProduct: Order[]) => {
     setProduct(orderProduct);
     navigate('/order');
+  };
+
+  const putCartAndToast = async (id: number, quantity: number) => {
+    const result = await putCart(id, quantity);
+    if (result) {
+      toast.success('장바구니에 담았습니다.');
+    }
+  };
+
+  const handleClickUp = () => {
+    if (quantity > 98) return;
+    setQuantity((prevCount) => prevCount + 1);
+  };
+
+  const handleClickDown = () => {
+    if (quantity < 2) return;
+    setQuantity((prevCount) => prevCount - 1);
   };
 
   return (
@@ -66,7 +82,7 @@ function DetailProductResult({
         <button
           type="button"
           className="detailButton"
-          onClick={() => putCart(id, quantity)}
+          onClick={() => putCartAndToast(id, quantity)}
         >
           장바구니 담기
         </button>

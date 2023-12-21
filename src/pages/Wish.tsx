@@ -1,23 +1,30 @@
+import toast from 'react-hot-toast';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
+import axiosInstance from '@/utils/axiosInstance';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { putCart } from '@/utils/HandleCart';
+import { handleCheckPutCart, putCart } from '@/utils/HandleCart';
 import {
   deleteAllWishes,
   deleteEachWish,
   fetchFirstOption,
 } from '@/utils/HandleWish';
-import axiosInstance from '@/utils/axiosInstance';
-import toast from 'react-hot-toast';
 import { useHandleOrder } from '@/utils/useHandleOrder';
+import { useCheckboxGroup } from '@/store/useCheckboxGroup';
 
 export default function Wish() {
   const [wishData, setWishData] = useState<CartItem[]>([]);
-  const [checkWish, setCheckWish] = useState<number[]>([]);
-  const [checkControl, setCheckControl] = useState<boolean>(false);
   const { handleOrderWishAll, handleOrder } = useHandleOrder(wishData);
+  const {
+    checkedItems,
+    isAllChecked,
+    toggleItem,
+    toggleAll,
+    setCheckedItems,
+    setIsAllChecked,
+  } = useCheckboxGroup(wishData, false);
 
   useEffect(() => {
     async function getWishes() {
@@ -27,44 +34,6 @@ export default function Wish() {
     getWishes();
   }, []);
 
-  const handleCheckWish = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    id: number
-  ) => {
-    if (e.target.checked) {
-      setCheckWish([...checkWish, id]);
-      if (checkWish.length + 1 === wishData.length) {
-        setCheckControl(true);
-      }
-    } else {
-      setCheckWish(checkWish.filter((item) => item !== id));
-      setCheckControl(false);
-    }
-  };
-
-  const handleCheckPutCart = () => {
-    if (checkWish.length === 0) {
-      toast.error('선택 상품이 없습니다.');
-      return;
-    }
-
-    Promise.all(
-      wishData.map(async (item) => {
-        if (
-          checkWish.includes(item._id) &&
-          item.product.productOptions.length > 0
-        ) {
-          const id = await fetchFirstOption(item.product_id);
-          putCart(id, 1);
-          return;
-        }
-        if (checkWish.includes(item._id)) {
-          putCart(item.product_id, 1);
-        }
-      })
-    );
-  };
-
   const clearWishes = async () => {
     try {
       const check = confirm('찜 목록을 정말 비우시겠습니까?');
@@ -73,36 +42,26 @@ export default function Wish() {
         await deleteAllWishes(wishData, setWishData);
       }
 
-      setCheckControl(false);
+      setIsAllChecked(false);
     } catch (error) {
       toast.error('잠시 후 다시 시도해주세요.');
     }
   };
 
   const deleteCheckWish = async () => {
-    if (checkWish.length === 0) {
-      toast.error('선택 상품이 없습니다.');
+    if (checkedItems.length === 0) {
+      toast.error('선택한 상품이 없습니다.');
       return;
     }
 
     await Promise.all(
-      checkWish.map((id) => axiosInstance.delete(`/bookmarks/${id}`))
+      checkedItems.map((id) => axiosInstance.delete(`/bookmarks/${id}`))
     );
 
-    setWishData(wishData.filter((item) => !checkWish.includes(item._id)));
-    setCheckWish([]);
+    setWishData(wishData.filter((item) => !checkedItems.includes(item._id)));
+    setCheckedItems([]);
     toast.success('삭제되었습니다.');
-    setCheckControl(false);
-  };
-
-  const controlCheck = () => {
-    setCheckControl(!checkControl);
-
-    if (checkControl) {
-      setCheckWish([]);
-    } else {
-      setCheckWish(wishData.map((item) => item._id));
-    }
+    setIsAllChecked(false);
   };
 
   async function handleAddToCart(productId: number, item: CartItem) {
@@ -110,7 +69,13 @@ export default function Wish() {
       item.product.productOptions.length > 0
         ? await fetchFirstOption(productId)
         : productId;
-    putCart(id, 1);
+    const result = await putCart(id, 1);
+
+    if (result) {
+      toast.success('장바구니에 상품을 담았습니다.');
+    } else {
+      toast.error('장바구니에 상품을 담지 못했습니다.');
+    }
   }
 
   return (
@@ -131,8 +96,8 @@ export default function Wish() {
                 <td className="w-[5%]">
                   <input
                     type="checkbox"
-                    onChange={controlCheck}
-                    checked={checkControl}
+                    onChange={toggleAll}
+                    checked={isAllChecked}
                     disabled={wishData.length === 0}
                   />
                 </td>
@@ -153,11 +118,9 @@ export default function Wish() {
                           <input
                             id="wishCheck"
                             type="checkbox"
-                            checked={
-                              checkControl || checkWish.includes(item._id)
-                            }
+                            checked={checkedItems.includes(item._id)}
                             className="w-5 h-5 cursor-pointer"
-                            onChange={(e) => handleCheckWish(e, item._id)}
+                            onChange={() => toggleItem(item._id)}
                           />
                         </label>
                       </td>
@@ -231,7 +194,7 @@ export default function Wish() {
                 </button>
                 <button
                   className={`text-sm border-gray-300 rounded-sm m-1 py-1 px-3 border-2`}
-                  onClick={handleCheckPutCart}
+                  onClick={() => handleCheckPutCart(checkedItems, wishData)}
                 >
                   장바구니 담기
                 </button>

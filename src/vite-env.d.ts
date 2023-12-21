@@ -37,8 +37,6 @@ interface DetailProductResult {
   quantity: number;
   price: string;
   required: boolean;
-  handleClickUp: () => void;
-  handleClickDown: () => void;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -47,7 +45,11 @@ interface Data {
   createdAt: string;
   descriptImages: string[];
   detailImages: string[];
-  extra: object;
+  extra?: {
+    depth: number;
+    parent: number;
+    option: string;
+  };
   mainImages: string[];
   name: string;
   options: string[];
@@ -75,6 +77,12 @@ interface OrderData {
   price: number;
   quantity: number;
   _id: number;
+  createdAt?: string;
+  extra: {
+    depth: number;
+    option: string;
+    parent: number;
+  };
 }
 
 interface UserOrderData {
@@ -85,7 +93,12 @@ interface UserOrderData {
     addressDetail?: string;
     zonecode?: string;
   };
-  cost?: { products: number; shippingFees: number; total: number };
+  cost?: {
+    discount?: { products: number; shippingFees: number };
+    products: number;
+    shippingFees: number;
+    total: number;
+  };
   createdAt?: string;
   products?: OrderData[];
   user_id?: number;
@@ -161,6 +174,7 @@ interface CartItem {
 }
 
 interface Product {
+  _id: number;
   price: number;
   name: string;
   image: string;
@@ -210,6 +224,7 @@ interface Replies {
     };
     product_name?: string;
     product_image?: string;
+    productOption?: string;
   };
 }
 
@@ -310,6 +325,7 @@ interface Address {
 }
 
 interface payProduct {
+  type: string;
   products: Order[];
   address: Address;
 }
@@ -317,4 +333,25 @@ interface payProduct {
 interface dateThreeMonthRange {
   dateToThreeMonth: Date | undefined;
   dateFromThreeMonth: Date | undefined;
+}
+
+interface OrderRes {
+  ok: 0 | 1;
+  item?: Product;
+  message?: string;
+}
+
+interface OrderInfo {
+  products: OrderProduct[];
+  address: {
+    name: string;
+    value: string;
+  };
+  payment: object;
+}
+
+interface IamportRes {
+  success: boolean;
+  error_msg: string;
+  [attr: string]: string | boolean;
 }

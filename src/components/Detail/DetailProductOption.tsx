@@ -24,16 +24,6 @@ function DetailProductOption({ data }: { data: ProductData }) {
     getInventory();
   }, [inventory, data]);
 
-  const handleClickUp = () => {
-    if (quantity > 98) return;
-    setQuantity((prevCount) => prevCount + 1);
-  };
-
-  const handleClickDown = () => {
-    if (quantity < 2) return;
-    setQuantity((prevCount) => prevCount - 1);
-  };
-
   if (data) {
     return (
       <section className="w-full text-left max-w-[500px] ml-auto">
@@ -74,7 +64,8 @@ function DetailProductOption({ data }: { data: ProductData }) {
               id={data._id}
               name={data.name}
               price={data.price}
-              option={data.productOptions}
+              optionSelect={data.productOptions}
+              optionInfo={data?.options.item}
             />
           )}
           {data?.options.item.length === 0 && inventory !== 0 && (
@@ -84,8 +75,6 @@ function DetailProductOption({ data }: { data: ProductData }) {
               price={`${data?.price}`}
               quantity={quantity}
               required={data?.options.item.length > 0}
-              handleClickUp={handleClickUp}
-              handleClickDown={handleClickDown}
               setQuantity={setQuantity}
             />
           )}
