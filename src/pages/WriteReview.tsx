@@ -52,6 +52,9 @@ export default function WriteReview() {
           type: 'review',
           title: titleRef.current.value,
           attachFile: attachFile,
+          productOption: selectData.extra?.option
+            ? selectData.extra.option
+            : '',
         },
       };
 
