@@ -6,7 +6,7 @@ import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import axiosInstance from '@/utils/axiosInstance';
-import { dateSortQnaReviewData } from '@/utils/getProductsData';
+import { useQuery } from '@tanstack/react-query';
 import EachPost from 'components/EachPost';
 import PageMainTitle from 'components/PageMainTitle';
 import { useEffect } from 'react';
@@ -28,6 +28,16 @@ export default function Review() {
     setSelectOrderId,
   } = useData();
 
+  const getReview = () => {
+    return axiosInstance.get(`/replies/all`);
+  };
+
+  const { isLoading, data } = useQuery({
+    queryKey: ['replies'],
+    queryFn: getReview,
+    staleTime: 5000,
+  });
+
   // 새로 Review 페이지 들어올때는 리셋
   useEffect(() => {
     setSelectId(null);
@@ -38,23 +48,12 @@ export default function Review() {
 
   // 데이터 집어넣기
   useEffect(() => {
-    const getReplies = async () => {
-      const res = await axiosInstance.get('/replies/all');
-
-      const sortReview = dateSortQnaReviewData(res.data.item);
-      const filterReview = sortReview.filter(
-        (v: Replies) => v.extra?.type === 'review'
-      );
-
-      setAllData(filterReview);
-      setDataLength(filterReview.length);
-      setPageData(filterReview.slice(0, 10));
-      setDataLengthPage(Math.ceil(filterReview.length / 10));
-      setPageNumber(1);
-    };
-
-    getReplies();
-  }, []);
+    setAllData(data?.data.item);
+    setDataLength(data?.data.item.length);
+    setPageData(data?.data.item.slice(0, 10));
+    setDataLengthPage(Math.ceil(data?.data.item.length / 10));
+    setPageNumber(1);
+  }, [data?.data.item, setAllData]);
 
   return (
     <>
@@ -94,6 +93,9 @@ export default function Review() {
                 ))}
             </tbody>
           </table>
+          {isLoading && (
+            <p className="text-center pb-5">데이터를 불러오는 중입니다</p>
+          )}
           <PaginationNumber length={allData ? dataLengthPage : 1} />
           <WriterButton link="/write-review" />
         </section>
