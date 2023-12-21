@@ -1,43 +1,34 @@
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-import QueryPagination from '@/components/QueryPagination';
 import ProductItem from '@/components/Shop/ProductItem';
 import { useData } from '@/store/useData';
 import { axiosBase } from '@/utils/axiosInstance';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { FormEvent, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { FormEvent, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 
 export default function Search() {
+  const [complete, setComplete] = useState(false);
   const searchRef = useRef<HTMLInputElement | null>(null);
-  const {
-    allData,
-    setAllData,
-    dataLengthPage,
-    setDataLengthPage,
-    dataLength,
-    setDataLength,
-    setPageNumber,
-    pageNumber,
-    currentPage,
-  } = useData();
+  const minPriceRef = useRef<HTMLInputElement | null>(null);
+  const maxPriceRef = useRef<HTMLInputElement | null>(null);
+
+  const { allData, setAllData, dataLength, setDataLength } = useData();
 
   const searchData = () => {
     return axiosBase.get(
-      `/products?keyword=${searchRef.current && searchRef.current.value}`
+      `/products?keyword=${
+        searchRef.current && searchRef.current.value
+      }&custom={"price":{"$gte": ${
+        minPriceRef.current && minPriceRef.current.value
+      }, "$lt": ${
+        maxPriceRef.current && Number(maxPriceRef.current.value) === 0
+          ? 50000
+          : maxPriceRef.current && Number(maxPriceRef.current.value) + 1
+      }}}`
     );
   };
-
-  // 데이터 가져오기
-  const getProducts = (pageNum: number) => {
-    return axiosBase.get(`/products?page=${pageNum}&limit=10`);
-  };
-
-  const { isLoading, data } = useQuery({
-    queryKey: ['products', currentPage],
-    queryFn: () => getProducts(currentPage),
-  });
 
   const { refetch } = useQuery({
     queryKey: ['products'],
@@ -46,21 +37,7 @@ export default function Search() {
     onSuccess: (data) => {
       setAllData(data?.data.item);
       setDataLength(data?.data.item.length);
-      setPageNumber(0);
-    },
-  });
-
-  const { mutate: totalRefetch } = useMutation(getProducts, {
-    onMutate: () => {
-      toast('초기화중..', {
-        icon: '⭐',
-        duration: 500,
-      });
-    },
-    onSuccess: (total) => {
-      setAllData(total?.data.item);
-      setDataLength(total?.data.pagination.total);
-      setPageNumber(1);
+      setComplete(true);
     },
   });
 
@@ -68,18 +45,22 @@ export default function Search() {
   const handleSearchData = (e: FormEvent) => {
     e.preventDefault();
 
+    if (
+      Number(minPriceRef.current && minPriceRef.current.value) >
+      Number(maxPriceRef.current && maxPriceRef.current.value)
+    ) {
+      toast('최대금액은 최소금액보다 높게 설정해주세요', {
+        icon: '🦦',
+        duration: 2000,
+      });
+    }
+
     if (searchRef.current && searchRef.current.value === '') {
-      totalRefetch(1);
+      return;
     } else {
       refetch();
     }
   };
-
-  useEffect(() => {
-    setAllData(data?.data.item);
-    setDataLength(data?.data.pagination.total);
-    setDataLengthPage(Math.ceil(data?.data.pagination.total / 10));
-  }, [data?.data.item, setAllData]);
 
   return (
     <>
@@ -94,30 +75,61 @@ export default function Search() {
             className="border-2 border-starGreen p-10 text-center rounded-xl"
             onSubmit={handleSearchData}
           >
-            <label htmlFor="productCategory" className=" font-bold">
-              상품 검색
-            </label>
-            <input
-              type="search"
-              placeholder="원하는 상품 이름을 검색해주세요."
-              className="w-60 h-8 border-b border-starGreen mx-6 focus:outline-none  focus:border-starGreen"
-              ref={searchRef}
-            />
-            <button
-              type="submit"
-              className="bg-starGreen py-3 px-6 rounded-lg font-bold"
-            >
-              검색
-            </button>
+            <fieldset>
+              <label htmlFor="productCategory" className=" font-bold">
+                상품 검색
+              </label>
+              <input
+                type="search"
+                placeholder="원하는 상품 이름을 검색해주세요."
+                className="w-60 h-8 border-b border-starGreen mx-6 focus:outline-none  focus:border-starGreen"
+                ref={searchRef}
+                required
+              />
+              <button
+                type="submit"
+                className="bg-starGreen py-3 px-6 rounded-lg font-bold"
+              >
+                검색
+              </button>
+            </fieldset>
+            <fieldset className="flex gap-5 justify-center pt-3 w-full">
+              <label
+                htmlFor="priceCategory"
+                className=" font-bold text-gray-400"
+              >
+                가격대
+              </label>
+              <input
+                className="text-center w-[10%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
+                id="priceCategory"
+                type="number"
+                ref={minPriceRef}
+                placeholder="최솟값"
+                min={0}
+                max={50000}
+              />
+              <span>~</span>
+              <input
+                className="text-center w-[10%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
+                type="number"
+                ref={maxPriceRef}
+                placeholder="최댓값"
+                min={0}
+                max={50000}
+              />
+            </fieldset>
           </form>
 
-          <p className="p-3 text-sm border mt-4">
-            총
-            <span className="font-bold  text-starRed px-">
-              {allData ? dataLength : 0}
-            </span>
-            개의 상품이 검색되었습니다.
-          </p>
+          {allData && (
+            <p className="p-3 text-sm border mt-4">
+              총
+              <span className="font-bold  text-starRed pl-2">
+                {allData ? dataLength : 0}
+              </span>
+              개의 상품이 검색되었습니다.
+            </p>
+          )}
 
           <ul className="flex flex-wrap text-center py-3">
             {allData &&
@@ -132,14 +144,8 @@ export default function Search() {
                 </li>
               ))}
           </ul>
-          {isLoading && (
-            <p className="text-center pb-5">데이터를 불러오는 중입니다</p>
-          )}
-          {allData && allData.length === 0 && (
+          {complete && allData && allData.length === 0 && (
             <p className="text-center pb-5">검색 결과가 없습니다 : ）</p>
-          )}
-          {pageNumber > 0 && dataLengthPage > 0 && (
-            <QueryPagination length={allData ? dataLengthPage : 1} />
           )}
         </section>
       </main>
