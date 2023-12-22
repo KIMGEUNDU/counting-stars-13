@@ -229,6 +229,7 @@ interface Replies {
 }
 
 interface Review {
+  title: string;
   _id: number;
   content: string;
   rating: number;
@@ -257,6 +258,7 @@ interface OrderItemDetail {
   link: string;
   num?: number;
   img: string;
+  option?: string;
   name: string;
   number: number;
   price: number;
@@ -277,6 +279,7 @@ interface CommentInput {
 }
 
 interface myOrderInfoType {
+  _id?: number;
   createdAt: Date;
   state: string;
   products: OrderProduct[];
