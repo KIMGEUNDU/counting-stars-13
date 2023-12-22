@@ -278,8 +278,8 @@ interface CommentInput {
   };
 }
 
-interface myOrderInfoType {
-  _id?: number;
+interface MyOrderInfoType {
+  _id: number;
   createdAt: Date;
   state: string;
   products: OrderProduct[];

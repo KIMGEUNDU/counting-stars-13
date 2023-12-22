@@ -16,14 +16,20 @@ export default function MyOrderDetail() {
   const { id } = useParams();
   const deliveryState = useDeliveryState(orderState);
   const orderProductList = orderInfo?.products;
+  console.log(id);
 
   useEffect(() => {
     const handleGetOrderInfo = async () => {
       try {
         const response = await axiosInstance.get(`/orders`);
-        const dataItem = response.data.item[id as string];
-        setOrderInfo(dataItem);
-        setOrderState(dataItem.state);
+        const dataItem = response.data.item;
+
+        const result = dataItem.filter((i: OrderItemDetail) => {
+          return i._id == id;
+        });
+
+        setOrderInfo(result[0]);
+        setOrderState(result[0].state);
       } catch (error) {
         toast.error('주문 정보가 없습니다.');
       }
