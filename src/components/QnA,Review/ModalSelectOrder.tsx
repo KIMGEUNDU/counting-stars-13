@@ -65,8 +65,6 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setPageNumber(1);
   }, []);
 
-  // console.log(orderData);
-
   return (
     <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
       <div
@@ -98,7 +96,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
                   date={v.createdAt}
                   price={v.price}
                   id={v._id}
-                  option={v.extra.option ? v.extra.option : ''}
+                  option={v.extra?.option ? v.extra.option : ''}
                 />
               ))}
             {orderData.length === 0 && (
