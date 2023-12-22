@@ -60,7 +60,7 @@ export default function TokenRefresher() {
             toastDisplayed = true; // 토스트 메시지가 표시되었음을 나타냄
           }
 
-          window.location.replace('/login');
+          window.location.replace('/#/login');
 
           console.error(
             '토큰 갱신 요청에서 오류가 발생했습니다:',

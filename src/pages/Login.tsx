@@ -1,9 +1,11 @@
+import { useJoinToLogin } from '@/store/useJoinToLogin';
 import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { axiosBase } from '@/utils/axiosInstance';
 import { emailReg } from '@/utils/loginReg';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import PageMainTitle from 'components/PageMainTitle';
@@ -14,8 +16,12 @@ export default function Login() {
   //아이디 비밀번호 정보 값
   const { isLoginInfo, setLoginInfo } = useLoginInfo();
   const { setUserInfo } = useUserInfo();
-
+  const { joinToLogin, setJoinToLogin } = useJoinToLogin();
   const navigate = useNavigate();
+
+  if (AUTH_ID()) {
+    navigate(-1);
+  }
 
   useEffect(() => {
     setLoginInfo({ email: '', password: '' });
@@ -25,7 +31,7 @@ export default function Login() {
   ) => {
     e.preventDefault();
     if (!emailReg(isLoginInfo.email)) {
-      return toast('이메일형식으로 입력해주세요.', {
+      return toast('이메일 형식으로 입력해주세요.', {
         icon: '✏️',
         duration: 2000,
       });
@@ -54,7 +60,8 @@ export default function Login() {
 
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
-        navigate(-1);
+        joinToLogin ? navigate('/home') : navigate('/home');
+        setJoinToLogin(false);
         toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,
