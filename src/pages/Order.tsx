@@ -516,63 +516,65 @@ export default function Order() {
               </table>
             </section>
             <section>
-              <h3 className="font-bold text-lg mt-14 mb-3">결제 예정 금액</h3>
-              <table className="text-center w-full mb-10">
-                <thead>
-                  <tr className="bg-gray-50 h-14 font-bold text-sm border-t-2 border-b">
-                    <td className="w-1/4">총 상품 금액</td>
-                    <td className="w-1/4 ">총 배송비</td>
-                    <td className="w-1/2 ">결제 예정 금액</td>
-                  </tr>
-                </thead>
-                <thead>
-                  <tr className="h-24 font-extrabold border-b-2">
-                    <td className="font-bold">
-                      <span className="text-2xl">
+              <h3 className="font-bold text-lg mt-14 mb-3">결제</h3>
+              <section className="flex flex-row gap-10">
+                <table className="text-center w-full">
+                  <thead>
+                    <tr className="bg-gray-50 h-14 font-bold text-sm border-t-2 border-b">
+                      <td className="w-1/4">총 상품 금액</td>
+                      <td className="w-1/4 ">총 배송비</td>
+                      <td className="w-1/2 ">결제 예정 금액</td>
+                    </tr>
+                  </thead>
+                  <thead>
+                    <tr className="h-24 font-extrabold border-b-2">
+                      <td className="font-bold">
+                        <span className="text-2xl">
+                          {totalPrice.toLocaleString()}
+                        </span>
+                        원
+                      </td>
+                      <td className="font-bold">
+                        <span className="text-2xl">0</span>원
+                      </td>
+                      <td className="font-bold text-2xl text-starRed">
+                        {totalPrice.toLocaleString()}원
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+
+                <article className="w-full max-w-[400px] flex border border-gray-300 ">
+                  <section className="w-full bg-gray-50 border-gray-300 border p-3 text-right">
+                    <h3 className="font-bold">최종 결제 금액</h3>
+                    <p className="text-starRed text-lg font-semibold mb-4">
+                      <span className="text-4xl font-semibold">
                         {totalPrice.toLocaleString()}
-                      </span>
+                      </span>{' '}
                       원
-                    </td>
-                    <td className="font-bold">
-                      <span className="text-2xl">0</span>원
-                    </td>
-                    <td className="font-bold text-2xl text-starRed">
-                      {totalPrice.toLocaleString()}원
-                    </td>
-                  </tr>
-                </thead>
-              </table>
+                    </p>
+                    <input
+                      type="checkbox"
+                      id="buyAgree"
+                      className="mr-2"
+                      onChange={() => setFinalAgreement(!finalAgreement)}
+                    />
+                    <label htmlFor="buyAgree">
+                      결제 정보를 확인하였으며, 구매 진행에 동의합니다.
+                    </label>
+                    <button
+                      type="button"
+                      className="hover:bg-gray-800 block w-full h-14 text-base text-white bg-gray-700 mt-4"
+                      onClick={handlePayment}
+                    >
+                      결제하기
+                    </button>
+                  </section>
+                </article>
+              </section>
             </section>
             <section>
               <h3 className="font-bold text-lg mt-14 mb-3">결제</h3>
-
-              <article className="flex border border-gray-300 ">
-                <section className="w-full bg-gray-50 border-gray-300 border p-3 text-right">
-                  <h3 className="font-bold">최종 결제 금액</h3>
-                  <p className="text-starRed text-lg font-semibold mb-24">
-                    <span className="text-4xl font-semibold">
-                      {totalPrice.toLocaleString()}
-                    </span>{' '}
-                    원
-                  </p>
-                  <input
-                    type="checkbox"
-                    id="buyAgree"
-                    className="mr-2"
-                    onChange={() => setFinalAgreement(!finalAgreement)}
-                  />
-                  <label htmlFor="buyAgree">
-                    결제 정보를 확인하였으며, 구매 진행에 동의합니다.
-                  </label>
-                  <button
-                    type="button"
-                    className="hover:bg-gray-800 block w-full h-14 text-base text-white bg-gray-700 mt-4"
-                    onClick={handlePayment}
-                  >
-                    결제하기
-                  </button>
-                </section>
-              </article>
               <section className="border-2 mt-8 mb-20">
                 <h3 className="text-sm bg-gray-100 font-semibold py-2 block border-b-2 px-4 ">
                   이용 안내
