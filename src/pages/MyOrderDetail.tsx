@@ -16,7 +16,6 @@ export default function MyOrderDetail() {
   const { id } = useParams();
   const deliveryState = useDeliveryState(orderState);
   const orderProductList = orderInfo?.products;
-  console.log(orderInfo);
 
   useEffect(() => {
     const handleGetOrderInfo = async () => {
