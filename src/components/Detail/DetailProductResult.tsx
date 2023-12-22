@@ -5,6 +5,7 @@ import { putWish } from '@/utils/HandleWish';
 import { useNavigate } from 'react-router-dom';
 import { useOrderSet } from '@/store/useOrderSet';
 import toast from 'react-hot-toast';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 
 function DetailProductResult({
   id,
@@ -25,6 +26,11 @@ function DetailProductResult({
   ];
 
   const handleOrderDetail = (orderProduct: Order[]) => {
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     setProduct(orderProduct);
     navigate('/order');
   };

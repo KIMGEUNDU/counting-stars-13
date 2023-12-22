@@ -229,6 +229,7 @@ interface Replies {
 }
 
 interface Review {
+  title: string;
   _id: number;
   content: string;
   rating: number;
@@ -257,6 +258,7 @@ interface OrderItemDetail {
   link: string;
   num?: number;
   img: string;
+  option?: string;
   name: string;
   number: number;
   price: number;
@@ -277,6 +279,7 @@ interface CommentInput {
 }
 
 interface myOrderInfoType {
+  _id?: number;
   createdAt: Date;
   state: string;
   products: OrderProduct[];
@@ -319,9 +322,10 @@ interface Order {
 }
 
 interface Address {
-  address: string;
-  addressDetail: string;
-  zonecode: string;
+  name: string;
+  value: string;
+  phone: string;
+  message: string;
 }
 
 interface payProduct {
@@ -346,6 +350,8 @@ interface OrderInfo {
   address: {
     name: string;
     value: string;
+    phone: string;
+    message: string;
   };
   payment: object;
 }

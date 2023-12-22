@@ -7,6 +7,7 @@ import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
 import PageListOrder from '@/components/QnA,Review/PageListOrder';
 import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
 import { useComment } from '@/store/useComment';
+import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
@@ -15,9 +16,11 @@ import { sortQnaReviewData } from '@/utils/getProductsData';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 function QnaDetail() {
+  const currentlocation = useLocation();
+  const currentPath = currentlocation.pathname;
   const navigate = useNavigate();
   const [prevData, setPrevData] = useState<Replies | null>(null);
   const [currentData, setCurrentData] = useState<Replies | null>(null);
@@ -28,6 +31,19 @@ function QnaDetail() {
   const { userInfo, setUserInfo } = useUserInfo();
   const [editStatus, setEditStatus] = useState(false);
   const { setContent } = useForm();
+  const { setAllData, setPageNumber, setCurrentPage } = useData();
+
+  const moveQna = () => {
+    if (currentPath === '/qna') {
+      navigate(1);
+    } else {
+      setAllData([]);
+      setPageNumber(1);
+      setCurrentPage(1);
+
+      navigate('/qna');
+    }
+  };
 
   // 댓글정렬
   const sortComment = sortQnaReviewData(qnaComment);
@@ -161,7 +177,7 @@ function QnaDetail() {
             btn1="목록"
             btn2="삭제"
             btn3="수정"
-            onClick1={() => navigate('/qna')}
+            onClick1={moveQna}
             onClick2={handleDelete}
             onClick3={() => navigate(`/edit-qna/${id}`)}
             style="quaReviewDetailButton"

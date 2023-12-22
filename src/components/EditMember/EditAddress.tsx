@@ -27,6 +27,7 @@ export default function EditAddress() {
         addressDetail: isAddress?.addressDetail,
       },
     });
+    setIsOpen(false);
   }; // handleComplete 함수
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function EditAddress() {
       <td className="p-3">
         <div className="mb-2">
           <input
-            value={orderUserInfo?.address?.zonecode}
+            defaultValue={orderUserInfo?.address?.zonecode}
             type="text"
             className="border border-gray-300 rounded w-16 mr-2"
             id="inputZipCode"
@@ -81,7 +82,7 @@ export default function EditAddress() {
         )}
         <div className="mb-2">
           <input
-            value={orderUserInfo?.address?.address}
+            defaultValue={orderUserInfo?.address?.address}
             type="text"
             className="border border-gray-300 rounded w-80 mr-2"
             id="inputAddress"
@@ -92,7 +93,7 @@ export default function EditAddress() {
         </div>
         <div>
           <input
-            value={orderUserInfo?.address?.addressDetail}
+            defaultValue={orderUserInfo?.address?.addressDetail}
             onChange={handleAdressDetailEdit}
             type="text"
             className="border border-gray-300 rounded w-80 mr-2"

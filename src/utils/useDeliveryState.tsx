@@ -10,6 +10,9 @@ export function useDeliveryState(orderState: string) {
           setDeliveryState('주문 완료');
           break;
         case 'OS020':
+          setDeliveryState('결제 완료');
+          break;
+        case 'OS030':
           setDeliveryState('배송 준비 중');
           break;
         case 'OS035':

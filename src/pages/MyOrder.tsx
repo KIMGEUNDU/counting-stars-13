@@ -1,12 +1,12 @@
-import OrderItem from '@/components/MyOrder/OrderItem';
-import PageMainTitle from '@/components/PageMainTitle';
-import PageMap from '@/components/PageMap';
 import { useDeliveryState } from '@/store/useDeliveryState';
-import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { useEffect, useState } from 'react';
+import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { Helmet } from 'react-helmet-async';
-import moment from 'moment';
 import axiosInstance from '@/utils/axiosInstance';
+import PageMainTitle from '@/components/PageMainTitle';
+import OrderItem from '@/components/MyOrder/OrderItem';
+import PageMap from '@/components/PageMap';
+import moment from 'moment';
 
 export default function MyOrder() {
   const [, setOrder] = useState(false);
@@ -121,7 +121,9 @@ export default function MyOrder() {
     const handleGetUserInfo = async () => {
       try {
         const response = await axiosInstance.get(`/orders`);
-        setMyOrderInfo(response.data.item);
+        setMyOrderInfo(
+          response.data.item.filter((item: UserOrderData) => item.address)
+        );
         setMyOrderProductInfo(response.data[0].item.products);
         setOrder(true);
       } catch (e) {

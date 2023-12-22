@@ -32,7 +32,7 @@ export default function Order() {
     setCheckedItems,
     setIsAllChecked,
   } = useCheckboxGroup(orderData, false);
-  console.log(orderData, order, orderUserInfo);
+
   const handleGetUserInfo = async () => {
     try {
       const response = await axiosInstance.get(`/users/${AUTH_ID()}`);
@@ -81,7 +81,11 @@ export default function Order() {
     phoneNumber(orderUserInfo?.phone, setPhoneNumber);
   }, [orderUserInfo?.phone, setPhoneNumber]);
 
-  const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEdit = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setOrderUserInfo({ ...orderUserInfo, [e.target.name]: e.target.value });
   };
 
@@ -159,28 +163,30 @@ export default function Order() {
       toast.error(err.response?.data?.message || '주문 실패');
     },
   });
-
+  console.log(orderUserInfo);
   const handlePayment = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!finalAgreement) {
-      toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
-      return;
-    }
     if (!isAddress.address) {
       toast.error('주소를 입력해주세요.');
       return;
     }
 
+    if (!finalAgreement) {
+      toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
+      return;
+    }
+
     try {
-      // 결제
       const res = await requestPay();
 
       createOrder.mutate({
         products: orderData,
         address: {
           name: orderUserInfo.name,
-          value: isAddress.address,
+          value: `${isAddress.address} ${isAddress.addressDetail}`,
+          phone: `${isPhoneNumber.phoneFirst}-${isPhoneNumber.phoneMiddle}-${isPhoneNumber.phoneLast}`,
+          message: orderUserInfo.deliveryMessage || '',
         },
         payment: res,
       });
@@ -200,15 +206,15 @@ export default function Order() {
     //     const payOrder: payProduct = {
     //       type: 'cart',
     //       products: [],
-    //       address: { address: '', addressDetail: '', zonecode: '' },
+    //       address: { name: '', value: '', phone: '', message: '' },
     //     };
 
     //     payOrder.products = order.products;
     //     payOrder.address = {
-    //       ...orderUserInfo.address,
-    //       address: isAddress.address || '',
-    //       addressDetail: isAddress.addressDetail || '',
-    //       zonecode: isAddress.zonecode || '',
+    //       name: orderUserInfo.name,
+    //       value: `${isAddress.address} ${isAddress.addressDetail}`,
+    //       phone: `${isPhoneNumber.phoneFirst}-${isPhoneNumber.phoneMiddle}-${isPhoneNumber.phoneLast}`,
+    //       message: orderUserInfo.deliveryMessage || '',
     //     };
 
     //     const payComplete = await axiosInstance.post('/orders', payOrder);
@@ -474,6 +480,7 @@ export default function Order() {
                         className="border border-gray-300 rounded w-32 mr-1"
                         id="inputId"
                         defaultValue={orderUserInfo?.email.split('@')[0]}
+                        readOnly
                       />
                       <span className="mr-1">@</span>
                       <input
@@ -482,6 +489,7 @@ export default function Order() {
                         className="border border-gray-300 rounded w-32 mr-1"
                         id="inputId"
                         defaultValue={orderUserInfo?.email.split('@')[1]}
+                        readOnly
                       />
 
                       <p className="mt-2 text-gray-500 text-sm">
@@ -500,6 +508,7 @@ export default function Order() {
                         name="deliveryMessage"
                         id="deliveryMessage"
                         className="border w-4/5 h-16"
+                        onChange={handleEdit}
                       ></textarea>
                     </td>
                   </tr>
@@ -535,62 +544,10 @@ export default function Order() {
               </table>
             </section>
             <section>
-              <h3 className="font-bold text-lg mt-14 mb-3">결제수단</h3>
+              <h3 className="font-bold text-lg mt-14 mb-3">결제</h3>
 
               <article className="flex border border-gray-300 ">
-                <section className="w-3/5 m-3">
-                  <div>
-                    <input
-                      type="checkbox"
-                      id="bankTransfer"
-                      checked={true}
-                      className="mr-2 mb-4"
-                      readOnly
-                    />
-                    <label htmlFor="bankTransfer">무통장입금</label>
-                  </div>
-                  <div>
-                    <table className="w-full border-t border-gray-300">
-                      <tbody className="border-b border-gray-300">
-                        <tr className="border-b border-gray-300">
-                          <td className="bg-gray-50 p-3">
-                            <label htmlFor="inputName">입금자명</label>
-                            <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                              *
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            <input
-                              type="text"
-                              className="border pl-2 border-gray-300 rounded w-40"
-                              id="inputName"
-                              defaultValue={orderUserInfo?.name}
-                              name="name"
-                              onChange={handleEdit}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b border-gray-300">
-                          <td className="bg-gray-50 p-3">
-                            <label htmlFor="inputName">입금 은행</label>
-                            <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                              *
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            <select className="border p-1">
-                              <option>🍀선택해주세요.</option>
-                              <option>별해달은행 333-3333-33 김건주</option>
-                              <option>윤동주은행 555-5555-55 이동호</option>
-                              <option>다람쥐은행 777-7777-77 장효윤</option>
-                            </select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-                <section className="w-2/5 bg-gray-50 border-gray-300 border p-3 ">
+                <section className="w-full bg-gray-50 border-gray-300 border p-3 text-right">
                   <h3 className="font-bold">최종 결제 금액</h3>
                   <p className="text-starRed text-lg font-semibold mb-24">
                     <span className="text-4xl font-semibold">

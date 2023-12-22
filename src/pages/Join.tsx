@@ -1,12 +1,12 @@
-import { terms } from 'components/terms';
-import PageMainTitle from 'components/PageMainTitle';
-import { Helmet } from 'react-helmet-async';
 import { useEffect, useRef, useState } from 'react';
 import { emailReg, phoneReg } from '@/utils/loginReg';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
 import { axiosBase } from '@/utils/axiosInstance';
+import { Helmet } from 'react-helmet-async';
+import { terms } from 'components/terms';
+import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
+import PageMainTitle from 'components/PageMainTitle';
+import toast from 'react-hot-toast';
 
 export default function Join() {
   const emailInput = useRef<HTMLInputElement>(null);
@@ -155,15 +155,6 @@ export default function Join() {
         duration: 2000,
       });
     }
-
-    // if (!pwReg(password) || !password) {
-    //   (passwordInput.current as HTMLInputElement).focus();
-
-    //   return toast('영문, 숫자 조합으로 8~16자로 입력해주세요', {
-    //     icon: '😢',
-    //     duration: 2000,
-    //   });
-    // }
     if (password !== checkPassword) {
       (checkPasswordInput.current as HTMLInputElement).focus();
 

@@ -21,7 +21,9 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
 
       const item = response.data.item;
 
-      const date = item.map((v: Data) => {
+      const existAddressData = item.filter((v: UserOrderData) => v.address);
+
+      const date = existAddressData.map((v: Data) => {
         return v.createdAt;
       });
 
@@ -35,7 +37,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         extra: { depth: number; option: string; parent: number };
       }[][] = [];
 
-      const productsArray = response.data.item.map(
+      const productsArray = existAddressData.map(
         (v: UserOrderData) => v.products
       );
 
@@ -53,7 +55,11 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         }
       }
 
-      setOrderData(orderProducts);
+      const uniqueOrderData = [
+        ...new Map(orderProducts.map((v) => [v._id, v])).values(),
+      ];
+
+      setOrderData(uniqueOrderData);
     }
 
     getOrderData();
@@ -64,8 +70,6 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setDataLengthPage(Math.ceil(orderData.length / 10));
     setPageNumber(1);
   }, []);
-
-  // console.log(orderData);
 
   return (
     <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
@@ -98,7 +102,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
                   date={v.createdAt}
                   price={v.price}
                   id={v._id}
-                  option={v.extra.option ? v.extra.option : ''}
+                  option={v.extra?.option ? v.extra.option : ''}
                 />
               ))}
             {orderData.length === 0 && (

@@ -15,7 +15,7 @@ export default function MyOrderDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const deliveryState = useDeliveryState(orderState);
-  const orderProductList = orderInfo.products;
+  const orderProductList = orderInfo?.products;
 
   useEffect(() => {
     const handleGetOrderInfo = async () => {
@@ -34,6 +34,9 @@ export default function MyOrderDetail() {
   useEffect(() => {
     const handleGetUserName = async () => {
       try {
+        if (!orderInfo?.user_id) {
+          return;
+        }
         const response = await axiosInstance.get(
           `/users/${orderInfo.user_id}/name`
         );
@@ -43,7 +46,7 @@ export default function MyOrderDetail() {
       }
     };
     handleGetUserName();
-  }, [orderInfo.user_id]);
+  }, [orderInfo?.user_id]);
 
   const handleGoBack = () => {
     navigate(-1); // 바로 이전 페이지로 이동, '/main' 등 직접 지정도 당연히 가능
@@ -66,7 +69,7 @@ export default function MyOrderDetail() {
           <section className="my-10">
             <div>
               <span className="block text-lg font-bold pb-2 pl-1">
-                {orderInfo.createdAt?.split(' ')[0]}
+                {orderInfo?.createdAt?.split(' ')[0]}
               </span>
               <h3 className=" border-t bg-gray-100 font-bold py-1 block border-b px-4">
                 주문 상품 ({orderProductList?.length})
@@ -89,7 +92,13 @@ export default function MyOrderDetail() {
                         <tr className=" border-b" key={i}>
                           <td className="text-sm font-medium">{++i}</td>
                           <td className="p-2">
-                            <Link to={`/detail/${item._id}`}>
+                            <Link
+                              to={`/detail/${
+                                item.extra?.parent
+                                  ? item.extra?.parent
+                                  : item._id
+                              }`}
+                            >
                               <img src={item.image} className="h-24 mx-auto" />
                             </Link>
                           </td>
@@ -136,7 +145,7 @@ export default function MyOrderDetail() {
                 <tr className="h-24 font-extrabold border-b-2">
                   <td className="font-bold">
                     <span className="text-xl">
-                      {orderInfo.cost?.products.toLocaleString()}
+                      {orderInfo?.cost?.products.toLocaleString()}
                     </span>
                     원
                   </td>
@@ -145,7 +154,7 @@ export default function MyOrderDetail() {
                   </td>
 
                   <td className="font-bold text-2xl text-starRed">
-                    {orderInfo.cost?.products.toLocaleString()}원
+                    {orderInfo?.cost?.products.toLocaleString()}원
                   </td>
                 </tr>
               </thead>
@@ -168,9 +177,7 @@ export default function MyOrderDetail() {
                   <td className="bg-gray-50 p-3">
                     <span>결제 방법</span>
                   </td>
-                  <td className="p-3">
-                    <div className=""></div>
-                  </td>
+                  <td className="p-3">카드 결제</td>
                 </tr>
               </tbody>
             </table>
@@ -194,7 +201,7 @@ export default function MyOrderDetail() {
                   <span>휴대전화</span>
                 </td>
                 <td className="p-3">
-                  <span>010-0000-0000</span>
+                  <span>010-1234-1234</span>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -204,16 +211,16 @@ export default function MyOrderDetail() {
 
                   <div className="mb-2">
                     <span className="font-semibold pb-1 block">
-                      {orderInfo.address?.zonecode
-                        ? orderInfo.address?.zonecode
-                        : orderInfo.address?.name}
+                      {orderInfo?.address?.zonecode
+                        ? orderInfo?.address?.zonecode
+                        : orderInfo?.address?.name}
                     </span>
                     <span className="block">
-                      {orderInfo.address?.address
-                        ? orderInfo.address?.address
-                        : orderInfo.address?.value}
+                      {orderInfo?.address?.address
+                        ? orderInfo?.address?.address
+                        : orderInfo?.address?.value}
                       <span className="block">
-                        {orderInfo.address?.addressDetail}
+                        {orderInfo?.address?.addressDetail}
                       </span>
                     </span>
                   </div>

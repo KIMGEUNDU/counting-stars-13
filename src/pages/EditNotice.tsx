@@ -17,7 +17,7 @@ export default function EditNotice() {
   const { setAllData, setPageData } = useData();
   const { id } = useParams();
 
-  // Qna 등록하기 (Axios)
+  // Notice 등록하기 (Axios)
   const handleRegistNotice = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -54,13 +54,13 @@ export default function EditNotice() {
     const getCurrentQnaData = async () => {
       const res = await axiosInstance.get(`/posts/${id}`);
 
-      const currentQna = res.data.item;
+      const currentNotice = res.data.item;
 
       if (titleRef && titleRef.current) {
-        titleRef.current.value = currentQna.title;
-        setContent(currentQna.content);
-        if (currentQna.extra.attachFile) {
-          setAttachFile(currentQna.extra.attachFile);
+        titleRef.current.value = currentNotice.title;
+        setContent(currentNotice.content);
+        if (currentNotice.extra.attachFile) {
+          setAttachFile(currentNotice.extra.attachFile);
         }
       }
     };

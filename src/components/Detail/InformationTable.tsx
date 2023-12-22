@@ -6,7 +6,7 @@ function InformationTable({
 }: {
   title: string;
   length?: number;
-  reply: [];
+  reply: Review[];
 }) {
   return (
     <>
@@ -31,9 +31,10 @@ function InformationTable({
               return (
                 <InformationTableTr
                   key={i}
+                  type={item.extra.type === 'review' ? 'review' : 'qna'}
                   link={item._id}
                   number={i}
-                  content={item.extra.title}
+                  content={item.title ? item.title : item.extra.title}
                   writer={item.user.name}
                   date={item.createdAt.split(' ')[0]}
                 />
