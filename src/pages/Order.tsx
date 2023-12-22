@@ -32,7 +32,7 @@ export default function Order() {
     setCheckedItems,
     setIsAllChecked,
   } = useCheckboxGroup(orderData, false);
-  console.log(orderData, order, orderUserInfo);
+
   const handleGetUserInfo = async () => {
     try {
       const response = await axiosInstance.get(`/users/${AUTH_ID()}`);
@@ -474,6 +474,7 @@ export default function Order() {
                         className="border border-gray-300 rounded w-32 mr-1"
                         id="inputId"
                         defaultValue={orderUserInfo?.email.split('@')[0]}
+                        readOnly
                       />
                       <span className="mr-1">@</span>
                       <input
@@ -482,6 +483,7 @@ export default function Order() {
                         className="border border-gray-300 rounded w-32 mr-1"
                         id="inputId"
                         defaultValue={orderUserInfo?.email.split('@')[1]}
+                        readOnly
                       />
 
                       <p className="mt-2 text-gray-500 text-sm">
