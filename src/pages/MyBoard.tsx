@@ -201,7 +201,7 @@ function MyBoard() {
             </tbody>
           </table>
           {allData && allData.length === 0 && (
-            <p className="text-center py-5">게시물이 존재하지않습니다</p>
+            <p className="text-center py-5">게시물이 존재하지 않습니다</p>
           )}
           <PaginationNumber length={allData ? dataLengthPage : 1} />
         </section>
