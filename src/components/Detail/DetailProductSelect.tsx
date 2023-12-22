@@ -5,6 +5,7 @@ import { putWish } from '@/utils/HandleWish';
 import { useOrderSet } from '@/store/useOrderSet';
 import { useNavigate } from 'react-router-dom';
 import { putOptionCart } from '@/utils/HandleCart';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 
 function DetailProductSelect({
   id,
@@ -70,6 +71,11 @@ function DetailProductSelect({
       _id: optionId[item],
       quantity: count[item],
     }));
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     setProduct(orderProduct);
     navigate('/order');
   };
