@@ -121,7 +121,9 @@ export default function MyOrder() {
     const handleGetUserInfo = async () => {
       try {
         const response = await axiosInstance.get(`/orders`);
-        setMyOrderInfo(response.data.item);
+        setMyOrderInfo(
+          response.data.item.filter((item: UserOrderData) => item.address)
+        );
         setMyOrderProductInfo(response.data[0].item.products);
         setOrder(true);
       } catch (e) {
