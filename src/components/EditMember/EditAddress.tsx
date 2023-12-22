@@ -47,7 +47,7 @@ export default function EditAddress() {
       <td className="p-3">
         <div className="mb-2">
           <input
-            defaultValue={orderUserInfo?.address?.zonecode}
+            value={isAddress?.zonecode}
             type="text"
             className="border border-gray-300 rounded w-16 mr-2"
             id="inputZipCode"
@@ -82,7 +82,7 @@ export default function EditAddress() {
         )}
         <div className="mb-2">
           <input
-            defaultValue={orderUserInfo?.address?.address}
+            value={isAddress?.address}
             type="text"
             className="border border-gray-300 rounded w-80 mr-2"
             id="inputAddress"
@@ -93,7 +93,7 @@ export default function EditAddress() {
         </div>
         <div>
           <input
-            defaultValue={orderUserInfo?.address?.addressDetail}
+            value={isAddress?.addressDetail}
             onChange={handleAdressDetailEdit}
             type="text"
             className="border border-gray-300 rounded w-80 mr-2"

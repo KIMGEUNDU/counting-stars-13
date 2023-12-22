@@ -8,7 +8,6 @@ interface Product {
 }
 
 interface Products {
-  type: string;
   products: Product[];
 }
 
@@ -22,7 +21,6 @@ export const useOrderSet = create(
   persist<OrderSet>(
     (set) => ({
       order: {
-        type: 'cart',
         products: [],
       },
       setProduct: (orderProducts: Product[]) =>
