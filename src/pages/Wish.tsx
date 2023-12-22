@@ -11,7 +11,7 @@ import {
   deleteEachWish,
   fetchFirstOption,
 } from '@/utils/HandleWish';
-import { useHandleOrder } from '@/utils/useHandleOrder';
+import { useHandleOrder } from '@/store/useHandleOrder';
 import { useCheckboxGroup } from '@/store/useCheckboxGroup';
 
 export default function Wish() {

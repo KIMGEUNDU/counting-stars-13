@@ -1,12 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useOrderSet } from '@/store/useOrderSet';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 
 export const useHandleOrder = (cartData: CartItem[]) => {
   const navigate = useNavigate();
   const { setProduct } = useOrderSet();
 
   const handleOrderAll = () => {
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     const orderProduct = cartData.map((item: CartItem) => ({
       _id: item.product_id,
       quantity: item.quantity,
@@ -20,6 +26,11 @@ export const useHandleOrder = (cartData: CartItem[]) => {
     optionId: { [key: string]: number },
     count: { [key: string]: number }
   ) => {
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     const orderProduct = selectOption.map((item) => ({
       _id: optionId[item],
       quantity: count[item],
@@ -64,6 +75,11 @@ export const useHandleOrder = (cartData: CartItem[]) => {
     product_id: number,
     quantity: { [id: string]: number }
   ) => {
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     setProduct([{ _id: product_id, quantity: quantity[id] }]);
     navigate('/order');
   };
@@ -73,6 +89,11 @@ export const useHandleOrder = (cartData: CartItem[]) => {
     item: CartItem,
     fetchFirstOption: (id: number) => Promise<number>
   ) => {
+    if (!AUTH_ID()) {
+      toast.error('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
     const id =
       item.product.productOptions.length > 0
         ? await fetchFirstOption(productId)

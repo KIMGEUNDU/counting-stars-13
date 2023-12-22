@@ -163,17 +163,17 @@ export default function Order() {
   const handlePayment = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!finalAgreement) {
-      toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
-      return;
-    }
     if (!isAddress.address) {
       toast.error('주소를 입력해주세요.');
       return;
     }
 
+    if (!finalAgreement) {
+      toast.error('결제 정보 확인 및 구매 진행 동의가 필요합니다.');
+      return;
+    }
+
     try {
-      // 결제
       const res = await requestPay();
 
       createOrder.mutate({

@@ -8,7 +8,7 @@ import CartGuide from 'components/Cart/CartGuide';
 import { Helmet } from 'react-helmet-async';
 import { clearCart } from '@/utils/HandleCart';
 import { putWish } from '@/utils/HandleWish';
-import { useHandleOrder } from '@/utils/useHandleOrder';
+import { useHandleOrder } from '@/store/useHandleOrder';
 import { useCheckboxGroup } from '@/store/useCheckboxGroup';
 
 export default function MyCart() {
