@@ -163,7 +163,7 @@ export default function Order() {
       toast.error(err.response?.data?.message || '주문 실패');
     },
   });
-  console.log(orderUserInfo);
+
   const handlePayment = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
