@@ -1,6 +1,7 @@
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
 import Notice from '@/components/QnA,Review/Notice';
+import ReviewSearchBar from '@/components/QnA,Review/ReviewSearchBar';
 import Thead from '@/components/QnA,Review/Thead';
 import WriterButton from '@/components/QnA,Review/WriterButton';
 import { useData } from '@/store/useData';
@@ -26,6 +27,7 @@ export default function Review() {
     setSelectId,
     setSelectData,
     setSelectOrderId,
+    pageNumber,
   } = useData();
 
   const getReview = () => {
@@ -63,7 +65,10 @@ export default function Review() {
 
       <main className="min-h-[60vh]">
         <PageMap route="review" routeName="Review" />
-        <PageMainTitle title="상품 후기" />
+        <div className="center flex justify-between">
+          <PageMainTitle title="상품 후기" />
+          <ReviewSearchBar />
+        </div>
         <section className="w-4/5 mx-auto border-t-2 border-gray-300 relative">
           <table className="w-full">
             <Thead info="상품 정보" score="평점" />
@@ -96,7 +101,12 @@ export default function Review() {
           {isLoading && (
             <p className="text-center pb-5">데이터를 불러오는 중입니다</p>
           )}
-          <PaginationNumber length={allData ? dataLengthPage : 1} />
+          {pageData && pageData.length === 0 && (
+            <p className="text-center py-5">검색 결과가 없습니다 : ）</p>
+          )}
+          {pageNumber > 0 && (
+            <PaginationNumber length={allData ? dataLengthPage : 1} />
+          )}
           <WriterButton link="/write-review" />
         </section>
       </main>
