@@ -1,14 +1,14 @@
-import debounce from './../utils/debounce';
-import { Link } from 'react-router-dom';
-import PageMainTitle from 'components/PageMainTitle';
-import { useNavigate } from 'react-router-dom';
-import { emailReg } from '@/utils/loginReg';
 import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
-import { Helmet } from 'react-helmet-async';
-import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { axiosBase } from '@/utils/axiosInstance';
+import { emailReg } from '@/utils/loginReg';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import PageMainTitle from 'components/PageMainTitle';
+import debounce from './../utils/debounce';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   //아이디 비밀번호 정보 값
@@ -36,12 +36,6 @@ export default function Login() {
         duration: 2000,
       });
     }
-    // if (!pwReg(isLoginInfo.password)) {
-    //   return toast('비밀번호는 영문, 숫자 조합으로 8~16자로 입력해주세요.', {
-    //     icon: '✏️',
-    //     duration: 2000,
-    //   });
-    // }
     if (!isLoginInfo.password) {
       return toast('비밀번호를 입력해주세요.', {
         icon: '✏️',

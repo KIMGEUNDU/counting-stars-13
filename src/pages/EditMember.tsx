@@ -1,13 +1,12 @@
-import { AUTH_ID } from '@/utils/AUTH_TOKEN';
-import PageMainTitle from 'components/PageMainTitle';
-import toast from 'react-hot-toast';
-import { useEffect, useState } from 'react';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
+import { useEffect, useState } from 'react';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import DaumPostcode, { Address } from 'react-daum-postcode';
-
-import debounce from '@/utils/debounce';
+import PageMainTitle from 'components/PageMainTitle';
 import axiosInstance from '@/utils/axiosInstance';
+import debounce from '@/utils/debounce';
+import toast from 'react-hot-toast';
 
 export default function EditMember() {
   //회원정보조회 정보
@@ -144,37 +143,9 @@ export default function EditMember() {
     setEditMemberInfo({ ...editMemberInfo, birthday: e.target.value });
   };
 
-  //비밀번호 확인 유효성감사
-  // const [checkPassword, setCheckPassword] = useState('');
-  // const [checkPasswordP, setCheckPasswordP] = useState('');
-  // const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setCheckPassword(e.target.value);
-  // };
-
-  //비밀번호 확인 유효성감사
-  // useEffect(() => {
-  //   if (editMemberInfo.password === '' || checkPassword === '') {
-  //     return setCheckPasswordP('');
-  //   }
-
-  //   if (checkPassword === editMemberInfo.password) {
-  //     setCheckPasswordP('😀확인 되었습니다.');
-  //   }
-  //   if (checkPassword !== editMemberInfo.password) {
-  //     setCheckPasswordP('🥲비밀번호가 일치하지 않습니다.');
-  //   }
-
-  // }, [checkPassword, editMemberInfo.password]);
-
   const handlePatchUserInfo = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    // if (checkPassword !== editMemberInfo.password) {
-    //   return toast('비밀번호를 확인해주세요.', {
-    //     icon: '😢',
-    //     duration: 2000,
-    //   });
-    // }
     e.preventDefault();
     try {
       e.preventDefault();
@@ -224,9 +195,6 @@ export default function EditMember() {
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 w-40 p-3">
                   <label htmlFor="inputId">이메일</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="flex flex-row p-3">
                   <p className="font-medium">{editMemberInfo?.email}</p>
@@ -235,9 +203,6 @@ export default function EditMember() {
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
                   <label htmlFor="inputPw">비밀번호</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="flex flex-row p-3">
                   <input
@@ -252,26 +217,18 @@ export default function EditMember() {
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
                   <label htmlFor="inputPwConfirm">비밀번호 확인</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="p-3">
                   <input
                     type="password"
                     className="border border-gray-300 rounded w-32"
                     id="inputPwConfirm"
-                    // onChange={handleCheckPassword}
                   />
-                  {/* <p>{checkPasswordP}</p> */}
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 p-3">
                   <label htmlFor="inputName">이름</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="p-3">
                   <input
@@ -356,15 +313,11 @@ export default function EditMember() {
                   <label htmlFor="inputPhone2" className="sr-only">
                     휴대전화
                   </label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="p-3">
                   <select
                     name="phoneNumber"
                     id="inputPhone0"
-                    //TODO: 휴대폰 앞자리 바꾸기
                     value={isPhoneNumber.phoneFirst}
                     onChange={handleChangePhoneFirst}
                   >
@@ -416,48 +369,6 @@ export default function EditMember() {
                   </p>
                 </td>
               </tr>
-              {/* <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">
-                  <label htmlFor="emailInput">이메일</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="p-3">
-                  <input
-                    type="email"
-                    className="border border-gray-300 rounded w-32"
-                    id="emailInput"
-                  />
-                </td>
-              </tr> */}
-              {/* <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">이메일 수신 여부</td>
-                <td className="p-3">
-                  <input
-                    type="checkbox"
-                    name=""
-                    id="emailOk"
-                    className="mr-1"
-                  />
-                  <label htmlFor="emailOk" className="mr-2">
-                    수신함
-                  </label>
-                  <input
-                    type="checkbox"
-                    name=""
-                    id="emailNo"
-                    className="mr-1"
-                  />
-                  <label htmlFor="emailNo" className="mr-2">
-                    수신안함
-                  </label>
-                  <p className="font-extralight">
-                    쇼핑몰에서 제공하는 유익한 이벤트 소식을 이메일로 받으실 수
-                    있습니다.
-                  </p>
-                </td>
-              </tr> */}
             </tbody>
           </table>
           <h2 className="font-bold text-lg mt-10 mb-2">추가 정보</h2>
@@ -466,9 +377,6 @@ export default function EditMember() {
               <tr className="border-b border-gray-300">
                 <td className="bg-gray-50 w-40 p-3">
                   <label htmlFor="inputBirthday">생년월일</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
                 </td>
                 <td className="flex flex-row p-3">
                   <input

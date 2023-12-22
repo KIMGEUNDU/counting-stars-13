@@ -18,10 +18,10 @@ export default function Footer() {
             <Link to="/brand">Brand</Link>
           </li>
           <li className="mb-4 ">
-            <Link to="/shop">Shop</Link>
+            <Link to="/shop/all">Shop</Link>
           </li>
           <li className="mb-4">
-            <Link to="/community">Community</Link>
+            <Link to="/qna">Community</Link>
           </li>
         </ul>
         <div className="-mt-3">
