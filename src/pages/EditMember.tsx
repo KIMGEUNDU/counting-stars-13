@@ -91,12 +91,13 @@ export default function EditMember() {
         addressDetail: isAddress.addressDetail,
       },
     });
-  }; // handleComplete 함수
+  };
 
   useEffect(() => {
     setIsOpen(false);
   }, [isAddress.zonecode]);
 
+  //우편번호 값
   useEffect(() => {
     setEditMemberInfo({
       ...editMemberInfo,
@@ -107,11 +108,11 @@ export default function EditMember() {
       },
     });
   }, [isAddress.zonecode]);
-
+  //주소 검색 모달창
   const onToggleModal = () => {
     setIsOpen(!isOpen);
   };
-
+  // 상세 주소값 넣기
   const handleAdressDetailEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddress({ ...isAddress, [e.target.name]: e.target.value });
 
@@ -126,7 +127,7 @@ export default function EditMember() {
       });
     }
   };
-
+  // zonecode주소값 넣기
   useEffect(() => {
     setEditMemberInfo({
       ...editMemberInfo,

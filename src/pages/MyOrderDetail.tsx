@@ -1,11 +1,11 @@
-import PageMainTitle from '@/components/PageMainTitle';
-import PageMap from '@/components/PageMap';
-import axiosInstance from '@/utils/axiosInstance';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useDeliveryState } from '@/utils/useDeliveryState';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDeliveryState } from '@/utils/useDeliveryState';
+import PageMainTitle from '@/components/PageMainTitle';
+import axiosInstance from '@/utils/axiosInstance';
+import PageMap from '@/components/PageMap';
 import toast from 'react-hot-toast';
 
 export default function MyOrderDetail() {
@@ -49,7 +49,7 @@ export default function MyOrderDetail() {
   }, [orderInfo?.user_id]);
 
   const handleGoBack = () => {
-    navigate(-1); // 바로 이전 페이지로 이동, '/main' 등 직접 지정도 당연히 가능
+    navigate(-1);
   };
 
   return (
