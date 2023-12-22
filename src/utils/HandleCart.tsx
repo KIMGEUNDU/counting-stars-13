@@ -85,6 +85,7 @@ export const handleCheckPutCart = async (
         const id = await fetchFirstOption(item.product_id);
         if (await putCart(id, 1)) {
           successCount++;
+          return;
         }
       }
       if (checkWish.includes(item._id)) {
