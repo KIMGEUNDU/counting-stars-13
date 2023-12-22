@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface orderUserInfo {
+  deliveryMessage: string;
   email: string;
   name: string;
   phone: string;
@@ -23,6 +24,7 @@ export const useOrderUserInfo = create(
         email: '',
         name: '',
         phone: '',
+        deliveryMessage: '',
         address: { zonecode: '', address: '', addressDetail: '' },
         subAddress: { zonecode: '', address: '', addressDetail: '' },
       },
