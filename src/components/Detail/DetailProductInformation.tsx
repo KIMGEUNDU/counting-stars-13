@@ -7,9 +7,11 @@ import ProductReviews from './ProductReviews';
 function DetailProductInformation({
   imgArray,
   reply,
+  productId,
 }: {
   imgArray: [];
   reply: [];
+  productId: number;
 }) {
   return (
     <div className="center">
@@ -17,7 +19,7 @@ function DetailProductInformation({
       <DeliveryInformation />
       <ExchangeReturnInformation />
       <ProductReviews reply={reply} />
-      <ProductQnA />
+      <ProductQnA productId={productId} />
     </div>
   );
 }

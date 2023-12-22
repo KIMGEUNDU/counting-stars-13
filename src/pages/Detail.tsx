@@ -31,6 +31,7 @@ function Detail() {
       <DetailProductInformation
         imgArray={data?.descriptImages}
         reply={data?.replies}
+        productId={data?._id}
       />
     </section>
   );
