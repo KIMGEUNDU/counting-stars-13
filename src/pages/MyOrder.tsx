@@ -30,7 +30,7 @@ export default function MyOrder() {
   todayThreeMonth.setDate(todayThreeMonth.getDate() - 91);
 
   const datefilterdOrders = myOrderInfo.filter((v) => {
-    return new Date(v.createdAt) > todayThreeMonth;
+    return new Date(`${v.createdAt}`) > todayThreeMonth;
   });
 
   const handleOrderDate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ export default function MyOrder() {
       result = myOrderInfo;
     } else {
       result = myOrderInfo.filter((v) => {
-        const orderDateRange = new Date(v.createdAt);
+        const orderDateRange = new Date(`${v.createdAt}`);
         let dateFrom, dateTo;
         if (orderDate.dateForm) {
           dateFrom = new Date(orderDate.dateForm);
@@ -156,7 +156,7 @@ export default function MyOrder() {
     return [];
   };
 
-  const orderList = getOrderList();
+  const orderList: MyOrderInfoType[] = getOrderList();
   return (
     <>
       <Helmet>
@@ -250,11 +250,11 @@ export default function MyOrder() {
                 </thead>
                 <tbody>
                   {orderList.length > 0 ? (
-                    orderList.map((order: MyOrderInfoType, i) => {
+                    orderList.map((order: MyOrderInfoType, i: number) => {
                       return (
                         <OrderItem
                           key={i}
-                          num={order._id}
+                          num={order?._id as number}
                           orderDate={String(order.createdAt).slice(0, 10)}
                           productList={order.products}
                           orderState={order.state}
