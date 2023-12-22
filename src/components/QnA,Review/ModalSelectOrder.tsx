@@ -71,8 +71,6 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
     setPageNumber(1);
   }, []);
 
-  console.log(orderData);
-
   return (
     <div className="absolute top-0 left-0 z-50 overflow-hidden bg-opacity-[0.9] bg-starBlack w-screen h-full flex items-center justify-center">
       <div
