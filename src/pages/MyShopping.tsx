@@ -7,8 +7,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '@/store/useData';
 
 export default function MyShopping() {
-  const memberGrade = '일반 회원';
+  const [memberGrade, setMemberGrade] = useState('일반 회원');
+
   const [name, setName] = useState<string>();
+
   const navigate = useNavigate();
   const { setCombineData } = useData();
 
@@ -21,6 +23,9 @@ export default function MyShopping() {
     async function getUserName() {
       const res = await axiosInstance.get(`/users/${AUTH_ID()}`);
       setName(res.data.item.name);
+      if (res.data.item.email === 'admin@market.com') {
+        setMemberGrade('관리자');
+      }
     }
     getUserName();
   }, [name]);
@@ -34,7 +39,9 @@ export default function MyShopping() {
           <section className="flex items-center gap-5 border-2 p-4 mb-8">
             <img src="/avatar.gif" className=" pr-4 border-r" />
             <p>
-              별,해달✨ 쇼핑몰을 이용해주셔서 감사합니다.{' '}
+              {memberGrade === '관리자'
+                ? '✨별,해달 '
+                : '별,해달✨ 쇼핑몰을 이용해주셔서 감사합니다.'}
               <strong>{name}</strong> 님은
               <span className="font-bold text-starRed"> {memberGrade}</span>
               입니다.

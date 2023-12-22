@@ -1,4 +1,3 @@
-import { useJoinToLogin } from '@/store/useJoinToLogin';
 import { useLoginInfo } from '@/store/useLogin';
 import { useUserInfo } from '@/store/useUserInfo';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +15,6 @@ export default function Login() {
   //아이디 비밀번호 정보 값
   const { isLoginInfo, setLoginInfo } = useLoginInfo();
   const { setUserInfo } = useUserInfo();
-  const { joinToLogin, setJoinToLogin } = useJoinToLogin();
   const navigate = useNavigate();
 
   if (AUTH_ID()) {
@@ -50,7 +48,6 @@ export default function Login() {
     }
     try {
       const response = await axiosBase.post('/users/login', isLoginInfo);
-
       const responseItem = response.data.item;
 
       localStorage.clear();
@@ -60,12 +57,11 @@ export default function Login() {
 
       setUserInfo(responseItem);
       if (response.data.ok === 1) {
-        joinToLogin ? navigate('/home') : navigate('/home');
-        setJoinToLogin(false);
         toast(`환영합니다. ${responseItem.name}님`, {
           icon: '😀',
           duration: 2500,
         });
+        navigate('/');
       }
     } catch (e) {
       return toast(`아이디 또는 비밀번호가 일치하지 않습니다.`, {
@@ -133,22 +129,20 @@ export default function Login() {
           <hr className="my-5 mx-auto w-1/2" />
           <article>
             <ul className="flex justify-center mb-10 text-sm">
-              {/* <Link to="/findid"> */}
               <li
                 className="border-r border-gray-200 px-2 cursor-pointer"
                 onClick={handleFindModal}
               >
                 이메일 찾기
               </li>
-              {/* </Link> */}
-              {/* <Link to="/findpw"> */}
+
               <li
                 className="border-r border-gray-200 px-2 cursor-pointer"
                 onClick={handleFindModal}
               >
                 비밀번호 찾기
               </li>
-              {/* </Link> */}
+
               <Link to="/join">
                 <li className="px-2">회원가입</li>
               </Link>
