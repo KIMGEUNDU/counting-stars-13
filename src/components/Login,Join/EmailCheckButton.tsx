@@ -1,5 +1,5 @@
+import { axiosBase } from '@/utils/axiosInstance';
 import { emailReg } from '@/utils/loginReg';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 
 interface EmailCheckButton {
@@ -20,10 +20,10 @@ export default function EmailCheckButton({
         duration: 2000,
       });
     }
+    console.log(email);
+
     try {
-      const response = await axios.get(
-        `https://localhost/api/users/email?email=${itemEmail}`
-      );
+      const response = await axiosBase.get(`/users/email?email=${itemEmail}`);
       setCheckEmail(true);
       if (response.data.ok === 1) {
         toast('이용 가능한 이메일입니다.', {
