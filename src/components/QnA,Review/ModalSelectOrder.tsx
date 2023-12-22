@@ -21,7 +21,9 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
 
       const item = response.data.item;
 
-      const date = item.map((v: Data) => {
+      const existAddressData = item.filter((v: UserOrderData) => v.address);
+
+      const date = existAddressData.map((v: Data) => {
         return v.createdAt;
       });
 
@@ -35,7 +37,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         extra: { depth: number; option: string; parent: number };
       }[][] = [];
 
-      const productsArray = response.data.item.map(
+      const productsArray = existAddressData.map(
         (v: UserOrderData) => v.products
       );
 
