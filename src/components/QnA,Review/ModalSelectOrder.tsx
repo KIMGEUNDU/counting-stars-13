@@ -53,7 +53,11 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
         }
       }
 
-      setOrderData(orderProducts);
+      const uniqueOrderData = [
+        ...new Map(orderProducts.map((v) => [v._id, v])).values(),
+      ];
+
+      setOrderData(uniqueOrderData);
     }
 
     getOrderData();
