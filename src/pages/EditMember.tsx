@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 export default function EditMember() {
   //회원정보조회 정보
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
-
+  const [isOpen, setIsOpen] = useState(false);
   const [editMemberInfo, setEditMemberInfo] = useState<editMemberInfo>({
     email: '',
     name: '',
@@ -20,6 +20,12 @@ export default function EditMember() {
     type: '',
     emailAgree: false,
     birthday: '',
+  });
+
+  const [isAddress, setAddress] = useState<address>({
+    zonecode: '',
+    address: '',
+    addressDetail: '',
   });
 
   // 번호 앞자리, 뒷자리 나누기 값
@@ -71,12 +77,6 @@ export default function EditMember() {
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
   };
 
-  const [isAddress, setAddress] = useState<address>({
-    zonecode: '',
-    address: '',
-    addressDetail: '',
-  });
-
   const handleComplete = (data: Address) => {
     setAddress({
       ...isAddress,
@@ -108,7 +108,6 @@ export default function EditMember() {
     });
   }, [isAddress.zonecode]);
 
-  const [isOpen, setIsOpen] = useState(false);
   const onToggleModal = () => {
     setIsOpen(!isOpen);
   };

@@ -177,9 +177,7 @@ export default function MyOrderDetail() {
                   <td className="bg-gray-50 p-3">
                     <span>결제 방법</span>
                   </td>
-                  <td className="p-3">
-                    <div className=""></div>
-                  </td>
+                  <td className="p-3">카드 결제</td>
                 </tr>
               </tbody>
             </table>
@@ -203,7 +201,7 @@ export default function MyOrderDetail() {
                   <span>휴대전화</span>
                 </td>
                 <td className="p-3">
-                  <span>010-0000-0000</span>
+                  <span>010-1234-1234</span>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
