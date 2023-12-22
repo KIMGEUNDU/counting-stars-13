@@ -22,11 +22,12 @@ export default function OrderItem({
       </td>
       <td colSpan={6}>
         {Object.values(productList).map((item, i) => (
-          <div key={i} className="flex items-center">
+          <div key={i} className="flex items-center ">
             <OrderItemDetail
               key={i}
               num={num}
               link={item._id ? item._id : ''}
+              option={item.extra?.option}
               img={item.image}
               name={item.name}
               number={item.quantity ? item.quantity : 0}

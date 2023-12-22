@@ -1,13 +1,12 @@
-import OrderItem from '@/components/MyOrder/OrderItem';
-import PageMainTitle from '@/components/PageMainTitle';
-import PageMap from '@/components/PageMap';
 import { useDeliveryState } from '@/store/useDeliveryState';
-import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { useEffect, useState } from 'react';
+import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { Helmet } from 'react-helmet-async';
-import moment from 'moment';
 import axiosInstance from '@/utils/axiosInstance';
-// import { useQuery } from '@tanstack/react-query';
+import PageMainTitle from '@/components/PageMainTitle';
+import OrderItem from '@/components/MyOrder/OrderItem';
+import PageMap from '@/components/PageMap';
+import moment from 'moment';
 
 export default function MyOrder() {
   const [, setOrder] = useState(false);
@@ -117,16 +116,6 @@ export default function MyOrder() {
       });
       break;
   }
-
-  //페이지 네이션
-  // const getProducts = (pageNum: number) => {
-  //   return axiosBase.get(`/orders?page=${pageNum}&limit=10`);
-  // };
-
-  // const { isLoading, data } = useQuery({
-  //   queryKey: ['products', currentPage],
-  //   queryFn: () => getProducts(currentPage),
-  // });
 
   useEffect(() => {
     const handleGetUserInfo = async () => {
