@@ -13,6 +13,7 @@ export default function MyOrder() {
   const { isFindDeliveryState, setFindDeliveryState } = useDeliveryState();
   const { myOrderInfo, setMyOrderInfo, setMyOrderProductInfo } =
     useMyOrderInfo();
+
   const [filteredOrders, setFilteredOrders] = useState(myOrderInfo);
   const [orderDate, setOrderDate] = useState({
     dateForm: '',
@@ -249,11 +250,11 @@ export default function MyOrder() {
                 </thead>
                 <tbody>
                   {orderList.length > 0 ? (
-                    orderList.map((order, i) => {
+                    orderList.map((order: MyOrderInfoType, i) => {
                       return (
                         <OrderItem
                           key={i}
-                          num={i}
+                          num={order._id}
                           orderDate={String(order.createdAt).slice(0, 10)}
                           productList={order.products}
                           orderState={order.state}
