@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { emailReg, phoneReg } from '@/utils/loginReg';
+import { useJoinToLogin } from '@/store/useJoinToLogin';
 import { useNavigate } from 'react-router-dom';
 import { axiosBase } from '@/utils/axiosInstance';
+import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { Helmet } from 'react-helmet-async';
 import { terms } from 'components/terms';
 import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
@@ -15,7 +17,7 @@ export default function Join() {
   const nameInput = useRef<HTMLInputElement>(null);
   const phoneInput = useRef<HTMLInputElement>(null);
   const LastPhoneInput = useRef<HTMLInputElement>(null);
-
+  const { setJoinToLogin } = useJoinToLogin();
   const navigate = useNavigate();
   const [joinInfo, setJoinInfo] = useState({
     id: '',
@@ -50,6 +52,14 @@ export default function Join() {
   // 회원가입정보값 가져오기
   const { phone, password, name, email } = joinInfo;
   const { phoneFont, phoneMiddle, phoneLast } = phoneNumberList;
+
+  if (AUTH_ID()) {
+    navigate(-1);
+  }
+  //회원가입 사이트 들어오면 true 값
+  useEffect(() => {
+    setJoinToLogin(true);
+  }, []);
 
   //비밀번호 중복체크
   const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +200,7 @@ export default function Join() {
       const response = await axiosBase.post('/users', joinInfo);
 
       if (response.data.ok === 1) {
-        navigate('/');
+        navigate('/login');
         toast(`회원가입이 완료 되었습니다.`, {
           icon: '🎉',
           duration: 2500,
@@ -286,6 +296,7 @@ export default function Join() {
                     type="text"
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputId"
+                    maxLength={25}
                     required
                   />
 
@@ -311,6 +322,7 @@ export default function Join() {
                     type="password"
                     className="border border-gray-300 rounded w-32 mr-1"
                     id="inputPw"
+                    maxLength={16}
                     required
                   />
                   <p className="text-gray-500 ">(영문, 숫자 조합으로 8~16자)</p>
@@ -330,6 +342,7 @@ export default function Join() {
                     type="password"
                     className="border border-gray-300 rounded w-32"
                     id="inputPwConfirm"
+                    maxLength={16}
                     required
                     onChange={handleCheckPassword}
                   />
@@ -359,6 +372,7 @@ export default function Join() {
                     type="text"
                     className="border border-gray-300 rounded w-32"
                     id="inputName"
+                    maxLength={10}
                     required
                   />
                   <p className="text-red-400 text-sm font-semibold">
@@ -397,6 +411,7 @@ export default function Join() {
                     onChange={handlePhoneNumberList}
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone"
+                    maxLength={4}
                   />
                   -
                   <input
@@ -406,6 +421,7 @@ export default function Join() {
                     onChange={handlePhoneNumberList}
                     className="border border-gray-300 rounded w-16"
                     id="inputPhone2"
+                    maxLength={4}
                   />
                   <p
                     className={
