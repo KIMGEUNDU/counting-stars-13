@@ -20,7 +20,6 @@ export default function EmailCheckButton({
         duration: 2000,
       });
     }
-    console.log(email);
 
     try {
       const response = await axiosBase.get(`/users/email?email=${itemEmail}`);
