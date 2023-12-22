@@ -43,7 +43,12 @@ export default function EditAddress() {
 
   return (
     <tr className="border-b border-gray-300">
-      <td className="bg-gray-50 p-3">주소</td>
+      <td className="bg-gray-50 p-3">
+        주소
+        <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+          *
+        </span>
+      </td>
       <td className="p-3">
         <div className="mb-2">
           <input
