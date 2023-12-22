@@ -3,12 +3,16 @@
 ## 프로젝트 소개
 
 *[테킷 멋쟁이사자처럼] 프론트엔드 스쿨 플러스 1기*에서 진행한  
-React + TypeScript 프로젝트
+**반려동물 간식 오픈마켓 프로젝트**  
+[React + TypeScript]
 
 ## 참여 인원
 
-_[테킷 멋쟁이사자처럼] 프론트엔드 스쿨 플러스 1기 13조_ **윤동주**  
-[김건주][] [이동호][] [장효윤][]
+_[테킷 멋쟁이사자처럼] 프론트엔드 스쿨 플러스 1기 13조_ **윤동주**
+
+[김건주][]*컴포넌트 마스터  
+[이동호][]*스크럼 마스터  
+[장효윤][]\_깃 마스터
 
 ## 기술 스택
 
@@ -20,20 +24,9 @@ _[테킷 멋쟁이사자처럼] 프론트엔드 스쿨 플러스 1기 13조_ **�
 [이동호]: https://github.com/rustandbone
 [장효윤]: https://github.com/HYHYJ
 
-## Server
-
-### API 서버 실행
-
-[API 서버 레포지토리][]
+## 프로젝트 실행
 
 ```js
-/*프로젝트 루트에서 실행*/
-cd api
-npm i
-npm start
-
-/*DB 초기화_처음 실행 시 필수*/
-npm run dbinit
+npm run dev
+//npm i --legacy-peer-deps 포함
 ```
-
-[API 서버 레포지토리]: https://github.com/likelion-plus/api-server.git
