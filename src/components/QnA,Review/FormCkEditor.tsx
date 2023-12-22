@@ -72,7 +72,7 @@ function FormCkEditor({ type }: { type?: string }) {
           <Editor
             placeholder={
               userInfo?.type === 'admin'
-                ? '마크다운 문법으로 작성해주세요 : )'
+                ? '마크다운 문법으로 작성해주세요 ☺️'
                 : location.href.includes('review')
                 ? '⚠️ 리뷰 작성 후 수정 및 삭제가 불가능합니다'
                 : '내용을 적어주세요 ☺️'
