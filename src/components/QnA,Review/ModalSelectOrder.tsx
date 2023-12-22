@@ -101,7 +101,7 @@ function ModalSelectOrder({ onClick }: Pick<ContainerTitle, 'onClick'>) {
                   title={v.name}
                   date={v.createdAt}
                   price={v.price}
-                  id={v.extra.parent}
+                  id={v.extra?.parent ? v.extra.parent : v._id}
                   option={v.extra?.option ? v.extra.option : ''}
                 />
               ))}

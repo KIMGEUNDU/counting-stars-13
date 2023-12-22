@@ -16,7 +16,6 @@ export default function MyOrderDetail() {
   const { id } = useParams();
   const deliveryState = useDeliveryState(orderState);
   const orderProductList = orderInfo?.products;
-  console.log(id);
 
   useEffect(() => {
     const handleGetOrderInfo = async () => {
@@ -198,7 +197,7 @@ export default function MyOrderDetail() {
 
                 <td className="p-3">
                   <span className="" id="inputName">
-                    {orderUserName}
+                    {orderInfo?.address?.name}
                   </span>
                 </td>
               </tr>
@@ -207,7 +206,7 @@ export default function MyOrderDetail() {
                   <span>휴대전화</span>
                 </td>
                 <td className="p-3">
-                  <span>010-1234-1234</span>
+                  <span>{orderInfo?.address?.phone}</span>
                 </td>
               </tr>
               <tr className="border-b border-gray-300">
@@ -239,7 +238,7 @@ export default function MyOrderDetail() {
                   <label htmlFor="inputId">배송 메시지</label>
                 </td>
                 <td className="p-3 ">
-                  <p className="">안전하게 배송해주세요.</p>
+                  <p className="">{orderInfo?.address?.message}</p>
                 </td>
               </tr>
               <tr className="border-b">
