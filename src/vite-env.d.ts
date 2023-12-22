@@ -92,6 +92,8 @@ interface UserOrderData {
     address?: string;
     addressDetail?: string;
     zonecode?: string;
+    phone?: string;
+    message?: string;
   };
   cost?: {
     discount?: { products: number; shippingFees: number };
