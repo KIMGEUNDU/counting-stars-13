@@ -22,10 +22,12 @@ export default function Search() {
         searchRef.current && searchRef.current.value
       }&custom={"price":{"$gte": ${
         minPriceRef.current && minPriceRef.current.value
+          ? minPriceRef.current.value
+          : 0
       }, "$lt": ${
-        maxPriceRef.current && Number(maxPriceRef.current.value) === 0
-          ? 50000
-          : maxPriceRef.current && Number(maxPriceRef.current.value) + 1
+        maxPriceRef.current && maxPriceRef.current.value
+          ? Number(maxPriceRef.current.value) + 1
+          : 50000
       }}}`
     );
   };
@@ -46,16 +48,35 @@ export default function Search() {
     e.preventDefault();
 
     if (
-      Number(minPriceRef.current && minPriceRef.current.value) >
-      Number(maxPriceRef.current && maxPriceRef.current.value)
+      minPriceRef.current &&
+      minPriceRef.current.value &&
+      maxPriceRef.current &&
+      !maxPriceRef.current.value
     ) {
-      toast('최대금액은 최소금액보다 높게 설정해주세요', {
+      toast('최댓값을 입력해주세요', {
         icon: '🦦',
         duration: 2000,
       });
-    }
-
-    if (searchRef.current && searchRef.current.value === '') {
+      return;
+    } else if (
+      minPriceRef.current &&
+      !minPriceRef.current.value &&
+      maxPriceRef.current &&
+      maxPriceRef.current.value
+    ) {
+      toast('최솟값을 입력해주세요', {
+        icon: '🦦',
+        duration: 2000,
+      });
+      return;
+    } else if (
+      Number(minPriceRef.current && minPriceRef.current.value) >
+      Number(maxPriceRef.current && maxPriceRef.current.value)
+    ) {
+      toast('최댓값은 최솟값보다 높게 설정해주세요', {
+        icon: '🦦',
+        duration: 2000,
+      });
       return;
     } else {
       refetch();
@@ -70,7 +91,7 @@ export default function Search() {
       <main>
         <PageMap route="search" routeName="상품 검색" />
         <PageMainTitle title="상품 검색" />
-        <section className="w-[80%] mx-auto mt-5">
+        <section className="w-[80%] mx-auto mt-5 mb-28">
           <form
             className="border-2 border-starGreen p-10 text-center rounded-xl"
             onSubmit={handleSearchData}
@@ -101,7 +122,7 @@ export default function Search() {
                 가격대
               </label>
               <input
-                className="text-center w-[10%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
+                className="text-center w-[8%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
                 id="priceCategory"
                 type="number"
                 ref={minPriceRef}
@@ -109,19 +130,21 @@ export default function Search() {
                 min={0}
                 max={50000}
               />
+              <span>원</span>
               <span>~</span>
               <input
-                className="text-center w-[10%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
+                className="text-center w-[8%] border-b border-starGreen focus:outline-none  focus:border-starGreen"
                 type="number"
                 ref={maxPriceRef}
                 placeholder="최댓값"
                 min={0}
                 max={50000}
               />
+              <span>원</span>
             </fieldset>
           </form>
 
-          {allData && (
+          {complete && (
             <p className="p-3 text-sm border mt-4">
               총
               <span className="font-bold  text-starRed pl-2">
