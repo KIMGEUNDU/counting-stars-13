@@ -3,7 +3,7 @@ import EditAddress from '@/components/EditMember/EditAddress';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import debounce from '@/utils/debounce';
-import axiosInstance from '@/utils/axiosInstance';
+import axiosInstance, { axiosBase } from '@/utils/axiosInstance';
 import { AxiosResponse, AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -48,9 +48,9 @@ export default function Order() {
 
   const handleGetOrder = useCallback(async () => {
     try {
-      const response = await axiosInstance.post(`/orders`, order);
+      const response = await axiosBase.post(`/carts/local`, order);
       const item = await response.data.item.products;
-      const totalPrice = await response.data.item.cost.products;
+      const totalPrice = await response.data.cost.products;
 
       setTotalPrice(totalPrice);
       setOrderData(item);
