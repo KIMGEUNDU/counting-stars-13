@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 
 export default function EditMember() {
   const navigate = useNavigate();
+  const [admin, setAdmin] = useState(false);
   //회원정보조회 정보
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
   const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +51,9 @@ export default function EditMember() {
       const response = await axiosInstance.get(`/users/${AUTH_ID()}`);
       const item = response.data.item;
       setEditMemberInfo(item);
+      if (item.email === 'admin@market.com') {
+        setAdmin(true);
+      }
 
       //가져온정보 넣기
     } catch (e) {
@@ -185,12 +189,14 @@ export default function EditMember() {
               className="border-r border-gray-200 pr-4"
             />
             <p className="pl-4 align-middle">
-              ✨별,해달을 이용해주셔서 감사합니다.
+              {admin ? '✨별,해달 ' : '✨별,해달을 이용해주셔서 감사합니다.'}
               <span className="text-blue-700 font-bold m-1">
                 {editMemberInfo?.name}
               </span>
               님은
-              <span className="font-bold"> [일반회원]</span>
+              <span className="font-bold">
+                {admin ? ' [관리자] ' : ' [일반회원] '}
+              </span>
               입니다.
             </p>
           </article>
