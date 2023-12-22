@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { emailReg, phoneReg } from '@/utils/loginReg';
-import { useJoinToLogin } from '@/store/useJoinToLogin';
+
 import { useNavigate } from 'react-router-dom';
 import { axiosBase } from '@/utils/axiosInstance';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
@@ -17,7 +17,7 @@ export default function Join() {
   const nameInput = useRef<HTMLInputElement>(null);
   const phoneInput = useRef<HTMLInputElement>(null);
   const LastPhoneInput = useRef<HTMLInputElement>(null);
-  const { setJoinToLogin } = useJoinToLogin();
+
   const navigate = useNavigate();
   const [joinInfo, setJoinInfo] = useState({
     id: '',
@@ -48,7 +48,7 @@ export default function Join() {
     emailAgree: false,
   });
   const [checkPassword, setCheckPassword] = useState('');
-
+  const [isAllAgree, setAllAgree] = useState(false);
   // 회원가입정보값 가져오기
   const { phone, password, name, email } = joinInfo;
   const { phoneFont, phoneMiddle, phoneLast } = phoneNumberList;
@@ -56,10 +56,6 @@ export default function Join() {
   if (AUTH_ID()) {
     navigate(-1);
   }
-  //회원가입 사이트 들어오면 true 값
-  useEffect(() => {
-    setJoinToLogin(true);
-  }, []);
 
   //비밀번호 중복체크
   const handleCheckPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +207,6 @@ export default function Join() {
     }
   };
 
-  const [isAllAgree, setAllAgree] = useState(false);
   //모두 동의 체크박스 기능
   const allAgree = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.checked ? setAllAgree(true) : setAllAgree(false);
