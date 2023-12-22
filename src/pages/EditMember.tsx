@@ -1,6 +1,7 @@
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { useEffect, useState } from 'react';
 import { phoneNumber } from '@/components/EditMember/phoneNumber';
+import { useNavigate } from 'react-router-dom';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 import PageMainTitle from 'components/PageMainTitle';
@@ -9,6 +10,7 @@ import debounce from '@/utils/debounce';
 import toast from 'react-hot-toast';
 
 export default function EditMember() {
+  const navigate = useNavigate();
   //회원정보조회 정보
   const { isPhoneNumber, setPhoneNumber } = usePhoneNumber();
   const [isOpen, setIsOpen] = useState(false);
@@ -155,11 +157,13 @@ export default function EditMember() {
         editMemberInfo
       );
       const item = response.data.item;
+
       setEditMemberInfo(item);
       toast('회원님의 정보가 수정 되었습니다.', {
         icon: '😀',
         duration: 2000,
       });
+      navigate('/myShopping');
       //가져온정보 넣기
     } catch (e) {
       return toast('정보가 불러와지지 않음', {
