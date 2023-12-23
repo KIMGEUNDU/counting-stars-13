@@ -363,3 +363,7 @@ interface IamportRes {
   error_msg: string;
   [attr: string]: string | boolean;
 }
+
+interface Array<T> {
+  toSorted(item): Array<T>;
+}
