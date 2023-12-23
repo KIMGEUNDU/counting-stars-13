@@ -108,6 +108,12 @@ export async function handleModalPutCart(
   link: string
 ) {
   e.preventDefault();
+
+  if (!AUTH_ID()) {
+    toast.error('로그인이 필요한 서비스입니다.');
+    return;
+  }
+
   const id = await fetchFirstOption(+link);
   let result;
   if (id) {

@@ -4,6 +4,11 @@ import axiosInstance from '@/utils/axiosInstance';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 
 export const putWish = async (id: number) => {
+  if (!AUTH_ID()) {
+    toast.error('로그인이 필요한 서비스입니다.');
+    return;
+  }
+
   const wish = {
     product_id: id,
     user_id: Number(AUTH_ID()),
