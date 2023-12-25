@@ -3,6 +3,7 @@ import EditAddress from '@/components/EditMember/EditAddress';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import debounce from '@/utils/debounce';
+import OrderGuide from 'components/OrderGuide';
 import axiosInstance, { axiosBase } from '@/utils/axiosInstance';
 import { AxiosResponse, AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
@@ -94,6 +95,7 @@ export default function Order() {
   };
 
   const handlePhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
     setPhoneNumber({ ...isPhoneNumber, [e.target.name]: e.target.value });
   };
 
@@ -413,6 +415,7 @@ export default function Order() {
                         defaultValue={orderUserInfo?.name}
                         name="name"
                         onChange={handleEdit}
+                        maxLength={30}
                       />
                     </td>
                   </tr>
@@ -453,7 +456,8 @@ export default function Order() {
                         className="border border-gray-300 rounded w-16"
                         id="inputPhone1"
                         defaultValue={isPhoneNumber.phoneMiddle}
-                        onChange={debounce(handlePhoneNumber, 1000)}
+                        onChange={debounce(handlePhoneNumber, 500)}
+                        maxLength={4}
                       />
                       -
                       <input
@@ -463,40 +467,8 @@ export default function Order() {
                         id="inputPhone2"
                         defaultValue={isPhoneNumber.phoneLast}
                         onChange={debounce(handlePhoneNumber, 500)}
+                        maxLength={4}
                       />
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-300">
-                    <td className="bg-gray-50 w-40 p-3">
-                      <label htmlFor="inputId">이메일</label>
-                      <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                        *
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      <input
-                        name="email"
-                        type="text"
-                        className="border border-gray-300 rounded w-32 mr-1"
-                        id="inputId"
-                        defaultValue={orderUserInfo?.email.split('@')[0]}
-                        readOnly
-                      />
-                      <span className="mr-1">@</span>
-                      <input
-                        name="email"
-                        type="text"
-                        className="border border-gray-300 rounded w-32 mr-1"
-                        id="inputId"
-                        defaultValue={orderUserInfo?.email.split('@')[1]}
-                        readOnly
-                      />
-
-                      <p className="mt-2 text-gray-500 text-sm">
-                        이메일로 주문 처리 과정을 보내드립니다.
-                        <br />
-                        반드시 수신 가능한 이메일을 입력해주세요.
-                      </p>
                     </td>
                   </tr>
                   <tr className="border-b">
@@ -507,8 +479,10 @@ export default function Order() {
                       <textarea
                         name="deliveryMessage"
                         id="deliveryMessage"
-                        className="border w-4/5 h-16"
-                        onChange={handleEdit}
+                        className="border w-4/5 h-16 resize-none pl-2"
+                        onChange={debounce(handleEdit, 1000)}
+                        maxLength={100}
+                        placeholder="배송 기사님에게 전달할 내용을 적어주세요(100자 이내)"
                       ></textarea>
                     </td>
                   </tr>
@@ -522,8 +496,8 @@ export default function Order() {
                   <thead>
                     <tr className="bg-gray-50 h-14 font-bold text-sm border-t-2 border-b">
                       <td className="w-1/4">총 상품 금액</td>
-                      <td className="w-1/4 ">총 배송비</td>
-                      <td className="w-1/2 ">결제 예정 금액</td>
+                      <td className="w-1/4">총 배송비</td>
+                      <td className="w-1/2">결제 예정 금액</td>
                     </tr>
                   </thead>
                   <thead>
@@ -544,7 +518,7 @@ export default function Order() {
                   </thead>
                 </table>
 
-                <article className="w-full max-w-[400px] flex border border-gray-300 ">
+                <article className="w-full max-w-[400px] flex border border-gray-300">
                   <section className="w-full bg-gray-50 border-gray-300 border p-3 text-right">
                     <h3 className="font-bold">최종 결제 금액</h3>
                     <p className="text-starRed text-lg font-semibold mb-4">
@@ -573,80 +547,7 @@ export default function Order() {
                 </article>
               </section>
             </section>
-            <section>
-              <h3 className="font-bold text-lg mt-14 mb-3">결제</h3>
-              <section className="border-2 mt-8 mb-20">
-                <h3 className="text-sm bg-gray-100 font-semibold py-2 block border-b-2 px-4 ">
-                  이용 안내
-                </h3>
-                <div className="px-4">
-                  <p className="text-sm text-gray-500 my-5">
-                    세금계산서 발행 안내
-                  </p>
-                  <ol className="flex flex-col gap-2 text-sm text-gray-500 my-5">
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        1
-                      </span>
-                      부가가치세법 제 54조에 의거하여 세금계산서는 배송
-                      완료일로부터 다음달 10일까지만 요청할 수 있습니다.
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        2
-                      </span>
-                      세금계산서는 사업자만 신청할 수 있습니다.
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        3
-                      </span>
-                      배송이 완료된 주문에 한하여 세금계산서 발행 신청이
-                      가능합니다.
-                    </li>
-                  </ol>
-                  <p className="text-sm text-gray-500 my-5">
-                    현금영수증 이용안내
-                  </p>
-                  <ol className="flex flex-col gap-2 text-sm text-gray-500 my-5">
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        1
-                      </span>
-                      현금영수증은 1원 이상의 현금성거래(무통장입금,
-                      실시간계좌이체, 에스크로, 예치금)에 대해 발행이 됩니다.
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        2
-                      </span>
-                      현금영수증 발행 금액에는 배송비는 포함되고, 적립금
-                      사용액은 포함되지 않습니다.
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        3
-                      </span>
-                      발행신청 기간 제한 현금 영수증은 입금 확인일로부터 48시간
-                      안에 발행을 해야 합니다.
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        4
-                      </span>
-                      현금영수증 발행 취소의 경우는 시간 제한이 없습니다.
-                      (국세청의 정책에 따라 변경될 수 있습니다.)
-                    </li>
-                    <li>
-                      <span className="inline-block w-5 h-5 bg-gray-400 text-white text-center mr-3">
-                        5
-                      </span>
-                      현금영수증이나 세금계산서 중 하나만 발행 가능 합니다.
-                    </li>
-                  </ol>
-                </div>
-              </section>
-            </section>
+            <OrderGuide />
           </div>
         </section>
       </main>

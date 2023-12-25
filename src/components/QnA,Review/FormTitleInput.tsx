@@ -19,6 +19,8 @@ function FormTitleInput({
           className="border border-gray-300 rounded w-60 mr-1"
           id="inputId"
           ref={titleRef}
+          maxLength={100}
+          placeholder="제목을 적어주세요(100자 이내)"
           required
         />
       </td>
