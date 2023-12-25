@@ -17,12 +17,22 @@ function FormCkEditor({ type }: { type?: string }) {
   const { userInfo, setUserInfo } = useUserInfo();
   const [view, setView] = useState(false);
 
+  const MAX_LENGTH = 1000;
+
   // 사진은 한개만 업로드된다는 안내문
   const noticeImageUpload = () => {
     toast('사진은 최대 1개만 업로드 가능합니다 : )', {
       icon: '📷',
       duration: 2000,
     });
+  };
+
+  const handleExcessLength = (content: string) => {
+    alert(`최대 ${MAX_LENGTH}자까지 입력 가능합니다.`);
+    const editorInstance = editorRef.current?.getInstance();
+    editorInstance.eventManager.removeEventHandler('change');
+    editorInstance.setMarkdown(content.substring(0, MAX_LENGTH));
+    editorInstance.eventManager.addEventHandler('change', onChange);
   };
 
   // 사진 변경
@@ -32,6 +42,12 @@ function FormCkEditor({ type }: { type?: string }) {
       const removeImgTag = content.replace(/<img[^>]*>/g, '');
 
       setContent(removeImgTag);
+    }
+
+    const editorInstance = editorRef.current?.getInstance();
+    const content = editorInstance.getMarkdown();
+    if (content.length > MAX_LENGTH) {
+      handleExcessLength(content);
     }
   };
 
@@ -74,8 +90,8 @@ function FormCkEditor({ type }: { type?: string }) {
               userInfo?.type === 'admin'
                 ? '마크다운 문법으로 작성해주세요 ☺️'
                 : location.href.includes('review')
-                ? '⚠️ 리뷰 작성 후 수정 및 삭제가 불가능합니다'
-                : '내용을 적어주세요 ☺️'
+                ? '후기를 작성해주세요(1000자 이내). \n ⚠️후기는 작성 후 수정 및 삭제가 불가능합니다'
+                : '문의 내용을 적어주세요(1000자 이내)'
             }
             initialValue=" "
             height="600px"
