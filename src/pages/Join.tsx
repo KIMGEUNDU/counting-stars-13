@@ -6,7 +6,7 @@ import { axiosBase } from '@/utils/axiosInstance';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { Helmet } from 'react-helmet-async';
 import { terms } from 'components/terms';
-import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
+import EmailCheckButton from '@/components/join/EmailCheckButton';
 import PageMainTitle from 'components/PageMainTitle';
 import toast from 'react-hot-toast';
 

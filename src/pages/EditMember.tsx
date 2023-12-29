@@ -1,6 +1,6 @@
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { useEffect, useState } from 'react';
-import { phoneNumber } from '@/components/EditMember/phoneNumber';
+import { phoneNumber } from '@/components/editMember/phoneNumber';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import DaumPostcode, { Address } from 'react-daum-postcode';
