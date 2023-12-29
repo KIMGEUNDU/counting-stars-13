@@ -4,6 +4,7 @@ import { phoneNumber } from '@/components/editMember/phoneNumber';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import DaumPostcode, { Address } from 'react-daum-postcode';
+import calculateDateYearsAgo from '@/utils/calculateDateYearsAgo';
 import PageMainTitle from 'components/PageMainTitle';
 import axiosInstance from '@/utils/axiosInstance';
 import debounce from '@/utils/debounce';
@@ -30,6 +31,9 @@ export default function EditMember() {
     address: '',
     addressDetail: '',
   });
+  // 생년월일 min, max 값
+  const minDate = calculateDateYearsAgo(110);
+  const maxDate = calculateDateYearsAgo(14);
 
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
@@ -395,6 +399,8 @@ export default function EditMember() {
                     type="date"
                     name=""
                     id="inputBirthday"
+                    min={minDate}
+                    max={maxDate}
                   />
                 </td>
               </tr>
