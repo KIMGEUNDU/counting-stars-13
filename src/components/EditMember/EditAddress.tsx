@@ -58,6 +58,7 @@ export default function EditAddress() {
             id="inputZipCode"
             onChange={handleAdressDetailEdit}
             name="zonecode"
+            readOnly
           />
           <label htmlFor="inputZipCode">
             <button
@@ -93,6 +94,7 @@ export default function EditAddress() {
             id="inputAddress"
             onChange={handleAdressDetailEdit}
             name="address"
+            readOnly
           />
           <label htmlFor="inputAddress">기본 주소</label>
         </div>
@@ -104,6 +106,7 @@ export default function EditAddress() {
             className="border border-gray-300 rounded w-80 mr-2"
             id="inputDetailAddress"
             name="addressDetail"
+            maxLength={50}
           />
           <label htmlFor="inputDetailAddress">상세 주소(선택)</label>
         </div>
