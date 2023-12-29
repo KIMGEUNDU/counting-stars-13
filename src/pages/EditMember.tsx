@@ -1,9 +1,10 @@
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { useEffect, useState } from 'react';
-import { phoneNumber } from '@/components/EditMember/phoneNumber';
+import { phoneNumber } from '@/components/editMember/phoneNumber';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import DaumPostcode, { Address } from 'react-daum-postcode';
+import calculateDateYearsAgo from '@/utils/calculateDateYearsAgo';
 import PageMainTitle from 'components/PageMainTitle';
 import axiosInstance from '@/utils/axiosInstance';
 import debounce from '@/utils/debounce';
@@ -30,6 +31,9 @@ export default function EditMember() {
     address: '',
     addressDetail: '',
   });
+  // 생년월일 min, max 값
+  const minDate = calculateDateYearsAgo(110);
+  const maxDate = calculateDateYearsAgo(14);
 
   // 번호 앞자리, 뒷자리 나누기 값
   useEffect(() => {
@@ -200,215 +204,219 @@ export default function EditMember() {
               입니다.
             </p>
           </article>
-          <table className="w-full border-t border-gray-300">
-            <tbody>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 w-40 p-3">
-                  <label htmlFor="inputId">이메일</label>
-                </td>
-                <td className="flex flex-row p-3">
-                  <p className="font-medium">{editMemberInfo?.email}</p>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputPw">비밀번호</label>
-                </td>
-                <td className="flex flex-row p-3">
-                  <input
-                    name="password"
-                    // value={editMemberInfo.password}
-                    type="password"
-                    className="border border-gray-300 rounded w-32 mr-1"
-                    id="inputPw"
-                  />
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputPwConfirm">비밀번호 확인</label>
-                </td>
-                <td className="p-3">
-                  <input
-                    type="password"
-                    className="border border-gray-300 rounded w-32"
-                    id="inputPwConfirm"
-                  />
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputName">이름</label>
-                </td>
-                <td className="p-3">
-                  <input
-                    type="text"
-                    className="border border-gray-300 rounded w-32"
-                    id="inputName"
-                    defaultValue={editMemberInfo?.name}
-                    name="name"
-                    onChange={handleEdit}
-                  />
-                </td>
-              </tr>
-
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">주소</td>
-                <td className="p-3">
-                  <div className="mb-2">
+          <form action="post">
+            <table className="w-full border-t border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 w-40 p-3">
+                    <label htmlFor="inputId">이메일</label>
+                  </td>
+                  <td className="flex flex-row p-3">
+                    <p className="font-medium">{editMemberInfo?.email}</p>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">
+                    <label htmlFor="inputPw">비밀번호</label>
+                  </td>
+                  <td className="flex flex-row p-3">
                     <input
-                      value={editMemberInfo?.address?.zonecode}
-                      type="text"
-                      className="border border-gray-300 rounded w-16 mr-2"
-                      id="inputZipCode"
-                      onChange={handleAdressDetailEdit}
-                      name="zonecode"
+                      name="password"
+                      // value={editMemberInfo.password}
+                      type="password"
+                      className="border border-gray-300 rounded w-32 mr-1"
+                      id="inputPw"
                     />
-                    <label htmlFor="inputZipCode">
-                      <button
-                        onClick={onToggleModal}
-                        type="button"
-                        className="border border-gray-300 px-2"
-                      >
-                        우편번호
-                      </button>
-                    </label>
-                  </div>
-                  {isOpen && (
-                    <div
-                      className="h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-40 text-center"
-                      onClick={onToggleModal}
-                    >
-                      <div
-                        className="bg-white rounded w-4/5 md:w-2/3 m-5 p-8"
-                        onClick={onToggleModal}
-                      >
-                        <DaumPostcode
-                          className="w-96 h-3/4 md:text-sm"
-                          onComplete={handleComplete}
-                        ></DaumPostcode>
-                      </div>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">
+                    <label htmlFor="inputPwConfirm">비밀번호 확인</label>
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="password"
+                      className="border border-gray-300 rounded w-32"
+                      id="inputPwConfirm"
+                    />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">
+                    <label htmlFor="inputName">이름</label>
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="text"
+                      className="border border-gray-300 rounded w-32"
+                      id="inputName"
+                      defaultValue={editMemberInfo?.name}
+                      name="name"
+                      onChange={handleEdit}
+                    />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">주소</td>
+                  <td className="p-3">
+                    <div className="mb-2">
+                      <input
+                        value={editMemberInfo?.address?.zonecode}
+                        type="text"
+                        className="border border-gray-300 rounded w-16 mr-2"
+                        id="inputZipCode"
+                        onChange={handleAdressDetailEdit}
+                        name="zonecode"
+                      />
+                      <label htmlFor="inputZipCode">
+                        <button
+                          onClick={onToggleModal}
+                          type="button"
+                          className="border border-gray-300 px-2"
+                        >
+                          우편번호
+                        </button>
+                      </label>
                     </div>
-                  )}
-                  <div className="mb-2">
+                    {isOpen && (
+                      <div
+                        className="h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-40 text-center"
+                        onClick={onToggleModal}
+                      >
+                        <div
+                          className="bg-white rounded w-4/5 md:w-2/3 m-5 p-8"
+                          onClick={onToggleModal}
+                        >
+                          <DaumPostcode
+                            className="w-96 h-3/4 md:text-sm"
+                            onComplete={handleComplete}
+                          ></DaumPostcode>
+                        </div>
+                      </div>
+                    )}
+                    <div className="mb-2">
+                      <input
+                        value={editMemberInfo?.address?.address}
+                        type="text"
+                        className="border border-gray-300 rounded w-80 mr-2"
+                        id="inputAddress"
+                        onChange={handleAdressDetailEdit}
+                        name="address"
+                      />
+                      <label htmlFor="inputAddress">기본 주소</label>
+                    </div>
+                    <div>
+                      <input
+                        value={editMemberInfo?.address?.addressDetail}
+                        onChange={handleAdressDetailEdit}
+                        type="text"
+                        className="border border-gray-300 rounded w-80 mr-2"
+                        id="inputDetailAddress"
+                        name="addressDetail"
+                      />
+                      <label htmlFor="inputDetailAddress">
+                        상세 주소(선택)
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">
+                    <label htmlFor="inputPhone0" className="sr-only">
+                      휴대전화
+                    </label>
+                    <label htmlFor="inputPhone1">휴대전화</label>
+                    <label htmlFor="inputPhone2" className="sr-only">
+                      휴대전화
+                    </label>
+                  </td>
+                  <td className="p-3">
+                    <select
+                      name="phoneNumber"
+                      id="inputPhone0"
+                      value={isPhoneNumber.phoneFirst}
+                      onChange={handleChangePhoneFirst}
+                    >
+                      <option value="011">010</option>
+                      <option value="011">011</option>
+                      <option value="016">016</option>
+                      <option value="017">017</option>
+                      <option value="018">018</option>
+                      <option value="019">019</option>
+                    </select>
+                    -
                     <input
-                      value={editMemberInfo?.address?.address}
+                      name="phoneMiddle"
                       type="text"
-                      className="border border-gray-300 rounded w-80 mr-2"
-                      id="inputAddress"
-                      onChange={handleAdressDetailEdit}
-                      name="address"
+                      className="border border-gray-300 rounded w-16"
+                      id="inputPhone1"
+                      defaultValue={isPhoneNumber.phoneMiddle}
+                      onChange={debounce(handlePhoneNumber, 1000)}
                     />
-                    <label htmlFor="inputAddress">기본 주소</label>
-                  </div>
-                  <div>
+                    -
                     <input
-                      value={editMemberInfo?.address?.addressDetail}
-                      onChange={handleAdressDetailEdit}
+                      name="phoneLast"
                       type="text"
-                      className="border border-gray-300 rounded w-80 mr-2"
-                      id="inputDetailAddress"
-                      name="addressDetail"
+                      className="border border-gray-300 rounded w-16"
+                      id="inputPhone2"
+                      defaultValue={isPhoneNumber.phoneLast}
+                      onChange={debounce(handlePhoneNumber, 500)}
                     />
-                    <label htmlFor="inputDetailAddress">상세 주소(선택)</label>
-                  </div>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">
-                  <label htmlFor="inputPhone0" className="sr-only">
-                    휴대전화
-                  </label>
-                  <label htmlFor="inputPhone1">휴대전화</label>
-                  <label htmlFor="inputPhone2" className="sr-only">
-                    휴대전화
-                  </label>
-                </td>
-                <td className="p-3">
-                  <select
-                    name="phoneNumber"
-                    id="inputPhone0"
-                    value={isPhoneNumber.phoneFirst}
-                    onChange={handleChangePhoneFirst}
-                  >
-                    <option value="011">010</option>
-                    <option value="011">011</option>
-                    <option value="016">016</option>
-                    <option value="017">017</option>
-                    <option value="018">018</option>
-                    <option value="019">019</option>
-                  </select>
-                  -
-                  <input
-                    name="phoneMiddle"
-                    type="text"
-                    className="border border-gray-300 rounded w-16"
-                    id="inputPhone1"
-                    defaultValue={isPhoneNumber.phoneMiddle}
-                    onChange={debounce(handlePhoneNumber, 1000)}
-                  />
-                  -
-                  <input
-                    name="phoneLast"
-                    type="text"
-                    className="border border-gray-300 rounded w-16"
-                    id="inputPhone2"
-                    defaultValue={isPhoneNumber.phoneLast}
-                    onChange={debounce(handlePhoneNumber, 500)}
-                  />
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 p-3">SMS 수신 여부</td>
-                <td className="p-3">
-                  <input
-                    type="checkbox"
-                    name="emailAgree"
-                    id="smsOk"
-                    className="mr-1"
-                    checked={editMemberInfo?.emailAgree}
-                    onChange={handleCheckboxEdit}
-                  />
-                  <label htmlFor="smsOk" className="mr-2">
-                    수신 여부
-                  </label>
-
-                  <p className="font-extralight">
-                    쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수
-                    있습니다.
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <h2 className="font-bold text-lg mt-10 mb-2">추가 정보</h2>
-          <table className="w-full border-t border-gray-300">
-            <tbody>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-50 w-40 p-3">
-                  <label htmlFor="inputBirthday">생년월일</label>
-                </td>
-                <td className="flex flex-row p-3">
-                  <input
-                    value={editMemberInfo?.birthday}
-                    onChange={handleBirthdayEdit}
-                    type="date"
-                    name=""
-                    id="inputBirthday"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <article className="flex justify-center mt-2">
-            <button
-              onClick={handlePatchUserInfo}
-              className=" text-white bg-slate-500 py-3 mr-1 w-36"
-            >
-              회원 정보 수정
-            </button>
-            <button className="text-white bg-slate-500 w-36">취소</button>
-          </article>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 p-3">SMS 수신 여부</td>
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      name="emailAgree"
+                      id="smsOk"
+                      className="mr-1"
+                      checked={editMemberInfo?.emailAgree}
+                      onChange={handleCheckboxEdit}
+                    />
+                    <label htmlFor="smsOk" className="mr-2">
+                      수신 여부
+                    </label>
+                    <p className="font-extralight">
+                      쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수
+                      있습니다.
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h2 className="font-bold text-lg mt-10 mb-2">추가 정보</h2>
+            <table className="w-full border-t border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-50 w-40 p-3">
+                    <label htmlFor="inputBirthday">생년월일</label>
+                  </td>
+                  <td className="flex flex-row p-3">
+                    <input
+                      value={editMemberInfo?.birthday}
+                      onChange={handleBirthdayEdit}
+                      type="date"
+                      name=""
+                      id="inputBirthday"
+                      min={minDate}
+                      max={maxDate}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <article className="flex justify-center mt-2">
+              <button
+                onClick={handlePatchUserInfo}
+                className=" text-white bg-slate-500 py-3 mr-1 w-36"
+              >
+                회원 정보 수정
+              </button>
+              <button className="text-white bg-slate-500 w-36">취소</button>
+            </article>
+          </form>
         </section>
       </main>
     </>

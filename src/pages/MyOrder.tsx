@@ -4,7 +4,7 @@ import { useMyOrderInfo } from '@/store/useMyOrderInfo';
 import { Helmet } from 'react-helmet-async';
 import axiosInstance from '@/utils/axiosInstance';
 import PageMainTitle from '@/components/PageMainTitle';
-import OrderItem from '@/components/MyOrder/OrderItem';
+import OrderItem from '@/components/myOrder/OrderItem';
 import PageMap from '@/components/PageMap';
 import moment from 'moment';
 
