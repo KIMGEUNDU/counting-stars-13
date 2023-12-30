@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 
 export default function EditAddress() {
+  const [isOpen, setIsOpen] = useState(false);
   const { orderUserInfo, setOrderUserInfo, isAddress, setAddress } =
     useOrderUserInfo();
-  const [isOpen, setIsOpen] = useState(false);
   const onToggleModal = () => {
     setIsOpen(!isOpen);
   };
