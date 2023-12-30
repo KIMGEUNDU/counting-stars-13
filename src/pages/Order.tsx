@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import EditAddress from '@/components/EditMember/EditAddress';
+import EditAddress from '@/components/editMember/EditAddress';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import debounce from '@/utils/debounce';
@@ -12,7 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useOrderUserInfo } from '@/store/useOrderUserInfo';
 import { usePhoneNumber } from '@/store/usePhoneNumber';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
-import { phoneNumber } from '@/components/EditMember/phoneNumber';
+import { phoneNumber } from '@/components/editMember/phoneNumber';
 import { useOrderSet } from '@/store/useOrderSet';
 import { useMutation } from '@tanstack/react-query';
 import { useCheckboxGroup } from '@/store/useCheckboxGroup';

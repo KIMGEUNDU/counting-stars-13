@@ -6,7 +6,7 @@ import { axiosBase } from '@/utils/axiosInstance';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import { Helmet } from 'react-helmet-async';
 import { terms } from 'components/terms';
-import EmailCheckButton from 'components/Login,Join/EmailCheckButton';
+import EmailCheckButton from '@/components/join/EmailCheckButton';
 import PageMainTitle from 'components/PageMainTitle';
 import toast from 'react-hot-toast';
 
@@ -274,267 +274,268 @@ export default function Join() {
       <main className="w-full">
         <PageMainTitle title="회원 가입" />
         <section className="w-4/5 mx-auto">
-          <table className="w-full border-t border-gray-300">
-            <tbody>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 w-40 p-3">
-                  <label htmlFor="inputId">이메일</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="flex flex-row p-3">
-                  <input
-                    ref={emailInput}
-                    name="email"
-                    onChange={handleJoinInfo}
-                    type="text"
-                    className="border border-gray-300 rounded w-32 mr-1"
-                    id="inputId"
-                    maxLength={25}
-                    required
-                  />
-
-                  <EmailCheckButton
-                    email={email}
-                    setCheckEmail={setCheckEmail}
-                    itemEmail={joinInfo.email}
-                  />
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3">
-                  <label htmlFor="inputPw">비밀번호</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="flex flex-row p-3">
-                  <input
-                    ref={passwordInput}
-                    name="password"
-                    onChange={handleJoinInfo}
-                    type="password"
-                    className="border border-gray-300 rounded w-32 mr-1"
-                    id="inputPw"
-                    maxLength={16}
-                    required
-                  />
-                  <p className="text-gray-500 ">(영문, 숫자 조합으로 8~16자)</p>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3">
-                  <label htmlFor="inputPwConfirm">비밀번호 확인</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="p-3 flex items-center gap-2">
-                  <input
-                    ref={checkPasswordInput}
-                    name="checkPassword"
-                    type="password"
-                    className="border border-gray-300 rounded w-32"
-                    id="inputPwConfirm"
-                    maxLength={16}
-                    required
-                    onChange={handleCheckPassword}
-                  />
-                  <p
-                    className={
-                      password !== checkPassword
-                        ? 'text-red-400 text-sm font-semibold '
-                        : 'text-blue-400 text-sm font-semibold'
-                    }
-                  >
-                    {validationInfo.password}
-                  </p>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3">
-                  <label htmlFor="inputName">이름</label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="p-3 flex items-center gap-2">
-                  <input
-                    ref={nameInput}
-                    name="name"
-                    onChange={handleJoinInfo}
-                    type="text"
-                    className="border border-gray-300 rounded w-32"
-                    id="inputName"
-                    maxLength={10}
-                    required
-                  />
-                  <p className="text-red-400 text-sm font-semibold">
-                    {validationInfo.name}
-                  </p>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="bg-gray-100 p-3 ">
-                  <label htmlFor="inputPhone">휴대전화</label>
-                  <label htmlFor="inputPhone2" className="sr-only">
-                    휴대전화
-                  </label>
-                  <span className="text-starRed font-extrabold text-xl align-middle pl-1">
-                    *
-                  </span>
-                </td>
-                <td className="p-3 flex items-center gap-0.5">
-                  <select
-                    name="phoneFont"
-                    id=""
-                    onChange={handleSelectPhoneNumberList}
-                  >
-                    <option value="011">010</option>
-                    <option value="011">011</option>
-                    <option value="016">016</option>
-                    <option value="017">017</option>
-                    <option value="018">018</option>
-                    <option value="019">019</option>
-                  </select>
-                  -
-                  <input
-                    ref={phoneInput}
-                    type="text"
-                    name="phoneMiddle"
-                    onChange={handlePhoneNumberList}
-                    className="border border-gray-300 rounded w-16"
-                    id="inputPhone"
-                    maxLength={4}
-                  />
-                  -
-                  <input
-                    ref={LastPhoneInput}
-                    type="text"
-                    name="phoneLast"
-                    onChange={handlePhoneNumberList}
-                    className="border border-gray-300 rounded w-16"
-                    id="inputPhone2"
-                    maxLength={4}
-                  />
-                  <p
-                    className={
-                      phoneReg(joinInfo.phone) || joinInfo.phone.length <= 10
-                        ? 'text-red-400 text-sm font-semibold '
-                        : ''
-                    }
-                  >
-                    {validationInfo.phone}
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h2 className="font-bold text-lg mt-10 mb-2">전체 동의</h2>
-          <table className="bg-gray-100 w-full border border-gray-300">
-            <tbody>
-              <tr className="border-b border-gray-300">
-                <td className="p-4 flex flex-row">
-                  <input
-                    type="checkbox"
-                    className="mr-1 w-5"
-                    name="allAgree"
-                    id="allAgree"
-                    checked={isAgree.allAgree}
-                    onChange={allAgree}
-                  />
-                  <label htmlFor="allAgree">
-                    이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두
-                    동의합니다.
-                  </label>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="p-4">
-                  <p className="mb-2">[필수] 이용약관 동의</p>
-                  <textarea
-                    name=""
-                    id=""
-                    className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
-                    readOnly
-                    value={terms.term}
-                  ></textarea>
-                  <div className="flex flex-row">
-                    <p className="mr-2">이용 약관에 동의하십니까?</p>
+          <form action="post">
+            <table className="w-full border-t border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-100 w-40 p-3">
+                    <label htmlFor="inputId">이메일</label>
+                    <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+                      *
+                    </span>
+                  </td>
+                  <td className="flex flex-row p-3">
                     <input
-                      type="checkbox"
-                      className="mr-1"
-                      name="useAgree"
-                      id="termAgree"
-                      onChange={allAgreeElem}
-                      checked={isAgree.useAgree}
+                      ref={emailInput}
+                      name="email"
+                      onChange={handleJoinInfo}
+                      type="text"
+                      className="border border-gray-300 rounded w-32 mr-1"
+                      id="inputId"
+                      maxLength={25}
+                      required
                     />
-                    <label htmlFor="termAgree">동의함</label>
-                  </div>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="p-4">
-                  <p className="mb-2">[필수] 개인정보 수집 및 이용 동의</p>
-                  <textarea
-                    name=""
-                    id=""
-                    className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
-                    readOnly
-                    value={terms.privacy}
-                  ></textarea>
-                  <div className="flex flex-row">
-                    <p className="mr-2">
-                      개인정보 수집 및 이용에 동의하십니까?
+                    <EmailCheckButton
+                      email={email}
+                      setCheckEmail={setCheckEmail}
+                      itemEmail={joinInfo.email}
+                    />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-100 p-3">
+                    <label htmlFor="inputPw">비밀번호</label>
+                    <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+                      *
+                    </span>
+                  </td>
+                  <td className="flex flex-row p-3">
+                    <input
+                      ref={passwordInput}
+                      name="password"
+                      onChange={handleJoinInfo}
+                      type="password"
+                      className="border border-gray-300 rounded w-32 mr-1"
+                      id="inputPw"
+                      maxLength={16}
+                      required
+                    />
+                    <p className="text-gray-500 ">
+                      (영문, 숫자 조합으로 8~16자)
                     </p>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-100 p-3">
+                    <label htmlFor="inputPwConfirm">비밀번호 확인</label>
+                    <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+                      *
+                    </span>
+                  </td>
+                  <td className="p-3 flex items-center gap-2">
                     <input
-                      checked={isAgree.privacyAgree}
-                      type="checkbox"
-                      className="mr-1"
-                      name="privacyAgree"
-                      id="privacyAgree"
-                      onChange={allAgreeElem}
+                      ref={checkPasswordInput}
+                      name="checkPassword"
+                      type="password"
+                      className="border border-gray-300 rounded w-32"
+                      id="inputPwConfirm"
+                      maxLength={16}
+                      required
+                      onChange={handleCheckPassword}
                     />
-                    <label htmlFor="privacyAgree">동의함</label>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-4">
-                  <p className="mb-2">[선택] 쇼핑정보 수신 동의</p>
-                  <textarea
-                    name=""
-                    id=""
-                    className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
-                    readOnly
-                    value={terms.shopInfo}
-                  ></textarea>
-
-                  <div className="flex flex-row">
-                    <p className="mr-2">이메일/SMS 수신을 동의하십니까?</p>
+                    <p
+                      className={
+                        password !== checkPassword
+                          ? 'text-red-400 text-sm font-semibold '
+                          : 'text-blue-400 text-sm font-semibold'
+                      }
+                    >
+                      {validationInfo.password}
+                    </p>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-100 p-3">
+                    <label htmlFor="inputName">이름</label>
+                    <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+                      *
+                    </span>
+                  </td>
+                  <td className="p-3 flex items-center gap-2">
                     <input
-                      checked={isAgree.emailAgree}
-                      type="checkbox"
-                      onChange={allAgreeElem}
-                      className="mr-1"
-                      name="emailAgree"
-                      id="emailAgree"
-                      // onChange={allAgreeElem}
+                      ref={nameInput}
+                      name="name"
+                      onChange={handleJoinInfo}
+                      type="text"
+                      className="border border-gray-300 rounded w-32"
+                      id="inputName"
+                      maxLength={10}
+                      required
                     />
-                    <label htmlFor="emailAgree">동의함</label>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <button
-            onClick={handleJoin}
-            className="block text-white bg-slate-500 py-2 px-8 mt-4 mb-10 mx-auto"
-          >
-            회원 가입
-          </button>
+                    <p className="text-red-400 text-sm font-semibold">
+                      {validationInfo.name}
+                    </p>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="bg-gray-100 p-3 ">
+                    <label htmlFor="inputPhone">휴대전화</label>
+                    <label htmlFor="inputPhone2" className="sr-only">
+                      휴대전화
+                    </label>
+                    <span className="text-starRed font-extrabold text-xl align-middle pl-1">
+                      *
+                    </span>
+                  </td>
+                  <td className="p-3 flex items-center gap-0.5">
+                    <select
+                      name="phoneFont"
+                      id=""
+                      onChange={handleSelectPhoneNumberList}
+                    >
+                      <option value="011">010</option>
+                      <option value="011">011</option>
+                      <option value="016">016</option>
+                      <option value="017">017</option>
+                      <option value="018">018</option>
+                      <option value="019">019</option>
+                    </select>
+                    -
+                    <input
+                      ref={phoneInput}
+                      type="text"
+                      name="phoneMiddle"
+                      onChange={handlePhoneNumberList}
+                      className="border border-gray-300 rounded w-16"
+                      id="inputPhone"
+                      maxLength={4}
+                    />
+                    -
+                    <input
+                      ref={LastPhoneInput}
+                      type="text"
+                      name="phoneLast"
+                      onChange={handlePhoneNumberList}
+                      className="border border-gray-300 rounded w-16"
+                      id="inputPhone2"
+                      maxLength={4}
+                    />
+                    <p
+                      className={
+                        phoneReg(joinInfo.phone) || joinInfo.phone.length <= 10
+                          ? 'text-red-400 text-sm font-semibold '
+                          : ''
+                      }
+                    >
+                      {validationInfo.phone}
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h2 className="font-bold text-lg mt-10 mb-2">전체 동의</h2>
+            <table className="bg-gray-100 w-full border border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="p-4 flex flex-row">
+                    <input
+                      type="checkbox"
+                      className="mr-1 w-5"
+                      name="allAgree"
+                      id="allAgree"
+                      checked={isAgree.allAgree}
+                      onChange={allAgree}
+                    />
+                    <label htmlFor="allAgree">
+                      이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에
+                      모두 동의합니다.
+                    </label>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-4">
+                    <p className="mb-2">[필수] 이용약관 동의</p>
+                    <textarea
+                      name=""
+                      id=""
+                      className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
+                      readOnly
+                      value={terms.term}
+                    ></textarea>
+                    <div className="flex flex-row">
+                      <p className="mr-2">이용 약관에 동의하십니까?</p>
+                      <input
+                        type="checkbox"
+                        className="mr-1"
+                        name="useAgree"
+                        id="termAgree"
+                        onChange={allAgreeElem}
+                        checked={isAgree.useAgree}
+                      />
+                      <label htmlFor="termAgree">동의함</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-4">
+                    <p className="mb-2">[필수] 개인정보 수집 및 이용 동의</p>
+                    <textarea
+                      name=""
+                      id=""
+                      className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
+                      readOnly
+                      value={terms.privacy}
+                    ></textarea>
+                    <div className="flex flex-row">
+                      <p className="mr-2">
+                        개인정보 수집 및 이용에 동의하십니까?
+                      </p>
+                      <input
+                        checked={isAgree.privacyAgree}
+                        type="checkbox"
+                        className="mr-1"
+                        name="privacyAgree"
+                        id="privacyAgree"
+                        onChange={allAgreeElem}
+                      />
+                      <label htmlFor="privacyAgree">동의함</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-4">
+                    <p className="mb-2">[선택] 쇼핑정보 수신 동의</p>
+                    <textarea
+                      name=""
+                      id=""
+                      className="w-full border border-gray-200 h-32 resize-none p-4 text-gray-400 text-sm"
+                      readOnly
+                      value={terms.shopInfo}
+                    ></textarea>
+                    <div className="flex flex-row">
+                      <p className="mr-2">이메일/SMS 수신을 동의하십니까?</p>
+                      <input
+                        checked={isAgree.emailAgree}
+                        type="checkbox"
+                        onChange={allAgreeElem}
+                        className="mr-1"
+                        name="emailAgree"
+                        id="emailAgree"
+                        // onChange={allAgreeElem}
+                      />
+                      <label htmlFor="emailAgree">동의함</label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button
+              onClick={handleJoin}
+              className="block text-white bg-slate-500 py-2 px-8 mt-4 mb-10 mx-auto"
+            >
+              회원 가입
+            </button>
+          </form>
         </section>
       </main>
     </>
