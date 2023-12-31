@@ -1,9 +1,9 @@
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
-import Notice from '@/components/QnA,Review/Notice';
-import ReviewSearchBar from '@/components/QnA,Review/ReviewSearchBar';
-import Thead from '@/components/QnA,Review/Thead';
-import WriterButton from '@/components/QnA,Review/WriterButton';
+import Notice from '@/components/qnaAndReview/Notice';
+import ReviewSearchBar from '@/components/qnaAndReview/ReviewSearchBar';
+import Thead from '@/components/qnaAndReview/Thead';
+import WriterButton from '@/components/qnaAndReview/WriterButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import axiosInstance from '@/utils/axiosInstance';

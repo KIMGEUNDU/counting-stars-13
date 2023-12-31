@@ -2,7 +2,7 @@ import BestItem from '@/components/Home/BestItem';
 import ProductContainer from '@/components/Shop/ProductContainer';
 import ReviewSlide from '@/components/Home/ReviewSlide';
 import SlideBanner from '@/components/Home/SlideBanner';
-import Slogan from '@/components/Brand/Slogan';
+import Slogan from '@/components/brand/Slogan';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';

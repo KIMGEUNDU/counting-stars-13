@@ -1,8 +1,8 @@
 import PageMap from '@/components/PageMap';
-import Notice from '@/components/QnA,Review/Notice';
-import SearchBar from '@/components/QnA,Review/SearchBar';
-import Thead from '@/components/QnA,Review/Thead';
-import WriterButton from '@/components/QnA,Review/WriterButton';
+import Notice from '@/components/qnaAndReview/Notice';
+import SearchBar from '@/components/qnaAndReview/SearchBar';
+import Thead from '@/components/qnaAndReview/Thead';
+import WriterButton from '@/components/qnaAndReview/WriterButton';
 import QueryPagination from '@/components/QueryPagination';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';

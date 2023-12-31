@@ -1,8 +1,8 @@
 import DetailButton from '@/components/Detail/DetailButton';
 import PageMap from '@/components/PageMap';
-import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
-import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
-import PageListOrder from '@/components/QnA,Review/PageListOrder';
+import PageDetailTable from '@/components/qnaAndReview/PageDetailTable';
+import PageDetailTitle from '@/components/qnaAndReview/PageDetailTitle';
+import PageListOrder from '@/components/qnaAndReview/PageListOrder';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';
 import axiosInstance from '@/utils/axiosInstance';
