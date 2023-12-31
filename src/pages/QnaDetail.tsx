@@ -1,11 +1,11 @@
 import DetailButton from '@/components/Detail/DetailButton';
 import PageMap from '@/components/PageMap';
-import CommentInput from '@/components/QnA,Review/CommentInput';
-import CommentItem from '@/components/QnA,Review/CommentItem';
-import PageDetailTable from '@/components/QnA,Review/PageDetailTable';
-import PageDetailTitle from '@/components/QnA,Review/PageDetailTitle';
-import PageListOrder from '@/components/QnA,Review/PageListOrder';
-import ReviewProductItem from '@/components/QnA,Review/ReviewProductItem';
+import CommentInput from '@/components/qnaAndReview/CommentInput';
+import CommentItem from '@/components/qnaAndReview/CommentItem';
+import PageDetailTable from '@/components/qnaAndReview/PageDetailTable';
+import PageDetailTitle from '@/components/qnaAndReview/PageDetailTitle';
+import PageListOrder from '@/components/qnaAndReview/PageListOrder';
+import ReviewProductItem from '@/components/qnaAndReview/ReviewProductItem';
 import { useComment } from '@/store/useComment';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';

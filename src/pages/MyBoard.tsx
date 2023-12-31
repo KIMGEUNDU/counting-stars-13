@@ -2,7 +2,7 @@ import EachPost from '@/components/EachPost';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
 import PaginationNumber from '@/components/PaginationNumber';
-import Thead from '@/components/QnA,Review/Thead';
+import Thead from '@/components/qnaAndReview/Thead';
 import { useData } from '@/store/useData';
 import { useUserInfo } from '@/store/useUserInfo';
 import { AUTH_ID } from '@/utils/AUTH_TOKEN';

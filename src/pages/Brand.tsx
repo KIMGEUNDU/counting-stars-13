@@ -1,8 +1,8 @@
-import BrandIntroduce from '@/components/Brand/BrandIntroduce';
-import Logo from '@/components/Brand/Logo';
+import BrandIntroduce from '@/components/brand/BrandIntroduce';
+import Logo from '@/components/brand/Logo';
 import PageMainTitle from '@/components/PageMainTitle';
 import PageMap from '@/components/PageMap';
-import Slogan from '@/components/Brand/Slogan';
+import Slogan from '@/components/brand/Slogan';
 import { Helmet } from 'react-helmet-async';
 
 export default function Brand() {

@@ -1,9 +1,9 @@
 import PageMainTitle from '@/components/PageMainTitle';
-import FormCkEditor from '@/components/QnA,Review/FormCkEditor';
-import FormTitleInput from '@/components/QnA,Review/FormTitleInput';
-import ModalSelectOrder from '@/components/QnA,Review/ModalSelectOrder';
-import ProductSelect from '@/components/QnA,Review/ProductSelect';
-import WriteButton from '@/components/QnA,Review/WriteButton';
+import FormCkEditor from '@/components/qnaAndReview/FormCkEditor';
+import FormTitleInput from '@/components/qnaAndReview/FormTitleInput';
+import ModalSelectOrder from '@/components/qnaAndReview/ModalSelectOrder';
+import ProductSelect from '@/components/qnaAndReview/ProductSelect';
+import WriteButton from '@/components/qnaAndReview/WriteButton';
 import { useData } from '@/store/useData';
 import { useForm } from '@/store/useForm';
 import axiosInstance from '@/utils/axiosInstance';
